@@ -22,3 +22,7 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### BUG
+①路由菜单点击反应延迟
+②刷新页面默认路由未更换

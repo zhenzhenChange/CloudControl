@@ -70,21 +70,21 @@ export default {
           }
         ]
       }
-    };
+    }
   },
   methods: {
     submitLogin(name) {
       this.$refs[name].validate(valid => {
         if (valid) {
-          this.$Message.success("登录成功!");
-          this.$router.push("/home");
+          this.$Message.success("登录成功!")
+          this.$router.push("/home")
         } else {
-          this.$Message.error("未知错误!");
+          this.$Message.error("未知错误!")
         }
-      });
+      })
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

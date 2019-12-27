@@ -1,52 +1,74 @@
 <template>
   <div class="layout">
-    <Sider
-      :style="{ position: 'fixed', height: '100vh', left: 0, overflow: 'auto' }"
-    >
-      <Menu active-name="1-2" theme="dark" width="auto" :open-names="['1']">
+    <Sider class="sider">
+      <Menu active-name="1-1" theme="dark" width="auto" :open-names="['1']">
         <Submenu name="1">
-          <template slot="title">
-            <Icon type="ios-navigate"></Icon>
-            导航 1
-          </template>
-          <MenuItem name="1-1">选项 1</MenuItem>
-          <MenuItem name="1-2">选项 2</MenuItem>
-          <MenuItem name="1-3">选项 3</MenuItem>
+          <template slot="title"><Icon type="md-contact" />账户</template>
+          <MenuItem name="1-1">
+            <router-link to="/grouping" tag="div">分组管理</router-link>
+          </MenuItem>
+          <MenuItem name="1-2">
+            <router-link to="/m-account" tag="div">账号管理</router-link>
+          </MenuItem>
+          <MenuItem name="1-3">
+            <router-link to="/s-account" tag="div">账号设置</router-link>
+          </MenuItem>
+          <MenuItem name="1-4">
+            <router-link to="/tag" tag="div">标签管理</router-link>
+          </MenuItem>
+          <MenuItem name="1-5">
+            <router-link to="/trumpet" tag="div">小号互聊</router-link>
+          </MenuItem>
+          <MenuItem name="1-6">
+            <router-link to="/passive" tag="div">被动请求</router-link>
+          </MenuItem>
         </Submenu>
         <Submenu name="2">
           <template slot="title">
-            <Icon type="ios-keypad"></Icon>
-            导航 2
+            <Icon type="ios-phone-portrait" />通讯录
           </template>
-          <MenuItem name="2-1">选项 1</MenuItem>
-          <MenuItem name="2-2">选项 2</MenuItem>
+          <MenuItem name="2-1">
+            <router-link to="/friends" tag="div">好友管理</router-link>
+          </MenuItem>
+          <MenuItem name="2-2">
+            <router-link to="/fans" tag="div">加粉订单</router-link>
+          </MenuItem>
         </Submenu>
         <Submenu name="3">
+          <template slot="title"><Icon type="ios-people" />群管理</template>
+          <MenuItem name="3-1">
+            <router-link to="/group-chat" tag="div">群聊列表</router-link>
+          </MenuItem>
+          <MenuItem name="3-2">
+            <router-link to="/pull-group" tag="div">拉群订单</router-link>
+          </MenuItem>
+          <MenuItem name="3-3">
+            <router-link to="/inter-chat" tag="div">群互聊</router-link>
+          </MenuItem>
+        </Submenu>
+        <Submenu name="4">
           <template slot="title">
-            <Icon type="ios-analytics"></Icon>
-            导航 3
+            <Icon type="ios-settings-outline" />营销管理
           </template>
-          <MenuItem name="3-1">选项 1</MenuItem>
-          <MenuItem name="3-2">选项 2</MenuItem>
+          <MenuItem name="4-1">
+            <router-link to="/space" tag="div">发朋友圈</router-link>
+          </MenuItem>
+          <MenuItem name="4-2">
+            <router-link to="/material" tag="div">素材管理</router-link>
+          </MenuItem>
         </Submenu>
       </Menu>
     </Sider>
-    <Layout :style="{ marginLeft: '200px' }">
-      <Header
-        :style="{
-          background: '#fff',
-          boxShadow: '0 2px 3px 2px rgba(0,0,0,.1)'
-        }"
-        >云控平台 Your Can Really Code</Header
-      >
-      <Content :style="{ padding: '0 16px 16px' }">
-        <Breadcrumb :style="{ margin: '16px 0' }">
+    <Layout class="layout">
+      <Header class="header">Cloud → Your Can Really Code</Header>
+      <Content class="content">
+        <Breadcrumb class="breadcrumb">
           <BreadcrumbItem>首页</BreadcrumbItem>
           <BreadcrumbItem>组件</BreadcrumbItem>
           <BreadcrumbItem>布局</BreadcrumbItem>
         </Breadcrumb>
         <Card>
-          <div style="height: 650px">
+          <div class="card-div">
             <router-view />
           </div>
         </Card>
@@ -58,7 +80,7 @@
 <script>
 export default {
   name: "home"
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -68,9 +90,28 @@ export default {
   position: relative;
   border-radius: 4px;
   overflow: hidden;
-}
-.layout-header-bar {
-  background: #fff;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  .sider {
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    overflow: auto;
+  }
+  .layout {
+    margin-left: 200px;
+    .header {
+      text-align: center;
+      background: #fff;
+      box-shadow: 0 2px 3px 2px rgba(0, 0, 0, 0.1);
+    }
+    .content {
+      padding: 0 16px 16px;
+      .breadcrumb {
+        margin: 16px 0;
+      }
+      .card-div {
+        height: 650px;
+      }
+    }
+  }
 }
 </style>
