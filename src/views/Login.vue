@@ -1,7 +1,9 @@
 <template>
   <div class="login">
     <Card class="login-card">
-      <p slot="title"><Icon type="md-cloud-done" /> 请登录</p>
+      <p slot="title">
+        <Icon type="md-cloud-done" />请登录
+      </p>
       <Form ref="loginForm" :model="loginForm" :rules="loginRules" inline>
         <FormItem prop="username">
           <Input
@@ -32,8 +34,7 @@
             shape="circle"
             @click="submitLogin('loginForm')"
             icon="ios-radio-outline"
-            >登录</Button
-          >
+          >登录</Button>
         </FormItem>
       </Form>
     </Card>
@@ -77,7 +78,7 @@ export default {
       this.$refs[name].validate(valid => {
         if (valid) {
           this.$Message.success("登录成功!")
-          this.$router.push("/home")
+          this.$router.push("/grouping")
         } else {
           this.$Message.error("未知错误!")
         }
@@ -91,6 +92,7 @@ export default {
 .login {
   width: 100%;
   height: 100%;
+  text-align: center;
   padding-top: 250px;
   background-image: url(../assets/images/login.jpeg);
   .login-card {

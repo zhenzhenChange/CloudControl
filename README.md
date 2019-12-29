@@ -1,28 +1,33 @@
-# cloud-control
+# Cloud Platform Control
 
-## Project setup
-```
+## 云控平台：2019-12-27
+
+### 安装依赖
+
+```install
 npm install
 ```
 
-### Compiles and hot-reloads for development
-```
+### 开发环境
+
+```serve
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
+### 生产环境
+
+```build
 npm run build
 ```
 
-### Lints and fixes files
-```
+### 代码校验与修复
+
+```lint
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 待解决BUG
 
-### BUG
-①路由菜单点击反应延迟
-②刷新页面默认路由未更换
+* ①路由菜单点击反应延迟 ×
+* ②刷新页面默认路由未更换 ×
+* ③面包屑导航 ×

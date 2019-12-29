@@ -18,7 +18,11 @@ const routes = [
       {
         path: "/grouping",
         name: "Grouping",
-        component: () => import("../views/Account/Grouping.vue")
+        component: () => import("../views/Account/Grouping.vue"),
+        meta: {
+          name: ["首页", "分组管理", "账号管理"],
+          path: ["/", "/grouping", "/m-account"]
+        }
       },
       {
         path: "/m-account",
