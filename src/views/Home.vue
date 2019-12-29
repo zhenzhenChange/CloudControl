@@ -3,9 +3,7 @@
     <Sider class="sider">
       <Menu active-name="1-1" theme="dark" width="auto" :open-names="['1']">
         <Submenu name="1">
-          <template slot="title">
-            <Icon type="md-contact" />账户
-          </template>
+          <template slot="title"><Icon type="md-contact" />账户</template>
           <MenuItem name="1-1">
             <router-link to="/grouping" tag="div">分组管理</router-link>
           </MenuItem>
@@ -37,9 +35,7 @@
           </MenuItem>
         </Submenu>
         <Submenu name="3">
-          <template slot="title">
-            <Icon type="ios-people" />群管理
-          </template>
+          <template slot="title"><Icon type="ios-people" />群管理</template>
           <MenuItem name="3-1">
             <router-link to="/group-chat" tag="div">群聊列表</router-link>
           </MenuItem>
@@ -64,7 +60,9 @@
       </Menu>
     </Sider>
     <Layout class="layout">
-      <Header class="header">Cloud Platform Control ★ Your Can Really Code</Header>
+      <Header class="header"
+        >Cloud Platform Control ★ Your Can Really Code</Header
+      >
       <Content class="content">
         <Breadcrumb class="breadcrumb">
           <!-- <BreadcrumbItem

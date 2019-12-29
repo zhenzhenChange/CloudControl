@@ -1,15 +1,59 @@
 <template>
   <div class="grouping">
     <div class="grouping-search">
-      <Input class="grouping-search-input" placeholder="请输入分组名称">
+      <Input
+        class="grouping-search-input"
+        clearable
+        placeholder="请输入分组名称"
+      >
         <span slot="prepend">分组名称</span>
       </Input>
       <Button type="primary" shape="circle" icon="ios-search" />
     </div>
     <Divider />
     <div class="grouping-groupAction">
-      <Button type="error" icon="md-trash" class="mr-10">删除</Button>
-      <Button type="primary" icon="md-add-circle">添加</Button>
+      <Button
+        type="error"
+        icon="md-trash"
+        @click="deleteGroupModal = true"
+        class="mr-10"
+        >删除</Button
+      >
+      <Button type="primary" icon="md-add-circle" @click="addGroupModal = true"
+        >添加</Button
+      >
+      <Modal
+        width="330"
+        title="添加分组"
+        :mask-closable="false"
+        v-model="addGroupModal"
+        class-name="vertical-center-modal"
+      >
+        <Input class="mb-10" clearable placeholder="请输入分组名称">
+          <span slot="prepend">分组名称</span>
+        </Input>
+        <Input clearable placeholder="请输入排序数字">
+          <span slot="prepend">排序数字</span>
+        </Input>
+      </Modal>
+      <Modal
+        width="330"
+        :mask-closable="false"
+        v-model="deleteGroupModal"
+        class-name="vertical-center-modal"
+      >
+        <p slot="header" style="color:red;">
+          <Icon type="md-warning"></Icon>
+          <span>删除分组</span>
+        </p>
+        <div style="text-align:center">
+          <p>确定要删除这XX条数据吗？</p>
+        </div>
+        <div slot="footer">
+          <Button type="error" icon="md-trash">删除</Button>
+          <Button>取消</Button>
+        </div>
+      </Modal>
     </div>
     <Divider />
     <div class="grouping-table">
@@ -97,7 +141,7 @@ export default {
           key: "groupAction",
           width: 250,
           align: "center",
-          render: (h, params) => {
+          render: (h /*params*/) => {
             return h("div", [
               h(
                 "Button",
@@ -112,7 +156,8 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.show(params.index)
+                      this.addGroupModal = true
+                      // this.show(params.index)
                     }
                   }
                 },
@@ -128,7 +173,8 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.remove(params.index)
+                      this.deleteGroupModal = true
+                      // this.remove(params.index)
                     }
                   }
                 },
@@ -137,7 +183,9 @@ export default {
             ])
           }
         }
-      ]
+      ],
+      addGroupModal: false,
+      deleteGroupModal: false
     }
   },
   methods: {
