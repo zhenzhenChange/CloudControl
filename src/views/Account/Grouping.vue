@@ -1,27 +1,15 @@
 <template>
   <div class="grouping">
     <div class="grouping-search">
-      <Input
-        class="grouping-search-input"
-        clearable
-        placeholder="请输入分组名称"
-      >
+      <Input class="grouping-search-input" clearable placeholder="请输入分组名称">
         <span slot="prepend">分组名称</span>
       </Input>
       <Button type="primary" shape="circle" icon="ios-search" />
     </div>
     <Divider />
     <div class="grouping-groupAction">
-      <Button
-        type="error"
-        icon="md-trash"
-        @click="deleteGroupModal = true"
-        class="mr-10"
-        >删除</Button
-      >
-      <Button type="primary" icon="md-add-circle" @click="addGroupModal = true"
-        >添加</Button
-      >
+      <Button type="error" icon="md-trash" @click="deleteGroupModal = true" class="mr-10">删除</Button>
+      <Button type="primary" icon="md-add-circle" @click="addGroupModal = true">添加</Button>
       <Modal
         width="330"
         title="添加分组"
@@ -102,10 +90,10 @@ export default {
                 : "error"
             const text =
               row.groupName === 1
-                ? "Working"
+                ? "忙碌"
                 : row.groupName === 2
-                ? "Success"
-                : "Fail"
+                ? "在线"
+                : "封禁"
             return h(
               "Tag",
               {

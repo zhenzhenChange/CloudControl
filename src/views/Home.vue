@@ -1,61 +1,37 @@
 <template>
   <div class="layout">
     <Sider class="sider">
-      <Menu active-name="1-1" theme="dark" width="auto" :open-names="['1']">
-        <Submenu name="1">
-          <template slot="title"><Icon type="md-contact" />账户</template>
-          <MenuItem name="1-1">
-            <router-link to="/grouping" tag="div">分组管理</router-link>
-          </MenuItem>
-          <MenuItem name="1-2">
-            <router-link to="/m-account" tag="div">账号管理</router-link>
-          </MenuItem>
-          <MenuItem name="1-3">
-            <router-link to="/s-account" tag="div">账号设置</router-link>
-          </MenuItem>
-          <MenuItem name="1-4">
-            <router-link to="/tag" tag="div">标签管理</router-link>
-          </MenuItem>
-          <MenuItem name="1-5">
-            <router-link to="/trumpet" tag="div">小号互聊</router-link>
-          </MenuItem>
-          <MenuItem name="1-6">
-            <router-link to="/passive" tag="div">被动请求</router-link>
-          </MenuItem>
+      <Menu
+        :active-name="show"
+        ref="show"
+        theme="dark"
+        width="auto"
+        :open-names="['Account']"
+      >
+        <Submenu name="Account">
+          <template slot="title"><Icon type="md-person" />账户</template>
+          <MenuItem name="grouping" to="/grouping">分组管理</MenuItem>
+          <MenuItem name="m-account" to="/m-account">账号管理</MenuItem>
+          <MenuItem name="s-account" to="/s-account">账号设置</MenuItem>
+          <MenuItem name="tag" to="/tag">标签管理</MenuItem>
+          <MenuItem name="trumpet" to="/trumpet">小号互聊</MenuItem>
+          <MenuItem name="passive" to="/passive">被动请求</MenuItem>
         </Submenu>
-        <Submenu name="2">
-          <template slot="title">
-            <Icon type="ios-phone-portrait" />通讯录
-          </template>
-          <MenuItem name="2-1">
-            <router-link to="/friends" tag="div">好友管理</router-link>
-          </MenuItem>
-          <MenuItem name="2-2">
-            <router-link to="/fans" tag="div">加粉订单</router-link>
-          </MenuItem>
+        <Submenu name="MailList">
+          <template slot="title"><Icon type="md-call" />通讯录</template>
+          <MenuItem name="friends" to="/friends">好友管理</MenuItem>
+          <MenuItem name="fans" to="/fans">加粉订单</MenuItem>
         </Submenu>
-        <Submenu name="3">
+        <Submenu name="Group">
           <template slot="title"><Icon type="ios-people" />群管理</template>
-          <MenuItem name="3-1">
-            <router-link to="/group-chat" tag="div">群聊列表</router-link>
-          </MenuItem>
-          <MenuItem name="3-2">
-            <router-link to="/pull-group" tag="div">拉群订单</router-link>
-          </MenuItem>
-          <MenuItem name="3-3">
-            <router-link to="/inter-chat" tag="div">群互聊</router-link>
-          </MenuItem>
+          <MenuItem name="group-chat" to="/group-chat">群聊列表</MenuItem>
+          <MenuItem name="pull-group" to="/pull-group">拉群订单</MenuItem>
+          <MenuItem name="inter-chat" to="/inter-chat">群互聊</MenuItem>
         </Submenu>
-        <Submenu name="4">
-          <template slot="title">
-            <Icon type="ios-settings-outline" />营销管理
-          </template>
-          <MenuItem name="4-1">
-            <router-link to="/space" tag="div">发朋友圈</router-link>
-          </MenuItem>
-          <MenuItem name="4-2">
-            <router-link to="/material" tag="div">素材管理</router-link>
-          </MenuItem>
+        <Submenu name="Marketing">
+          <template slot="title"><Icon type="md-settings" />营销管理</template>
+          <MenuItem name="space" to="/space">发朋友圈</MenuItem>
+          <MenuItem name="material" to="/material">素材管理</MenuItem>
         </Submenu>
       </Menu>
     </Sider>
@@ -85,7 +61,18 @@
 
 <script>
 export default {
-  name: "home"
+  name: "home",
+  data() {
+    return {
+      show: "grouping"
+    }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.show = this.$route.path.slice(1)
+      this.$refs.show.updateActiveName()
+    })
+  }
   /* data() {
     return {
       routes: this.$route.meta.name
