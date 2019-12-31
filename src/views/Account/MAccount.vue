@@ -33,10 +33,10 @@
           >
         </Select>
       </div>
-      <Input class="input mr-10" clearable placeholder="请输入分组名称">
+      <Input class="input mr-10" clearable placeholder="请输入微信登录名">
         <span slot="prepend">微信登录名</span>
       </Input>
-      <Input class="input mr-10" clearable placeholder="请输入分组名称">
+      <Input class="input mr-10" clearable placeholder="请输入代理IP">
         <span slot="prepend">代理IP</span>
       </Input>
       <Button type="primary" shape="circle" icon="ios-search" />
