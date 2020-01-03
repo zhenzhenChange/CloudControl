@@ -1,17 +1,13 @@
 <template>
   <div class="grouping">
-    <div class="grouping-search">
-      <Input
-        class="grouping-search-input"
-        clearable
-        placeholder="请输入分组名称"
-      >
+    <div class="search">
+      <Input class="input" clearable placeholder="请输入分组名称">
         <span slot="prepend">分组名称</span>
       </Input>
       <Button type="primary" shape="circle" icon="ios-search" />
     </div>
-    <Divider />
-    <div class="grouping-groupAction">
+    <Divider dashed />
+    <div class="action">
       <Button
         type="error"
         icon="md-trash"
@@ -55,10 +51,10 @@
         </div>
       </Modal>
     </div>
-    <Divider />
-    <div class="grouping-table">
+    <Divider dashed />
+    <div class="table">
       <Table :data="groupData" :columns="groupColumns" stripe border></Table>
-      <div class="grouping-table-page">
+      <div class="page">
         <div>
           <Page
             :total="100"
@@ -210,15 +206,15 @@ export default {
 
 <style lang="scss" scoped>
 .grouping {
-  .grouping-search {
-    .grouping-search-input {
+  .search {
+    .input {
       width: 250px;
       margin-right: 10px;
       float: left;
     }
   }
-  .grouping-table {
-    .grouping-table-page {
+  .table {
+    .page {
       margin: 10px;
       overflow: hidden;
       div {
