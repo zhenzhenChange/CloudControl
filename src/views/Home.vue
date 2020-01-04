@@ -50,7 +50,9 @@
         </Breadcrumb>
         <Card>
           <div class="card-div">
-            <router-view />
+            <keep-alive>
+              <router-view />
+            </keep-alive>
           </div>
         </Card>
       </Content>

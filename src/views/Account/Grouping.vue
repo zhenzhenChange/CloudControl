@@ -8,16 +8,7 @@
     </div>
     <Divider dashed />
     <div class="action">
-      <Button
-        type="error"
-        icon="md-trash"
-        @click="deleteGroupModal = true"
-        class="mr-10"
-        >删除</Button
-      >
-      <Button type="primary" icon="md-add-circle" @click="addGroupModal = true"
-        >添加</Button
-      >
+      <CDButton />
       <Modal
         width="330"
         title="添加分组"
@@ -71,7 +62,11 @@
 </template>
 
 <script>
+import CDButton from "../../components/CDButton"
 export default {
+  components: {
+    CDButton
+  },
   data() {
     return {
       groupData: this.mockTableData(),
