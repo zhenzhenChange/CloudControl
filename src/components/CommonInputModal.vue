@@ -28,6 +28,7 @@
 
 <script>
 export default {
+  name: "InputModal",
   props: {
     title: String,
     infos: Array

@@ -20,18 +20,7 @@
 </template>
 
 <script>
-import CDButton from "../../components/CDButton.vue"
-import InputModal from "../../components/InputModal.vue"
-import ConfirmModal from "../../components/ConfirmModal.vue"
-import PagedTable from "../../components/PagedTable.vue"
-
 export default {
-  components: {
-    CDButton,
-    InputModal,
-    ConfirmModal,
-    PagedTable
-  },
   data() {
     return {
       groupColumns: [
@@ -42,6 +31,8 @@ export default {
         },
         {
           title: "序号",
+          width: 70,
+          align: "center",
           key: "groupNumber"
         },
         {

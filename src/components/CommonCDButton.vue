@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: "CDComponents",
+  name: "CDButton",
   methods: {
     addClick() {
       this.$parent.addModalVisibleChange()
