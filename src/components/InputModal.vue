@@ -2,17 +2,27 @@
   <!-- 含输入框的模态窗复用组件 -->
   <Modal
     width="330"
-    :title="title"
     :mask-closable="false"
     v-model="isShowInputModal"
+    @on-visible-change="visibleChange"
     class-name="vertical-center-modal"
   >
-    <Input clearable :placeholder="`请输入${inputOne}`" class="mb-10">
-      <span slot="prepend">{{ inputOne }}</span>
+    <p slot="header">
+      <Icon color="#2d8cf0" type="md-add-circle" class="mr-5" />{{ title }}
+    </p>
+    <Input
+      clearable
+      :key="index"
+      class="mb-10"
+      :placeholder="`请输入${info}`"
+      v-for="(info, index) in infos"
+    >
+      <span slot="prepend">{{ info }}</span>
     </Input>
-    <Input clearable :placeholder="`请输入${inputTwo}`">
-      <span slot="prepend">{{ inputTwo }}</span>
-    </Input>
+    <div slot="footer">
+      <Button icon="md-remove-circle">取消</Button>
+      <Button type="success" icon="md-checkmark">确定</Button>
+    </div>
   </Modal>
 </template>
 
@@ -20,11 +30,19 @@
 export default {
   props: {
     title: String,
-    isShowInputModal: Boolean,
-    inputOne: String,
-    inputTwo: String
+    infos: Array
+  },
+  data() {
+    return {
+      isShowInputModal: false
+    }
+  },
+  methods: {
+    visibleChange(value) {
+      if (!value) {
+        this.isShowInputModal = false
+      }
+    }
   }
 }
 </script>
-
-<style></style>

@@ -7,69 +7,33 @@
       <Button type="primary" shape="circle" icon="ios-search" />
     </div>
     <Divider dashed />
-    <div class="action">
-      <CDButton />
-      <Modal
-        width="330"
-        title="添加分组"
-        :mask-closable="false"
-        v-model="addGroupModal"
-        class-name="vertical-center-modal"
-      >
-        <Input class="mb-10" clearable placeholder="请输入分组名称">
-          <span slot="prepend">分组名称</span>
-        </Input>
-        <Input clearable placeholder="请输入排序数字">
-          <span slot="prepend">排序数字</span>
-        </Input>
-      </Modal>
-      <Modal
-        width="330"
-        :mask-closable="false"
-        v-model="deleteGroupModal"
-        class-name="vertical-center-modal"
-      >
-        <p slot="header" style="color:red;">
-          <Icon type="md-warning"></Icon>
-          <span>删除分组</span>
-        </p>
-        <div style="text-align:center">
-          <p>确定要删除这XX条数据吗？</p>
-        </div>
-        <div slot="footer">
-          <Button type="error" icon="md-trash">删除</Button>
-          <Button>取消</Button>
-        </div>
-      </Modal>
-    </div>
+    <CDButton />
+    <InputModal
+      ref="InputModal"
+      :title="'添加分组'"
+      :infos="['分组名称', '排序数字']"
+    />
+    <ConfirmModal ref="ConfirmModal" :title="'删除分组'" :total="10" />
     <Divider dashed />
-    <div class="table">
-      <Table :data="groupData" :columns="groupColumns" stripe border></Table>
-      <div class="page">
-        <div>
-          <Page
-            :total="100"
-            show-total
-            show-elevator
-            show-sizer
-            :current="3"
-            @on-change="changePage"
-          ></Page>
-        </div>
-      </div>
-    </div>
+    <PagedTable ref="PagedTable" :dataColumns="groupColumns" />
   </div>
 </template>
 
 <script>
-import CDButton from "../../components/CDButton"
+import CDButton from "../../components/CDButton.vue"
+import InputModal from "../../components/InputModal.vue"
+import ConfirmModal from "../../components/ConfirmModal.vue"
+import PagedTable from "../../components/PagedTable.vue"
+
 export default {
   components: {
-    CDButton
+    CDButton,
+    InputModal,
+    ConfirmModal,
+    PagedTable
   },
   data() {
     return {
-      groupData: this.mockTableData(),
       groupColumns: [
         {
           type: "selection",
@@ -118,12 +82,11 @@ export default {
           title: "创建时间",
           key: "groupCreateTime",
           sortable: true,
-          render: (h, params) => {
+          render: (h /* params */) => {
             return h(
               "div",
-              this.$options.filters.date(
-                this.groupData[params.index].groupCreateTime
-              )
+              this.$options.filters.date
+              // this.groupData[params.index].groupCreateTime
             )
           }
         },
@@ -147,7 +110,6 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.addGroupModal = true
                       // this.show(params.index)
                     }
                   }
@@ -164,7 +126,6 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.deleteGroupModal = true
                       // this.remove(params.index)
                     }
                   }
@@ -174,10 +135,11 @@ export default {
             ])
           }
         }
-      ],
-      addGroupModal: false,
-      deleteGroupModal: false
+      ]
     }
+  },
+  mounted() {
+    this.$refs["PagedTable"].tableData = this.mockTableData()
   },
   methods: {
     mockTableData() {
@@ -192,8 +154,11 @@ export default {
       }
       return data
     },
-    changePage() {
-      this.groupData = this.mockTableData()
+    addModalVisibleChange() {
+      this.$refs["InputModal"].isShowInputModal = true
+    },
+    deleteModalVisibleChange() {
+      this.$refs["ConfirmModal"].isShowConfirmModal = true
     }
   }
 }
