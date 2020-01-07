@@ -1,19 +1,21 @@
 <template>
   <div class="m-account">
-    <SearchSelect :title="'账号分组'" />
-    <SearchSelect :title="'微信状态'" />
+    <SearchSelect :title="'账号分组'" :options="cityList" :info="'分组'" />
+    <SearchSelect :title="'微信状态'" :options="cityList" :info="'在线状态'" />
     <SearchInput :infos="['微信登录名', '代理IP']" />
     <Divider dashed />
     <CDButton />
-    <ListButton />
+    <ButtonList :buttonListInfos="editButtonListInfos" />
+    <Divider />
+    <ButtonList :buttonListInfos="setButtonListInfos" />
     <InputModal
-      ref="InputModal"
+      ref="MAccountInputModal"
       :title="'添加分组'"
       :infos="['分组名称', '排序数字']"
     />
-    <ConfirmModal ref="ConfirmModal" :title="'删除分组'" :total="10" />
+    <ConfirmModal ref="MAccountConfirmModal" :title="'删除分组'" :total="10" />
     <Divider dashed />
-    <PagedTable ref="PagedTable" :dataColumns="mAccountColumns" />
+    <PagedTable ref="MAccountPagedTable" :dataColumns="mAccountColumns" />
   </div>
 </template>
 
@@ -144,8 +146,101 @@ export default {
             ])
           }
         }
+      ],
+      cityList: [
+        {
+          value: "New York",
+          label: "New York"
+        },
+        {
+          value: "London",
+          label: "London"
+        },
+        {
+          value: "Sydney",
+          label: "Sydney"
+        },
+        {
+          value: "Ottawa",
+          label: "Ottawa"
+        },
+        {
+          value: "Paris",
+          label: "Paris"
+        },
+        {
+          value: "Canberra",
+          label: "Canberra"
+        }
+      ],
+      editButtonListInfos: [
+        {
+          type: "warning",
+          icon: "md-trending-up",
+          name: "一键上线"
+        },
+        {
+          type: "warning",
+          icon: "md-trending-down",
+          name: "一键下线"
+        },
+        {
+          type: "info",
+          icon: "md-create",
+          name: "修改分组"
+        },
+        {
+          type: "info",
+          icon: "md-create",
+          name: "修改资料"
+        },
+        {
+          type: "info",
+          icon: "md-create",
+          name: "修改头像"
+        },
+        {
+          type: "info",
+          icon: "md-create",
+          name: "修改昵称"
+        },
+        {
+          type: "info",
+          icon: "md-create",
+          name: "修改密码"
+        },
+        {
+          type: "info",
+          icon: "md-create",
+          name: "修改朋友圈封面"
+        }
+      ],
+      setButtonListInfos: [
+        {
+          type: "success",
+          icon: "md-settings",
+          name: "设置朋友圈权限"
+        },
+        {
+          type: "success",
+          icon: "md-unlock",
+          name: "解锁改密码权限"
+        },
+        {
+          type: "success",
+          icon: "md-unlock",
+          name: "解锁改资料权限"
+        },
+        {
+          type: "success",
+          icon: "md-unlock",
+          name: "解锁改头像权限"
+        }
       ]
     }
+  },
+  mounted() {
+    this.$refs["MAccountPagedTable"].tableData = this.mockTableData()
   },
   methods: {
     mockTableData() {
@@ -158,8 +253,11 @@ export default {
       }
       return data
     },
-    changePage() {
-      this.mAccountData = this.mockTableData()
+    addModalVisibleChange() {
+      this.$refs["MAccountInputModal"].isShowInputModal = true
+    },
+    deleteModalVisibleChange() {
+      this.$refs["MAccountConfirmModal"].isShowConfirmModal = true
     }
   }
 }

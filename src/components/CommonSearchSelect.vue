@@ -1,4 +1,5 @@
 <template>
+  <!-- 下拉框搜索复用组件 -->
   <div class="SearchSelect mr-30">
     <span class="title mr-10">{{ title }}</span>
     <Select
@@ -6,11 +7,14 @@
       filterable
       clearable
       transfer
-      :placeholder="`请选择${title}`"
+      :placeholder="`请选择${info}`"
     >
-      <Option v-for="item in cityList" :value="item.value" :key="item.value">{{
-        item.label
-      }}</Option>
+      <Option
+        v-for="option in options"
+        :value="option.value"
+        :key="option.value"
+        >{{ option.label }}</Option
+      >
     </Select>
   </div>
 </template>
@@ -19,37 +23,9 @@
 export default {
   name: "SearchSelect",
   props: {
-    title: String
-  },
-  data() {
-    return {
-      cityList: [
-        {
-          value: "New York",
-          label: "New York"
-        },
-        {
-          value: "London",
-          label: "London"
-        },
-        {
-          value: "Sydney",
-          label: "Sydney"
-        },
-        {
-          value: "Ottawa",
-          label: "Ottawa"
-        },
-        {
-          value: "Paris",
-          label: "Paris"
-        },
-        {
-          value: "Canberra",
-          label: "Canberra"
-        }
-      ]
-    }
+    title: String,
+    info: String,
+    options: Array
   }
 }
 </script>

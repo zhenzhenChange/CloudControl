@@ -1,4 +1,5 @@
 <template>
+  <!-- 输入框搜索复用组件 -->
   <div class="search">
     <Input
       clearable

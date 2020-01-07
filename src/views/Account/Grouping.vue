@@ -4,13 +4,13 @@
     <Divider dashed />
     <CDButton />
     <InputModal
-      ref="InputModal"
+      ref="GroupingInputModal"
       :title="'添加分组'"
       :infos="['分组名称', '排序数字']"
     />
-    <ConfirmModal ref="ConfirmModal" :title="'删除分组'" :total="10" />
+    <ConfirmModal ref="GroupingConfirmModal" :title="'删除分组'" :total="10" />
     <Divider class="float-left" dashed />
-    <PagedTable ref="PagedTable" :dataColumns="groupColumns" />
+    <PagedTable ref="GroupingPagedTable" :dataColumns="groupColumns" />
   </div>
 </template>
 
@@ -125,7 +125,7 @@ export default {
     }
   },
   mounted() {
-    this.$refs["PagedTable"].tableData = this.mockTableData()
+    this.$refs["GroupingPagedTable"].tableData = this.mockTableData()
   },
   methods: {
     mockTableData() {
@@ -141,10 +141,10 @@ export default {
       return data
     },
     addModalVisibleChange() {
-      this.$refs["InputModal"].isShowInputModal = true
+      this.$refs["GroupingInputModal"].isShowInputModal = true
     },
     deleteModalVisibleChange() {
-      this.$refs["ConfirmModal"].isShowConfirmModal = true
+      this.$refs["GroupingConfirmModal"].isShowConfirmModal = true
     }
   }
 }
