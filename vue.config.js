@@ -2,5 +2,5 @@ module.exports = {
   devServer: {
     historyApiFallback: true
   },
-  publicPath: "./"
+  publicPath: "./cloud-control/dist/"
 }
