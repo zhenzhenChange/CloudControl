@@ -9,7 +9,7 @@
       :infos="['分组名称', '排序数字']"
     />
     <ConfirmModal ref="ConfirmModal" :title="'删除分组'" :total="10" />
-    <Divider dashed />
+    <Divider class="float-left" dashed />
     <PagedTable ref="PagedTable" :dataColumns="groupColumns" />
   </div>
 </template>
