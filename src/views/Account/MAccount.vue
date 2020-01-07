@@ -1,16 +1,17 @@
 <template>
   <div class="m-account">
-    <SearchSelect />
+    <SearchSelect :title="'账号分组'" />
+    <SearchSelect :title="'微信状态'" />
     <SearchInput :infos="['微信登录名', '代理IP']" />
     <Divider dashed />
     <CDButton />
+    <ListButton />
     <InputModal
       ref="InputModal"
       :title="'添加分组'"
       :infos="['分组名称', '排序数字']"
     />
     <ConfirmModal ref="ConfirmModal" :title="'删除分组'" :total="10" />
-    <ListButton />
     <Divider dashed />
     <PagedTable ref="PagedTable" :dataColumns="mAccountColumns" />
   </div>

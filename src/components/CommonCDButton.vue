@@ -21,3 +21,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.CDComponents {
+  width: 200px;
+  float: left;
+}
+</style>

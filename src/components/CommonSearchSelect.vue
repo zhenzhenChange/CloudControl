@@ -1,12 +1,12 @@
 <template>
   <div class="SearchSelect mr-30">
-    <span class="title mr-10">账号分组</span>
+    <span class="title mr-10">{{ title }}</span>
     <Select
       class="select"
       filterable
       clearable
       transfer
-      placeholder="请选择分组"
+      :placeholder="`请选择${title}`"
     >
       <Option v-for="item in cityList" :value="item.value" :key="item.value">{{
         item.label
@@ -18,6 +18,9 @@
 <script>
 export default {
   name: "SearchSelect",
+  props: {
+    title: String
+  },
   data() {
     return {
       cityList: [
@@ -63,6 +66,9 @@ export default {
     width: 200px;
     margin-top: 1px;
     float: left;
+    ::v-deep .ivu-select-input {
+      padding-bottom: 5px;
+    }
   }
 }
 </style>
