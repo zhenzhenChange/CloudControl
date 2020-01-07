@@ -1,11 +1,6 @@
 <template>
   <div class="grouping">
-    <div class="search">
-      <Input class="input" clearable placeholder="请输入分组名称">
-        <span slot="prepend">分组名称</span>
-      </Input>
-      <Button type="primary" shape="circle" icon="ios-search" />
-    </div>
+    <SearchInput :infos="['分组名称']" />
     <Divider dashed />
     <CDButton />
     <InputModal
@@ -154,24 +149,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.grouping {
-  .search {
-    .input {
-      width: 250px;
-      margin-right: 10px;
-      float: left;
-    }
-  }
-  .table {
-    .page {
-      margin: 10px;
-      overflow: hidden;
-      div {
-        float: left;
-      }
-    }
-  }
-}
-</style>

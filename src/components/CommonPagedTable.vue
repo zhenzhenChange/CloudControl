@@ -11,6 +11,7 @@
           show-sizer
           :current="1"
           @on-change="changePage"
+          @on-page-size-change="changeSize"
         />
       </div>
     </div>
@@ -31,6 +32,9 @@ export default {
   methods: {
     changePage() {
       this.tableData = this.$parent.mockTableData()
+    },
+    changeSize(pageSize) {
+      return pageSize
     }
   }
 }
