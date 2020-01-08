@@ -1,13 +1,8 @@
 <template>
   <div class="layout">
     <Sider class="sider">
-      <Menu
-        :active-name="show"
-        ref="show"
-        theme="dark"
-        width="auto"
-        :open-names="['Account']"
-      >
+      <!-- :open-names="['Account']" -->
+      <Menu :active-name="show" ref="show" theme="dark" width="auto">
         <Submenu name="Account">
           <template slot="title"><Icon type="md-person" />账户</template>
           <MenuItem name="grouping" to="/grouping">分组管理</MenuItem>

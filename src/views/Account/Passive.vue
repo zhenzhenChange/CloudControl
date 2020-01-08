@@ -1,14 +1,6 @@
 <template>
   <div class="Passive">
-    <span class="mr-10">时间范围</span>
-    <DatePicker
-      transfer
-      separator="  至  "
-      style="width: 350px"
-      type="datetimerange"
-      placeholder="请选择时间范围"
-      format="yyyy-MM-dd HH:mm:ss"
-    ></DatePicker>
+    <RangeDatePicker />
     <Divider dashed />
     <SearchSelect :title="'账号分组'" :info="'分组'" :options="cityList" />
     <SearchSelect :title="'所属账号'" :info="'账号'" :options="cityList" />

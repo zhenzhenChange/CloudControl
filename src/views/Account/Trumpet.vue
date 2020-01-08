@@ -123,7 +123,7 @@ export default {
                 "Button",
                 {
                   props: {
-                    type: "error",
+                    type: "warning",
                     size: "small",
                     icon: "md-remove-circle"
                   },
