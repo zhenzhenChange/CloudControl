@@ -1,42 +1,10 @@
 <template>
-  <div class="trumpet">
-    <div class="search">
-      <Input class="mr-10" clearable placeholder="请输入任务名称">
-        <span slot="prepend">任务名称</span>
-      </Input>
-      <Button type="primary" shape="circle" icon="ios-search" />
-    </div>
+  <div class="Trumpet">
+    <SearchInput :infos="['任务名称']" />
     <Divider dashed />
-    <div class="action">
-      <Button
-        type="primary"
-        icon="md-add"
-        @click="deleteGroupModal = true"
-        class="mr-10"
-        >创建任务</Button
-      >
-    </div>
+    <ButtonList :buttonListInfos="TrumpetButtonListInfos" />
     <Divider dashed />
-    <div class="table">
-      <Table
-        :data="mAccountData"
-        :columns="mAccountColumns"
-        stripe
-        border
-      ></Table>
-      <div class="page">
-        <div>
-          <Page
-            :total="100"
-            show-total
-            show-elevator
-            show-sizer
-            :current="3"
-            @on-change="changePage"
-          ></Page>
-        </div>
-      </div>
-    </div>
+    <PagedTable ref="TrumpetPagedTable" :dataColumns="TrumpetColumns" />
   </div>
 </template>
 
@@ -44,8 +12,7 @@
 export default {
   data() {
     return {
-      mAccountData: this.mockTableData(),
-      mAccountColumns: [
+      TrumpetColumns: [
         {
           type: "selection",
           width: 60,
@@ -127,7 +94,6 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.addGroupModal = true
                       // this.show(params.index)
                     }
                   }
@@ -147,7 +113,6 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.deleteGroupModal = true
                       // this.remove(params.index)
                     }
                   }
@@ -164,7 +129,6 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.deleteGroupModal = true
                       // this.remove(params.index)
                     }
                   }
@@ -175,8 +139,17 @@ export default {
           }
         }
       ],
-      model10: []
+      TrumpetButtonListInfos: [
+        {
+          type: "primary",
+          icon: "md-add",
+          name: "创建任务"
+        }
+      ]
     }
+  },
+  mounted() {
+    this.$refs["TrumpetPagedTable"].tableData = this.mockTableData()
   },
   methods: {
     mockTableData() {
@@ -188,41 +161,7 @@ export default {
         })
       }
       return data
-    },
-    changePage() {
-      this.mAccountData = this.mockTableData()
     }
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.trumpet {
-  .search {
-    div {
-      width: 250px;
-      float: left;
-      .title {
-        width: 60px;
-        height: 32px;
-        line-height: 32px;
-        margin-top: 1px;
-        float: left;
-      }
-      .select {
-        width: 180px;
-        margin-top: 1px;
-      }
-    }
-  }
-  .table {
-    .page {
-      margin: 10px;
-      overflow: hidden;
-      div {
-        float: left;
-      }
-    }
-  }
-}
-</style>

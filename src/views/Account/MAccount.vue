@@ -1,5 +1,5 @@
 <template>
-  <div class="m-account">
+  <div class="MAccount">
     <SearchSelect :title="'账号分组'" :options="cityList" :info="'分组'" />
     <SearchSelect :title="'微信状态'" :options="cityList" :info="'在线状态'" />
     <SearchInput :infos="['微信登录名', '代理IP']" />
@@ -15,7 +15,7 @@
     />
     <ConfirmModal ref="MAccountConfirmModal" :title="'删除分组'" :total="10" />
     <Divider dashed />
-    <PagedTable ref="MAccountPagedTable" :dataColumns="mAccountColumns" />
+    <PagedTable ref="MAccountPagedTable" :dataColumns="MAccountColumns" />
   </div>
 </template>
 
@@ -23,8 +23,7 @@
 export default {
   data() {
     return {
-      mAccountData: this.mockTableData(),
-      mAccountColumns: [
+      MAccountColumns: [
         {
           type: "selection",
           width: 60,

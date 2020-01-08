@@ -1,6 +1,6 @@
 <template>
   <!-- 输入框搜索复用组件 -->
-  <div class="search">
+  <div class="SearchInput">
     <Input
       clearable
       :key="index"
@@ -24,7 +24,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search {
+.SearchInput {
   div {
     width: 250px;
     float: left;

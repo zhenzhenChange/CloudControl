@@ -1,5 +1,5 @@
 <template>
-  <div class="grouping">
+  <div class="Grouping">
     <SearchInput :infos="['分组名称']" />
     <Divider dashed />
     <CDButton />
@@ -10,7 +10,7 @@
     />
     <ConfirmModal ref="GroupingConfirmModal" :title="'删除分组'" :total="10" />
     <Divider class="float-left" dashed />
-    <PagedTable ref="GroupingPagedTable" :dataColumns="groupColumns" />
+    <PagedTable ref="GroupingPagedTable" :dataColumns="GroupingColumns" />
   </div>
 </template>
 
@@ -18,7 +18,7 @@
 export default {
   data() {
     return {
-      groupColumns: [
+      GroupingColumns: [
         {
           type: "selection",
           width: 60,

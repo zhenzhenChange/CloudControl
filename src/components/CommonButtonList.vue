@@ -1,6 +1,6 @@
 <template>
   <!-- 按钮组复用组件 -->
-  <div class="listButton">
+  <div class="ButtonList">
     <Button
       class="mr-10"
       :key="index"
@@ -20,5 +20,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped></style>

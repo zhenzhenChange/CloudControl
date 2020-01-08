@@ -5,10 +5,10 @@
     <div class="page">
       <div>
         <Page
-          :total="100"
           show-total
-          show-elevator
           show-sizer
+          show-elevator
+          :total="100"
           :current="1"
           @on-change="changePage"
           @on-page-size-change="changeSize"

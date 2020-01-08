@@ -1,6 +1,6 @@
 <template>
   <!-- C：增加 D：删除      增删按钮（Action）复用组件 -->
-  <div class="CDComponents">
+  <div class="CDButton">
     <Button type="error" icon="md-trash" class="mr-10" @click="deleteClick"
       >删除</Button
     >
@@ -23,7 +23,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.CDComponents {
+.CDButton {
   width: 200px;
   float: left;
 }
