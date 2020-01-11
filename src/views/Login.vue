@@ -1,9 +1,7 @@
 <template>
   <div class="login">
     <Card class="login-card">
-      <p slot="title">
-        <Icon type="md-cloud-done" />请登录
-      </p>
+      <p slot="title"><Icon type="md-cloud-done" />请登录</p>
       <Form ref="loginForm" :model="loginForm" :rules="loginRules" inline>
         <FormItem prop="username">
           <Input
@@ -34,7 +32,8 @@
             shape="circle"
             @click="submitLogin('loginForm')"
             icon="ios-radio-outline"
-          >登录</Button>
+            >登录</Button
+          >
         </FormItem>
       </Form>
     </Card>
