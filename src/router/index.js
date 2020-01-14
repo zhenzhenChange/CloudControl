@@ -1,7 +1,10 @@
 import Vue from "vue"
+import ViewUI from "view-design"
 import VueRouter from "vue-router"
+
 import Login from "../views/Login.vue"
 
+Vue.use(ViewUI)
 Vue.use(VueRouter)
 
 const routes = [
@@ -97,6 +100,15 @@ const router = new VueRouter({
   base: "/cloud-control/",
   mode: "history",
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  ViewUI.LoadingBar.start()
+  next()
+})
+
+router.afterEach(() => {
+  ViewUI.LoadingBar.finish()
 })
 
 export default router

@@ -2,13 +2,17 @@
   <div class="Grouping">
     <SearchInput :infos="['分组名称']" />
     <Divider dashed />
-    <CDButton />
+    <CDButton :batch="batch" />
     <InputModal
       ref="GroupingInputModal"
       :title="'添加分组'"
       :infos="['分组名称', '排序数字']"
     />
-    <ConfirmModal ref="GroupingConfirmModal" :title="'删除分组'" :total="10" />
+    <ConfirmModal
+      ref="GroupingConfirmModal"
+      :title="'删除分组'"
+      :total="selectionLength"
+    />
     <Divider class="float-left" dashed />
     <PagedTable ref="GroupingPagedTable" :dataColumns="GroupingColumns" />
   </div>
@@ -20,13 +24,13 @@ export default {
     return {
       GroupingColumns: [
         {
-          type: "selection",
           width: 60,
-          align: "center"
+          align: "center",
+          type: "selection"
         },
         {
-          title: "序号",
           width: 70,
+          title: "序号",
           align: "center",
           key: "groupNumber"
         },
@@ -68,11 +72,13 @@ export default {
           title: "创建时间",
           key: "groupCreateTime",
           sortable: true,
-          render: (h /* params */) => {
+          render: (h, params) => {
             return h(
               "div",
-              this.$options.filters.date
-              // this.groupData[params.index].groupCreateTime
+              this.$options.filters.date(
+                this.$refs["GroupingPagedTable"].tableData[params.index]
+                  .groupCreateTime
+              )
             )
           }
         },
@@ -89,7 +95,8 @@ export default {
                   props: {
                     type: "primary",
                     size: "small",
-                    icon: "md-create"
+                    icon: "md-create",
+                    disabled: this.radio
                   },
                   style: {
                     marginRight: "5px"
@@ -108,7 +115,8 @@ export default {
                   props: {
                     type: "error",
                     size: "small",
-                    icon: "md-trash"
+                    icon: "md-trash",
+                    disabled: this.radio
                   },
                   on: {
                     click: () => {
@@ -121,7 +129,11 @@ export default {
             ])
           }
         }
-      ]
+      ],
+      batch: true,
+      radio: false,
+      pageSize: 10,
+      selectionLength: 0
     }
   },
   mounted() {
@@ -129,8 +141,9 @@ export default {
   },
   methods: {
     mockTableData() {
+      let i
       let data = []
-      for (let i = 0; i < 10; i++) {
+      for (i = 0; i < this.pageSize; i++) {
         data.push({
           groupNumber: Math.floor(Math.random() * 100 + 1),
           groupName: Math.floor(Math.random() * 3 + 1),

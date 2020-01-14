@@ -1,15 +1,23 @@
 <template>
   <!-- 集合分页的表格复用组件 -->
   <div class="PagedTable">
-    <Table :data="tableData" :columns="dataColumns" stripe border />
+    <Table
+      stripe
+      border
+      :data="tableData"
+      :columns="dataColumns"
+      @on-select-all="selectAll"
+      @on-selection-change="selectionChange"
+      @on-select-all-cancel="selectAllCancel"
+    />
     <div class="page">
       <div>
         <Page
           show-total
           show-sizer
           show-elevator
-          :total="100"
           :current="1"
+          :total="tableData.length"
           @on-change="changePage"
           @on-page-size-change="changeSize"
         />
@@ -34,7 +42,24 @@ export default {
       this.tableData = this.$parent.mockTableData()
     },
     changeSize(pageSize) {
-      return pageSize
+      this.$parent.batch = true
+      this.$parent.radio = !this.$parent.batch
+      this.$parent.pageSize = pageSize
+      this.changePage()
+    },
+    selectAll() {
+      this.$parent.batch = false
+    },
+    selectAllCancel() {
+      this.$parent.batch = true
+    },
+    selectionChange(selection) {
+      const selectionLength = selection.length
+      selectionLength === 0
+        ? (this.$parent.batch = true)
+        : (this.$parent.batch = false)
+      this.$parent.radio = !this.$parent.batch
+      this.$parent.selectionLength = selectionLength
     }
   }
 }
