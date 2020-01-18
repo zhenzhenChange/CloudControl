@@ -15,6 +15,7 @@
     />
     <Divider class="float-left" dashed />
     <PagedTable ref="GroupingPagedTable" :dataColumns="GroupingColumns" />
+    <GroupEditModal ref="GroupEditModal" :data="groupEditData" />
   </div>
 </template>
 
@@ -32,36 +33,11 @@ export default {
           width: 70,
           title: "序号",
           align: "center",
-          key: "groupNumber"
+          key: "serialNumber"
         },
         {
           title: "分组名称",
-          key: "groupName",
-          render: (h, params) => {
-            const row = params.row
-            const color =
-              row.groupName === 1
-                ? "primary"
-                : row.groupName === 2
-                ? "success"
-                : "error"
-            const text =
-              row.groupName === 1
-                ? "忙碌"
-                : row.groupName === 2
-                ? "在线"
-                : "封禁"
-            return h(
-              "Tag",
-              {
-                props: {
-                  type: "dot",
-                  color: color
-                }
-              },
-              text
-            )
-          }
+          key: "groupName"
         },
         {
           title: "排序数字",
@@ -87,7 +63,7 @@ export default {
           key: "groupAction",
           width: 250,
           align: "center",
-          render: (h /*params*/) => {
+          render: (h, params) => {
             return h("div", [
               h(
                 "Button",
@@ -103,7 +79,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      // this.show(params.index)
+                      this.groupEdit(params.row)
                     }
                   }
                 },
@@ -133,19 +109,36 @@ export default {
       batch: true,
       radio: false,
       pageSize: 10,
-      selectionLength: 0
+      selectionLength: 0,
+      groupEditData: {}
     }
   },
   mounted() {
     this.$refs["GroupingPagedTable"].tableData = this.mockTableData()
   },
   methods: {
+    groupEdit({ groupName, groupSortNumber }) {
+      this.groupEditData = {
+        title: "编辑分组",
+        transmiData: [
+          {
+            model: groupName,
+            placeholder: "分组名称"
+          },
+          {
+            placeholder: "排序数字",
+            model: groupSortNumber
+          }
+        ]
+      }
+      this.$refs["GroupEditModal"].isShowInputModal = true
+    },
     mockTableData() {
       let i
       let data = []
       for (i = 0; i < this.pageSize; i++) {
         data.push({
-          groupNumber: Math.floor(Math.random() * 100 + 1),
+          serialNumber: Math.floor(Math.random() * 100 + 1),
           groupName: Math.floor(Math.random() * 3 + 1),
           groupSortNumber: Math.floor(Math.random() * 100 + 1),
           groupCreateTime: new Date()
