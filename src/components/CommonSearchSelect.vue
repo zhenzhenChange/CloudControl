@@ -3,16 +3,16 @@
   <div class="SearchSelect mr-30">
     <span class="title mr-10">{{ title }}</span>
     <Select
-      class="select"
-      filterable
-      clearable
       transfer
+      clearable
+      filterable
+      class="select"
       :placeholder="`请选择${info}`"
     >
       <Option
-        v-for="option in options"
-        :value="option.value"
         :key="option.value"
+        :value="option.value"
+        v-for="option in options"
         >{{ option.label }}</Option
       >
     </Select>
@@ -23,8 +23,8 @@
 export default {
   name: "SearchSelect",
   props: {
-    title: String,
     info: String,
+    title: String,
     options: Array
   }
 }
@@ -39,9 +39,9 @@ export default {
     line-height: 32px;
   }
   .select {
+    float: left;
     width: 200px;
     margin-top: 1px;
-    float: left;
     ::v-deep .ivu-select-input {
       padding-bottom: 5px;
     }

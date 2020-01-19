@@ -1,44 +1,46 @@
 <template>
-  <!-- 删除对话确认模态窗复用组件 -->
   <Modal
     width="330"
     :mask-closable="false"
-    v-model="isShowConfirmModal"
     @on-visible-change="visibleChange"
     class-name="vertical-center-modal"
+    v-model="isShowMAccountTrendModal"
   >
     <p slot="header">
-      <Icon color="#ed4014" type="md-trash" class="mr-5" />{{ title }}
+      <Icon color="#FF9900" :type="type" class="mr-5" />{{ title }}
     </p>
     <div class="text-center">
-      <p>确定要删除这{{ total.length }}条数据吗？</p>
+      <p>确定要{{ title }}这{{ total.length }}个账号吗？</p>
     </div>
     <div slot="footer">
       <Button icon="md-remove-circle">取消</Button>
-      <Button type="error" icon="md-trash" @click="remove">删除</Button>
+      <Button type="success" icon="md-checkmark" @click="checkMark"
+        >确定</Button
+      >
     </div>
   </Modal>
 </template>
 
 <script>
 export default {
-  name: "ConfirmModal",
+  name: "MAccountTrendModal",
   props: {
+    type: String,
     total: Array,
     title: String
   },
   data() {
     return {
-      isShowConfirmModal: false
+      isShowMAccountTrendModal: false
     }
   },
   methods: {
     visibleChange(value) {
       if (!value) {
-        this.isShowConfirmModal = false
+        this.isShowMAccountTrendModal = false
       }
     },
-    remove() {
+    checkMark() {
       // console.log(this.total)
     }
   }

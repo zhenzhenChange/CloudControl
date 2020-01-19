@@ -87,16 +87,16 @@ export default {
 
 <style lang="scss" scoped>
 .layout {
-  border: 1px solid #d7dde4;
-  background: #f5f7f9;
+  overflow: hidden;
   position: relative;
   border-radius: 4px;
-  overflow: hidden;
+  background: #f5f7f9;
+  border: 1px solid #d7dde4;
   .sider {
-    position: fixed;
-    height: 100vh;
     left: 0;
+    height: 100vh;
     overflow: auto;
+    position: fixed;
   }
   .layout {
     margin-left: 200px;
@@ -115,8 +115,8 @@ export default {
       }
     }
     .footer {
-      padding: 0 50px 10px 50px;
       text-align: center;
+      padding: 0 50px 10px 50px;
     }
   }
 }

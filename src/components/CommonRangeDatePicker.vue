@@ -1,4 +1,5 @@
 <template>
+  <!-- 通用日期范围组件 -->
   <div class="RangeDatePicker">
     <span class="mr-10">时间范围</span>
     <DatePicker

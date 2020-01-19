@@ -15,6 +15,7 @@
     />
     <Divider class="float-left" dashed />
     <PagedTable ref="GroupingPagedTable" :dataColumns="GroupingColumns" />
+    <!-- 模态窗 -->
     <GroupEditModal ref="GroupEditModal" :data="groupEditData" />
     <GroupRemoveModal
       :title="'删除分组'"
@@ -28,6 +29,13 @@
 export default {
   data() {
     return {
+      data: [],
+      batch: true,
+      radio: false,
+      pageSize: 10,
+      dataSign: {},
+      selectionData: [],
+      groupEditData: {},
       GroupingColumns: [
         {
           width: 60,
@@ -41,18 +49,21 @@ export default {
           key: "serialNumber"
         },
         {
+          align: "center",
           title: "分组名称",
           key: "groupName"
         },
         {
+          sortable: true,
+          align: "center",
           title: "排序数字",
-          key: "groupSortNumber",
-          sortable: true
+          key: "groupSortNumber"
         },
         {
+          sortable: true,
+          align: "center",
           title: "创建时间",
           key: "groupCreateTime",
-          sortable: true,
           render: (h, params) => {
             return h(
               "div",
@@ -64,9 +75,8 @@ export default {
           }
         },
         {
+          width: 230,
           title: "操作",
-          key: "groupAction",
-          width: 250,
           align: "center",
           render: (h, params) => {
             return h("div", [
@@ -74,8 +84,8 @@ export default {
                 "Button",
                 {
                   props: {
-                    type: "primary",
                     size: "small",
+                    type: "primary",
                     icon: "md-create",
                     disabled: this.radio
                   },
@@ -110,19 +120,30 @@ export default {
             ])
           }
         }
-      ],
-      batch: true,
-      radio: false,
-      pageSize: 10,
-      selectionData: [],
-      groupEditData: {},
-      dataSign: {}
+      ]
     }
   },
+  created() {
+    this.getData()
+  },
   mounted() {
-    this.$refs["GroupingPagedTable"].tableData = this.mockTableData()
+    this.$refs["GroupingPagedTable"].tableData = this.data
   },
   methods: {
+    async getData() {
+      const { data } = await this.$http.get("grouping")
+      const res = data.data
+      const length = res.length
+      for (let i = 0; i < length; i++) {
+        this.data.push({
+          serialNumber: res[i].serialNumber,
+          groupName: res[i].groupName,
+          groupSortNumber: res[i].groupSortNumber,
+          groupCreateTime: res[i].groupCreateTime
+        })
+      }
+      return this.data
+    },
     groupEdit({ groupName, groupSortNumber }) {
       this.groupEditData = {
         title: "编辑分组",
@@ -142,19 +163,6 @@ export default {
     groupRemove(arg) {
       this.dataSign = arg
       this.$refs["GroupRemoveModal"].isShowConfirmModal = true
-    },
-    mockTableData() {
-      let i
-      let data = []
-      for (i = 0; i < this.pageSize; i++) {
-        data.push({
-          serialNumber: Math.floor(Math.random() * 100 + 1),
-          groupName: Math.floor(Math.random() * 3 + 1),
-          groupSortNumber: Math.floor(Math.random() * 100 + 1),
-          groupCreateTime: new Date()
-        })
-      }
-      return data
     },
     addModalVisibleChange() {
       this.$refs["GroupingInputModal"].isShowInputModal = true

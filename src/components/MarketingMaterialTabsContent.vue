@@ -13,44 +13,43 @@
 export default {
   name: "MaterialTabsContent",
   props: {
-    SelectInfo: Array,
     InputInfo: Array,
-    TableColumnsTitle: String,
-    ButtonName: String
+    SelectInfo: Array,
+    ButtonName: String,
+    TableColumnsTitle: String
   },
   data() {
     return {
       TabsContentColumns: [
         {
-          type: "selection",
           width: 60,
-          align: "center"
+          align: "center",
+          type: "selection"
         },
         {
-          title: "序号",
           width: 70,
+          title: "序号",
           align: "center",
           key: "mAccountNumber"
         },
         {
-          title: this.TableColumnsTitle,
           align: "center",
-          key: "mAccountNumber"
+          key: "mAccountNumber",
+          title: this.TableColumnsTitle
         },
         {
+          align: "center",
           title: "模板分类",
-          align: "center",
           key: "mAccountNumber"
         },
         {
+          align: "center",
           title: "创建时间",
-          align: "center",
           key: "mAccountNumber"
         },
         {
-          title: "操作",
-          key: "groupAction",
           width: 250,
+          title: "操作",
           align: "center",
           render: (h /*params*/) => {
             return h("div", [
@@ -58,8 +57,8 @@ export default {
                 "Button",
                 {
                   props: {
-                    type: "primary",
                     size: "small",
+                    type: "primary",
                     icon: "md-create"
                   },
                   style: {
@@ -95,8 +94,8 @@ export default {
       ],
       TabsButtonListInfo: [
         {
-          type: "primary",
           icon: "md-add",
+          type: "primary",
           name: `添加${this.ButtonName}`
         },
         {

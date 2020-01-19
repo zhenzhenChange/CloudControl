@@ -4,18 +4,38 @@
     <SearchSelect :title="'微信状态'" :options="cityList" :info="'在线状态'" />
     <SearchInput :infos="['微信登录名', '代理IP']" />
     <Divider dashed />
-    <CDButton />
-    <ButtonList :buttonListInfos="editButtonListInfos" />
+    <CDButton :batch="batch" />
+    <ButtonList :listBatch="batch" :buttonListInfos="oneKeyButtonListInfos" />
     <Divider />
-    <ButtonList :buttonListInfos="setButtonListInfos" />
+    <ButtonList :listBatch="batch" :buttonListInfos="editButtonListInfos" />
+    <Divider />
+    <ButtonList :listBatch="batch" :buttonListInfos="setButtonListInfos" />
     <InputModal
-      ref="MAccountInputModal"
       :title="'添加分组'"
+      ref="MAccountInputModal"
       :infos="['分组名称', '排序数字']"
     />
-    <ConfirmModal ref="MAccountConfirmModal" :title="'删除分组'" :total="10" />
+    <ConfirmModal
+      :total="selectionData"
+      :title="'删除分组'"
+      ref="MAccountConfirmModal"
+    />
     <Divider dashed />
     <PagedTable ref="MAccountPagedTable" :dataColumns="MAccountColumns" />
+    <!-- 模态窗 -->
+    <MAccountCreateModal ref="MAccountCreateModal" :title="'添加账号'" />
+    <MAccountTrendModal
+      :title="'一键上线'"
+      :total="selectionData"
+      :type="'md-trending-up'"
+      ref="MAccountTrendUpModal"
+    />
+    <MAccountTrendModal
+      :title="'一键下线'"
+      :total="selectionData"
+      :type="'md-trending-down'"
+      ref="MAccountTrendDownModal"
+    />
   </div>
 </template>
 
@@ -23,129 +43,10 @@
 export default {
   data() {
     return {
-      MAccountColumns: [
-        {
-          type: "selection",
-          width: 60,
-          align: "center"
-        },
-        {
-          title: "序号",
-          width: 70,
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "锁状态",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "账号状态",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "微信登录名",
-          width: 110,
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "密码",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "昵称",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "WXID",
-          width: 140,
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "微信号",
-          align: "center",
-          key: "mAccountSortNumber",
-          sortable: true
-        },
-        {
-          title: "签名",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "所属分组",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "性别",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "城市",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "设备类型",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "操作",
-          key: "mAccountAction",
-          width: 250,
-          align: "center",
-          render: (h /*params*/) => {
-            return h("div", [
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "warning",
-                    size: "small",
-                    icon: "ios-trending-up"
-                  },
-                  style: {
-                    marginRight: "5px"
-                  },
-                  on: {
-                    click: () => {
-                      this.addGroupModal = true
-                      // this.show(params.index)
-                    }
-                  }
-                },
-                "上线"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "info",
-                    size: "small",
-                    icon: "md-information-circle"
-                  },
-                  on: {
-                    click: () => {
-                      this.deleteGroupModal = true
-                      // this.remove(params.index)
-                    }
-                  }
-                },
-                "操作日志"
-              )
-            ])
-          }
-        }
-      ],
+      data: [],
+      batch: true,
+      radio: false,
+      selectionData: [],
       cityList: [
         {
           value: "New York",
@@ -172,17 +73,29 @@ export default {
           label: "Canberra"
         }
       ],
+      setButtonListInfos: [
+        {
+          type: "success",
+          icon: "md-settings",
+          name: "设置朋友圈权限"
+        },
+        {
+          type: "success",
+          icon: "md-unlock",
+          name: "解锁改密码权限"
+        },
+        {
+          type: "success",
+          icon: "md-unlock",
+          name: "解锁改资料权限"
+        },
+        {
+          type: "success",
+          icon: "md-unlock",
+          name: "解锁改头像权限"
+        }
+      ],
       editButtonListInfos: [
-        {
-          type: "warning",
-          icon: "md-trending-up",
-          name: "一键上线"
-        },
-        {
-          type: "warning",
-          icon: "md-trending-down",
-          name: "一键下线"
-        },
         {
           type: "info",
           icon: "md-create",
@@ -214,49 +127,247 @@ export default {
           name: "修改朋友圈封面"
         }
       ],
-      setButtonListInfos: [
+      oneKeyButtonListInfos: [
         {
-          type: "success",
-          icon: "md-settings",
-          name: "设置朋友圈权限"
+          type: "warning",
+          icon: "md-trending-up",
+          name: "一键上线"
         },
         {
-          type: "success",
-          icon: "md-unlock",
-          name: "解锁改密码权限"
+          type: "warning",
+          icon: "md-trending-down",
+          name: "一键下线"
+        }
+      ],
+      MAccountColumns: [
+        {
+          width: 60,
+          align: "center",
+          type: "selection"
         },
         {
-          type: "success",
-          icon: "md-unlock",
-          name: "解锁改资料权限"
+          width: 70,
+          title: "序号",
+          align: "center",
+          key: "serialNumber"
         },
         {
-          type: "success",
-          icon: "md-unlock",
-          name: "解锁改头像权限"
+          width: 120,
+          title: "锁状态",
+          align: "center",
+          key: "lockState",
+          render: (h, params) => {
+            const row = params.row
+            const color = row.lockState ? "error" : "success"
+            const text = row.lockState ? "锁定" : "正常"
+            return h(
+              "Tag",
+              {
+                props: {
+                  type: "dot",
+                  color
+                }
+              },
+              text
+            )
+          }
+        },
+        {
+          width: 120,
+          align: "center",
+          title: "账号状态",
+          key: "accountStatus",
+          render: (h, params) => {
+            const row = params.row
+            const color = row.accountStatus ? "error" : "success"
+            const text = row.accountStatus ? "已封禁" : "正常"
+            return h(
+              "Tag",
+              {
+                props: {
+                  type: "dot",
+                  color
+                }
+              },
+              text
+            )
+          }
+        },
+        {
+          width: 150,
+          tooltip: true,
+          align: "center",
+          title: "微信登录名",
+          key: "wechatLoginName"
+        },
+        {
+          width: 120,
+          title: "密码",
+          align: "center",
+          key: "password"
+        },
+        {
+          width: 120,
+          title: "昵称",
+          align: "center",
+          key: "nickName"
+        },
+        {
+          width: 120,
+          key: "wxId",
+          title: "WXID",
+          tooltip: true,
+          align: "center"
+        },
+        {
+          width: 120,
+          tooltip: true,
+          title: "微信号",
+          align: "center",
+          key: "wechatNumber"
+        },
+        {
+          width: 150,
+          title: "签名",
+          tooltip: true,
+          align: "center",
+          key: "autograph"
+        },
+        {
+          width: 120,
+          tooltip: true,
+          title: "所属分组",
+          align: "center",
+          key: "subordinate"
+        },
+        {
+          width: 120,
+          key: "sex",
+          title: "性别",
+          align: "center",
+          render: (h, params) => {
+            const row = params.row
+            const color = row.sex ? "success" : "primary"
+            const text = row.sex ? "男" : "女"
+            return h(
+              "Tag",
+              {
+                props: {
+                  type: "dot",
+                  color
+                }
+              },
+              text
+            )
+          }
+        },
+        {
+          width: 120,
+          key: "city",
+          title: "城市",
+          tooltip: true,
+          align: "center"
+        },
+        {
+          width: 150,
+          tooltip: true,
+          align: "center",
+          title: "设备类型",
+          key: "equipmentType"
+        },
+        {
+          width: 230,
+          title: "操作",
+          fixed: "right",
+          align: "center",
+          render: (h /*params*/) => {
+            return h("div", [
+              h(
+                "Button",
+                {
+                  props: {
+                    size: "small",
+                    type: "warning",
+                    disabled: this.radio,
+                    icon: "ios-trending-up"
+                  },
+                  style: {
+                    marginRight: "5px"
+                  },
+                  on: {
+                    click: () => {
+                      this.addGroupModal = true
+                      // this.show(params.index)
+                    }
+                  }
+                },
+                "上线"
+              ),
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "info",
+                    size: "small",
+                    disabled: this.radio,
+                    icon: "md-information-circle"
+                  },
+                  on: {
+                    click: () => {
+                      this.deleteGroupModal = true
+                      // this.remove(params.index)
+                    }
+                  }
+                },
+                "操作日志"
+              )
+            ])
+          }
         }
       ]
     }
   },
+  created() {
+    this.getData()
+  },
   mounted() {
-    this.$refs["MAccountPagedTable"].tableData = this.mockTableData()
+    this.$refs["MAccountPagedTable"].tableData = this.data
   },
   methods: {
-    mockTableData() {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          mAccountNumber: Math.floor(Math.random() * 100 + 1),
-          mAccountSortNumber: Math.floor(Math.random() * 100 + 1)
+    async getData() {
+      const { data } = await this.$http.get("maccount")
+      const res = data.data
+      const length = res.length
+      for (let i = 0; i < length; i++) {
+        this.data.push({
+          serialNumber: res[i].serialNumber,
+          lockState: res[i].lockState,
+          accountStatus: res[i].accountStatus,
+          wechatLoginName: res[i].wechatLoginName,
+          password: res[i].password,
+          nickName: res[i].nickName,
+          wxId: res[i].wxId,
+          wechatNumber: res[i].wechatNumber,
+          autograph: res[i].autograph,
+          subordinate: res[i].subordinate,
+          sex: res[i].sex,
+          city: res[i].city,
+          equipmentType: res[i].equipmentType
         })
       }
-      return data
+      return this.data
     },
     addModalVisibleChange() {
-      this.$refs["MAccountInputModal"].isShowInputModal = true
+      this.$refs["MAccountCreateModal"].isShowMAccountCreateModal = true
     },
     deleteModalVisibleChange() {
       this.$refs["MAccountConfirmModal"].isShowConfirmModal = true
+    },
+    trendUp() {
+      this.$refs["MAccountTrendUpModal"].isShowMAccountTrendModal = true
+    },
+    trendDown() {
+      this.$refs["MAccountTrendDownModal"].isShowMAccountTrendModal = true
     }
   }
 }

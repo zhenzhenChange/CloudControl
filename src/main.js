@@ -1,19 +1,24 @@
 import Vue from "vue"
+import http from "./http"
 import App from "./App.vue"
-import router from "./router"
 import store from "./store"
-import ViewUI from "view-design"
+import router from "./router"
 import DayFormat from "dayjs"
-import "view-design/dist/styles/iview.css"
+import ViewUI from "view-design"
+
+import "./mock/index.js"
 import "./assets/css/style.scss"
+import "view-design/dist/styles/iview.css"
 
 Vue.use(ViewUI)
+
+Vue.prototype.$http = http
+
+Vue.config.productionTip = false
 
 Vue.filter("date", value => {
   return DayFormat(value).format("YYYY-MM-DD HH:MM:ss")
 })
-
-Vue.config.productionTip = false
 
 const componentsContext = require.context("./components", true, /.vue$/)
 componentsContext.keys().forEach(component => {

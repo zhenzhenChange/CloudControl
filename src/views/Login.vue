@@ -5,22 +5,22 @@
       <Form ref="loginForm" :model="loginForm" :rules="loginRules" inline>
         <FormItem prop="username">
           <Input
+            clearable
             type="text"
             size="large"
-            v-model="loginForm.username"
             placeholder="username"
-            clearable
+            v-model="loginForm.username"
           >
             <Icon type="ios-person-outline" slot="prepend"></Icon>
           </Input>
         </FormItem>
         <FormItem prop="password">
           <Input
+            clearable
             size="large"
             type="password"
-            v-model="loginForm.password"
             placeholder="password"
-            clearable
+            v-model="loginForm.password"
           >
             <Icon type="ios-lock-outline" slot="prepend"></Icon>
           </Input>
@@ -30,8 +30,8 @@
           <Button
             type="info"
             shape="circle"
-            @click="submitLogin('loginForm')"
             icon="ios-radio-outline"
+            @click="submitLogin('loginForm')"
             >登录</Button
           >
         </FormItem>
@@ -52,21 +52,21 @@ export default {
         username: [
           {
             required: true,
-            message: "请填写用户名",
-            trigger: "blur"
+            trigger: "blur",
+            message: "请填写用户名"
           }
         ],
         password: [
           {
             required: true,
-            message: "请填写密码",
-            trigger: "blur"
+            trigger: "blur",
+            message: "请填写密码"
           },
           {
-            type: "string",
             min: 6,
-            message: "密码长度不能少于6位",
-            trigger: "blur"
+            type: "string",
+            trigger: "blur",
+            message: "密码长度不能少于6位"
           }
         ]
       }
@@ -76,8 +76,8 @@ export default {
     submitLogin(name) {
       this.$refs[name].validate(valid => {
         if (valid) {
-          this.$Message.success("登录成功!")
           this.$router.push("/grouping")
+          this.$Message.success("登录成功!")
         } else {
           this.$Message.error("未知错误!")
         }

@@ -30,8 +30,8 @@
 export default {
   name: "InputModal",
   props: {
-    title: String,
-    infos: Array
+    infos: Array,
+    title: String
   },
   data() {
     return {

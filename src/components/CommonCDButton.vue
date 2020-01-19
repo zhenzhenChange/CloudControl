@@ -32,7 +32,7 @@ export default {
 
 <style lang="scss" scoped>
 .CDButton {
-  width: 200px;
   float: left;
+  width: 200px;
 }
 </style>

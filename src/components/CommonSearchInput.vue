@@ -5,8 +5,8 @@
       clearable
       :key="index"
       class="mr-10"
-      v-for="(info, index) in infos"
       :placeholder="`请输入${info}`"
+      v-for="(info, index) in infos"
     >
       <span slot="prepend">{{ info }}</span>
     </Input>
@@ -26,14 +26,14 @@ export default {
 <style lang="scss" scoped>
 .SearchInput {
   div {
-    width: 250px;
     float: left;
+    width: 250px;
     .title {
+      float: left;
       width: 60px;
       height: 32px;
-      line-height: 32px;
       margin-top: 1px;
-      float: left;
+      line-height: 32px;
     }
     .select {
       width: 180px;

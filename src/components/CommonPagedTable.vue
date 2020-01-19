@@ -39,7 +39,7 @@ export default {
   },
   methods: {
     changePage() {
-      this.tableData = this.$parent.mockTableData()
+      this.tableData = this.$parent.data
     },
     changeSize(pageSize) {
       this.$parent.batch = true
