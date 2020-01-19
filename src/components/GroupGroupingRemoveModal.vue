@@ -11,7 +11,7 @@
       <Icon color="#ed4014" type="md-trash" class="mr-5" />{{ title }}
     </p>
     <div class="text-center">
-      <p>确定要删除这{{ total.length }}条数据吗？</p>
+      <p>确定要删除这条数据吗？</p>
     </div>
     <div slot="footer">
       <Button icon="md-remove-circle">取消</Button>
@@ -22,10 +22,10 @@
 
 <script>
 export default {
-  name: "ConfirmModal",
+  name: "GroupRemoveModal",
   props: {
     title: String,
-    total: Array
+    dataSign: Object
   },
   data() {
     return {
@@ -39,7 +39,7 @@ export default {
       }
     },
     remove() {
-      // console.log(this.total)
+      // console.log(this.dataSign)
     }
   }
 }

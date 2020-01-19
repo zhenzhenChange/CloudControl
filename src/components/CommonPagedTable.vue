@@ -54,12 +54,11 @@ export default {
       this.$parent.batch = true
     },
     selectionChange(selection) {
-      const selectionLength = selection.length
-      selectionLength === 0
+      selection.length === 0
         ? (this.$parent.batch = true)
         : (this.$parent.batch = false)
       this.$parent.radio = !this.$parent.batch
-      this.$parent.selectionLength = selectionLength
+      this.$parent.selectionData = selection
     }
   }
 }

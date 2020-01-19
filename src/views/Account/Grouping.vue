@@ -4,18 +4,23 @@
     <Divider dashed />
     <CDButton :batch="batch" />
     <InputModal
-      ref="GroupingInputModal"
       :title="'添加分组'"
+      ref="GroupingInputModal"
       :infos="['分组名称', '排序数字']"
     />
     <ConfirmModal
-      ref="GroupingConfirmModal"
       :title="'删除分组'"
-      :total="selectionLength"
+      :total="selectionData"
+      ref="GroupingConfirmModal"
     />
     <Divider class="float-left" dashed />
     <PagedTable ref="GroupingPagedTable" :dataColumns="GroupingColumns" />
     <GroupEditModal ref="GroupEditModal" :data="groupEditData" />
+    <GroupRemoveModal
+      :title="'删除分组'"
+      :dataSign="dataSign"
+      ref="GroupRemoveModal"
+    />
   </div>
 </template>
 
@@ -96,7 +101,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      // this.remove(params.index)
+                      this.groupRemove(params.row)
                     }
                   }
                 },
@@ -109,8 +114,9 @@ export default {
       batch: true,
       radio: false,
       pageSize: 10,
-      selectionLength: 0,
-      groupEditData: {}
+      selectionData: [],
+      groupEditData: {},
+      dataSign: {}
     }
   },
   mounted() {
@@ -132,6 +138,10 @@ export default {
         ]
       }
       this.$refs["GroupEditModal"].isShowInputModal = true
+    },
+    groupRemove(arg) {
+      this.dataSign = arg
+      this.$refs["GroupRemoveModal"].isShowConfirmModal = true
     },
     mockTableData() {
       let i
