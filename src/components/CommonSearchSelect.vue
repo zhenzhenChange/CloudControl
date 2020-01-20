@@ -32,14 +32,12 @@ export default {
 
 <style lang="scss" scoped>
 .SearchSelect {
-  float: left;
   .title {
     float: left;
     height: 32px;
     line-height: 32px;
   }
   .select {
-    float: left;
     width: 200px;
     margin-top: 1px;
     ::v-deep .ivu-select-input {

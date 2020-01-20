@@ -8,11 +8,7 @@ Vue.use(ViewUI)
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: "/",
-    name: "login",
-    component: Login
-  },
+  { path: "/", name: "login", component: Login },
   {
     path: "/home",
     name: "Home",

@@ -37,22 +37,9 @@ export default {
       selectionData: [],
       groupEditData: {},
       GroupingColumns: [
-        {
-          width: 60,
-          align: "center",
-          type: "selection"
-        },
-        {
-          width: 70,
-          title: "序号",
-          align: "center",
-          key: "serialNumber"
-        },
-        {
-          align: "center",
-          title: "分组名称",
-          key: "groupName"
-        },
+        { width: 60, align: "center", type: "selection" },
+        { width: 70, align: "center", title: "序号", key: "serialNumber" },
+        { align: "center", title: "分组名称", key: "groupName" },
         {
           sortable: true,
           align: "center",
@@ -89,9 +76,7 @@ export default {
                     icon: "md-create",
                     disabled: this.radio
                   },
-                  style: {
-                    marginRight: "5px"
-                  },
+                  style: { marginRight: "5px" },
                   on: {
                     click: () => {
                       this.groupEdit(params.row)
@@ -148,14 +133,8 @@ export default {
       this.groupEditData = {
         title: "编辑分组",
         transmiData: [
-          {
-            model: groupName,
-            placeholder: "分组名称"
-          },
-          {
-            placeholder: "排序数字",
-            model: groupSortNumber
-          }
+          { model: groupName, placeholder: "分组名称" },
+          { model: groupSortNumber, placeholder: "排序数字" }
         ]
       }
       this.$refs["GroupEditModal"].isShowInputModal = true

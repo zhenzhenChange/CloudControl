@@ -30,6 +30,15 @@ export default {
       if (e.toElement.innerText === "一键下线") {
         this.$parent.trendDown()
       }
+      if (e.toElement.innerText === "好友请求设置") {
+        this.$parent.requestAddFriend()
+      }
+      if (e.toElement.innerText === "自动回复设置") {
+        this.$parent.autoReply()
+      }
+      if (e.toElement.innerText === "创建任务") {
+        this.$parent.createTask()
+      }
     }
   }
 }

@@ -10,7 +10,7 @@
       <Icon color="#FF9900" :type="type" class="mr-5" />{{ title }}
     </p>
     <div class="text-center">
-      <p>确定要{{ title }}这{{ total.length }}个账号吗？</p>
+      <p>确定要{{ title }}这{{ total ? total.length : "" }}个账号吗？</p>
     </div>
     <div slot="footer">
       <Button icon="md-remove-circle">取消</Button>

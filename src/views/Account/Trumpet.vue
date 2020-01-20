@@ -1,10 +1,17 @@
 <template>
   <div class="Trumpet">
+    <RangeDatePicker />
+    <Divider dashed />
     <SearchInput :infos="['任务名称']" />
     <Divider dashed />
     <ButtonList :buttonListInfos="TrumpetButtonListInfos" />
     <Divider dashed />
     <PagedTable ref="TrumpetPagedTable" :dataColumns="TrumpetColumns" />
+    <TrumpetCreateTaskModal
+      :options="cityList"
+      :config="createTaskConfig"
+      ref="TrumpetCreateTaskModal"
+    />
   </div>
 </template>
 
@@ -12,72 +19,77 @@
 export default {
   data() {
     return {
+      data: [],
+      cityList: [
+        { value: "New York", label: "New York" },
+        { value: "London", label: "London" },
+        { value: "Sydney", label: "Sydney" },
+        { value: "Ottawa", label: "Ottawa" },
+        { value: "Paris", label: "Paris" },
+        { value: "Canberra", label: "Canberra" }
+      ],
+      createTaskConfig: {
+        label: "添加方式",
+        reallyText: "两两互加",
+        fakeText: "添加号码"
+      },
       TrumpetColumns: [
+        { width: 60, align: "center", type: "selection" },
+        { width: 70, align: "center", title: "序号", key: "serialNumber" },
+        { width: 120, align: "center", title: "任务编号", key: "taskNumber" },
+        { align: "center", width: 150, title: "任务名称", key: "taskName" },
         {
-          type: "selection",
-          width: 60,
-          align: "center"
-        },
-        {
-          title: "序号",
-          width: 70,
+          width: 150,
+          key: "addWay",
           align: "center",
-          key: "mAccountNumber"
+          title: "添加方式"
         },
         {
-          title: "任务编号",
+          width: 170,
           align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "任务名称",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "添加方式",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
           title: "互聊时间",
-          align: "center",
-          key: "mAccountNumber"
+          key: "interchatTime"
         },
         {
+          width: 120,
+          align: "center",
           title: "互聊间隔",
-          align: "center",
-          key: "mAccountNumber"
+          key: "interchatInterval"
         },
         {
+          width: 120,
+          align: "center",
           title: "自动聊天",
-          align: "center",
-          key: "mAccountNumber"
+          key: "automaticChat",
+          render: (h, params) => {
+            const row = params.row
+            return h("i-switch", {
+              props: { size: "large", value: row.automaticChat },
+              scopedSlots: {
+                open: () => h("span", "打开"),
+                close: () => h("span", "关闭")
+              }
+            })
+          }
         },
+        { width: 120, align: "center", title: "配对数", key: "pairNumber" },
         {
-          title: "配对数",
+          width: 120,
           align: "center",
-          key: "mAccountNumber"
-        },
-        {
           title: "成功请求数",
-          align: "center",
-          key: "mAccountNumber"
+          key: "successRequest"
         },
         {
+          width: 120,
+          align: "center",
           title: "失败请求数",
-          align: "center",
-          key: "mAccountNumber"
+          key: "errorRequest"
         },
+        { width: 120, key: "adopt", title: "通过数", align: "center" },
         {
-          title: "通过",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
+          width: 260,
           title: "操作",
-          key: "groupAction",
-          width: 250,
+          fixed: "right",
           align: "center",
           render: (h /*params*/) => {
             return h("div", [
@@ -89,13 +101,9 @@ export default {
                     size: "small",
                     icon: "md-eye"
                   },
-                  style: {
-                    marginRight: "5px"
-                  },
+                  style: { marginRight: "5px" },
                   on: {
-                    click: () => {
-                      // this.show(params.index)
-                    }
+                    click: () => {}
                   }
                 },
                 "查看"
@@ -108,13 +116,9 @@ export default {
                     size: "small",
                     icon: "md-create"
                   },
-                  style: {
-                    marginRight: "5px"
-                  },
+                  style: { marginRight: "5px" },
                   on: {
-                    click: () => {
-                      // this.remove(params.index)
-                    }
+                    click: () => {}
                   }
                 },
                 "修改"
@@ -128,9 +132,7 @@ export default {
                     icon: "md-remove-circle"
                   },
                   on: {
-                    click: () => {
-                      // this.remove(params.index)
-                    }
+                    click: () => {}
                   }
                 },
                 "取消"
@@ -140,27 +142,40 @@ export default {
         }
       ],
       TrumpetButtonListInfos: [
-        {
-          type: "primary",
-          icon: "md-add",
-          name: "创建任务"
-        }
+        { type: "primary", icon: "md-add", name: "创建任务" }
       ]
     }
   },
+  created() {
+    this.getData()
+  },
   mounted() {
-    this.$refs["TrumpetPagedTable"].tableData = this.mockTableData()
+    this.$refs["TrumpetPagedTable"].tableData = this.data
   },
   methods: {
-    mockTableData() {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          mAccountNumber: Math.floor(Math.random() * 100 + 1),
-          mAccountSortNumber: Math.floor(Math.random() * 100 + 1)
+    async getData() {
+      const { data } = await this.$http.get("trumpet")
+      const res = data.data
+      const length = res.length
+      for (let i = 0; i < length; i++) {
+        this.data.push({
+          serialNumber: res[i].serialNumber,
+          taskNumber: res[i].taskNumber,
+          taskName: res[i].taskName,
+          addWay: res[i].addWay,
+          interchatTime: res[i].interchatTime,
+          interchatInterval: res[i].interchatInterval,
+          automaticChat: res[i].automaticChat,
+          pairNumber: res[i].pairNumber,
+          successRequest: res[i].successRequest,
+          errorRequest: res[i].errorRequest,
+          adopt: res[i].adopt
         })
       }
-      return data
+      return this.data
+    },
+    createTask() {
+      this.$refs["TrumpetCreateTaskModal"].isShowCreateModal = true
     }
   }
 }

@@ -2,10 +2,30 @@
   <div class="Passive">
     <RangeDatePicker />
     <Divider dashed />
-    <SearchSelect :title="'账号分组'" :info="'分组'" :options="cityList" />
-    <SearchSelect :title="'所属账号'" :info="'账号'" :options="cityList" />
-    <SearchSelect :title="'所属标签'" :info="'标签'" :options="cityList" />
-    <SearchSelect :title="'通过状态'" :info="'状态'" :options="cityList" />
+    <SearchSelect
+      :info="'分组'"
+      :title="'账号分组'"
+      class="float-left"
+      :options="cityList"
+    />
+    <SearchSelect
+      :info="'账号'"
+      :title="'所属账号'"
+      class="float-left"
+      :options="cityList"
+    />
+    <SearchSelect
+      :info="'标签'"
+      :title="'所属标签'"
+      class="float-left"
+      :options="cityList"
+    />
+    <SearchSelect
+      :info="'状态'"
+      :title="'通过状态'"
+      class="float-left"
+      :options="cityList"
+    />
     <SearchInput :infos="['微信登录名']" />
     <Divider dashed />
     <ButtonList :buttonListInfos="confirmButtonListInfos" />
@@ -18,98 +38,95 @@
 export default {
   data() {
     return {
+      data: [],
       cityList: [
-        {
-          value: "New York",
-          label: "New York"
-        },
-        {
-          value: "London",
-          label: "London"
-        },
-        {
-          value: "Sydney",
-          label: "Sydney"
-        },
-        {
-          value: "Ottawa",
-          label: "Ottawa"
-        },
-        {
-          value: "Paris",
-          label: "Paris"
-        },
-        {
-          value: "Canberra",
-          label: "Canberra"
-        }
+        { value: "New York", label: "New York" },
+        { value: "London", label: "London" },
+        { value: "Sydney", label: "Sydney" },
+        { value: "Ottawa", label: "Ottawa" },
+        { value: "Paris", label: "Paris" },
+        { value: "Canberra", label: "Canberra" }
       ],
       PassiveColumns: [
+        { width: 60, align: "center", type: "selection" },
+        { width: 70, align: "center", title: "序号", key: "serialNumber" },
         {
-          type: "selection",
-          width: 60,
-          align: "center"
-        },
-        {
-          title: "序号",
-          width: 70,
+          width: 120,
           align: "center",
-          key: "mAccountNumber"
-        },
-        {
           title: "所属账号",
-          align: "center",
-          key: "mAccountNumber"
+          key: "subordinateAccount"
         },
         {
+          width: 120,
+          align: "center",
+          tooltip: true,
           title: "好友昵称",
-          align: "center",
-          key: "mAccountNumber"
+          key: "friendName"
         },
         {
+          width: 120,
+          tooltip: true,
+          align: "center",
           title: "好友微信号",
-          align: "center",
-          key: "mAccountNumber"
+          key: "friendWxId"
         },
         {
+          width: 120,
+          align: "center",
           title: "性别",
-          align: "center",
-          key: "mAccountNumber"
+          key: "sex",
+          render: (h, params) => {
+            const row = params.row
+            const color = row.sex ? "success" : "magenta"
+            const text = row.sex ? "男" : "女"
+            return h("Tag", { props: { type: "border", color } }, text)
+          }
         },
         {
+          width: 150,
+          tooltip: true,
+          align: "center",
           title: "签名",
-          align: "center",
-          key: "mAccountNumber"
+          key: "autograph"
         },
         {
+          width: 120,
+          tooltip: true,
+          align: "center",
           title: "城市",
-          align: "center",
-          key: "mAccountNumber"
+          key: "city"
         },
         {
+          width: 120,
+          align: "center",
+          tooltip: true,
           title: "添加来源",
-          align: "center",
-          key: "mAccountNumber"
+          key: "addSource"
         },
         {
+          width: 150,
+          tooltip: true,
+          align: "center",
           title: "招呼语",
-          align: "center",
-          key: "mAccountNumber"
+          key: "aCall"
         },
         {
+          width: 120,
+          align: "center",
           title: "状态",
-          align: "center",
-          key: "mAccountNumber"
+          key: "state",
+          render: (h, params) => {
+            const row = params.row
+            const color = row.state ? "success" : "error"
+            const text = row.state ? "通过" : "拒绝"
+            return h("Tag", { props: { type: "dot", color } }, text)
+          }
         },
+        { width: 170, align: "center", title: "添加时间", key: "createTime" },
         {
-          title: "添加时间",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
+          width: 230,
           title: "操作",
-          key: "groupAction",
-          width: 250,
+          fixed: "right",
           align: "center",
           render: (h /*params*/) => {
             return h("div", [
@@ -121,13 +138,9 @@ export default {
                     size: "small",
                     icon: "md-trash"
                   },
-                  style: {
-                    marginRight: "5px"
-                  },
+                  style: { marginRight: "5px" },
                   on: {
-                    click: () => {
-                      // this.show(params.index)
-                    }
+                    click: () => {}
                   }
                 },
                 "删除"
@@ -140,13 +153,9 @@ export default {
                     size: "small",
                     icon: "md-checkmark"
                   },
-                  style: {
-                    marginRight: "5px"
-                  },
+                  style: { marginRight: "5px" },
                   on: {
-                    click: () => {
-                      // this.remove(params.index)
-                    }
+                    click: () => {}
                   }
                 },
                 "通过请求"
@@ -156,32 +165,38 @@ export default {
         }
       ],
       confirmButtonListInfos: [
-        {
-          type: "error",
-          icon: "md-trash",
-          name: "删除"
-        },
-        {
-          type: "success",
-          icon: "md-done-all",
-          name: "通过请求"
-        }
+        { type: "error", icon: "md-trash", name: "删除" },
+        { type: "success", icon: "md-done-all", name: "通过请求" }
       ]
     }
   },
+  created() {
+    this.getData()
+  },
   mounted() {
-    this.$refs["PassivePagedTable"].tableData = this.mockTableData()
+    this.$refs["PassivePagedTable"].tableData = this.data
   },
   methods: {
-    mockTableData() {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          mAccountNumber: Math.floor(Math.random() * 100 + 1),
-          mAccountSortNumber: Math.floor(Math.random() * 100 + 1)
+    async getData() {
+      const { data } = await this.$http.get("passive")
+      const res = data.data
+      const length = res.length
+      for (let i = 0; i < length; i++) {
+        this.data.push({
+          serialNumber: res[i].serialNumber,
+          subordinateAccount: res[i].subordinateAccount,
+          friendName: res[i].friendName,
+          friendWxId: res[i].friendWxId,
+          sex: res[i].sex,
+          autograph: res[i].autograph,
+          city: res[i].city,
+          addSource: res[i].addSource,
+          aCall: res[i].aCall,
+          state: res[i].state,
+          createTime: res[i].createTime
         })
       }
-      return data
+      return this.data
     }
   }
 }

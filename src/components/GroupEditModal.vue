@@ -1,5 +1,4 @@
 <template>
-  <!-- 含输入框的模态窗复用组件 -->
   <Modal
     width="330"
     :mask-closable="false"

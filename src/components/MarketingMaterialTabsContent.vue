@@ -21,32 +21,15 @@ export default {
   data() {
     return {
       TabsContentColumns: [
-        {
-          width: 60,
-          align: "center",
-          type: "selection"
-        },
-        {
-          width: 70,
-          title: "序号",
-          align: "center",
-          key: "mAccountNumber"
-        },
+        { width: 60, align: "center", type: "selection" },
+        { width: 70, title: "序号", align: "center", key: "mAccountNumber" },
         {
           align: "center",
           key: "mAccountNumber",
           title: this.TableColumnsTitle
         },
-        {
-          align: "center",
-          title: "模板分类",
-          key: "mAccountNumber"
-        },
-        {
-          align: "center",
-          title: "创建时间",
-          key: "mAccountNumber"
-        },
+        { align: "center", title: "模板分类", key: "mAccountNumber" },
+        { align: "center", title: "创建时间", key: "mAccountNumber" },
         {
           width: 250,
           title: "操作",
@@ -61,13 +44,9 @@ export default {
                     type: "primary",
                     icon: "md-create"
                   },
-                  style: {
-                    marginRight: "5px"
-                  },
+                  style: { marginRight: "5px" },
                   on: {
-                    click: () => {
-                      // this.show(params.index)
-                    }
+                    click: () => {}
                   }
                 },
                 "编辑"
@@ -81,9 +60,7 @@ export default {
                     icon: "md-trash"
                   },
                   on: {
-                    click: () => {
-                      // this.remove(params.index)
-                    }
+                    click: () => {}
                   }
                 },
                 "删除"
@@ -93,16 +70,8 @@ export default {
         }
       ],
       TabsButtonListInfo: [
-        {
-          icon: "md-add",
-          type: "primary",
-          name: `添加${this.ButtonName}`
-        },
-        {
-          type: "error",
-          icon: "md-trash",
-          name: `删除${this.ButtonName}`
-        }
+        { icon: "md-add", type: "primary", name: `添加${this.ButtonName}` },
+        { type: "error", icon: "md-trash", name: `删除${this.ButtonName}` }
       ]
     }
   },

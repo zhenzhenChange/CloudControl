@@ -9,16 +9,26 @@
     <p slot="header">
       <Icon color="#2d8cf0" type="md-add-circle" class="mr-5" />{{ title }}
     </p>
-    <SearchSelect :title="'所属分组'" :options="cityList" :info="'分组'" />
+    <SearchSelect
+      :info="'分组'"
+      :title="'所属分组'"
+      class="float-left"
+      :options="cityList"
+    />
     <Button class="ml--20" type="primary" shape="circle" icon="md-refresh" />
     <div class="upload mt-10 mb-10">
       <span class="title mr-10">账号数据</span>
-      <Upload action="">
+      <Upload
+        action=""
+        :show-upload-list="false"
+        :before-upload="handleBeforeUpload"
+      >
         <Button icon="md-cloud-upload">批量上传账号</Button>
       </Upload>
     </div>
     <Input
       type="textarea"
+      v-model="accountData"
       :autosize="{ minRows: 5, maxRows: 20 }"
       placeholder="账号格式：XXXX----XXXX----XXXX（账号----密码----A16/62数据），一个账号单独一行，多个账号多行，支持A16/62"
     >
@@ -65,6 +75,7 @@ export default {
           label: "Canberra"
         }
       ],
+      accountData: "",
       isShowMAccountCreateModal: false
     }
   },
@@ -73,6 +84,14 @@ export default {
       if (!value) {
         this.isShowMAccountCreateModal = false
       }
+    },
+    handleBeforeUpload(file) {
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onload = () => {
+        this.accountData = reader.result
+      }
+      return false
     }
   }
 }

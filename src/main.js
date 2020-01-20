@@ -16,9 +16,7 @@ Vue.prototype.$http = http
 
 Vue.config.productionTip = false
 
-Vue.filter("date", value => {
-  return DayFormat(value).format("YYYY-MM-DD HH:MM:ss")
-})
+Vue.filter("date", value => DayFormat(value).format("YYYY-MM-DD HH:MM:ss"))
 
 const componentsContext = require.context("./components", true, /.vue$/)
 componentsContext.keys().forEach(component => {
@@ -27,7 +25,7 @@ componentsContext.keys().forEach(component => {
 })
 
 new Vue({
-  router,
   store,
+  router,
   render: h => h(App)
 }).$mount("#app")
