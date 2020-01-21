@@ -1,17 +1,8 @@
 <template>
+  <!-- 账号设置 -->
   <div class="SAccount">
-    <SearchSelect
-      :info="'分组'"
-      :title="'所属分组'"
-      class="float-left"
-      :options="cityList"
-    />
-    <SearchSelect
-      :info="'在线状态'"
-      :title="'微信状态'"
-      class="float-left"
-      :options="cityList"
-    />
+    <SearchSelect :info="'分组'" :title="'所属分组'" :options="cityList" />
+    <SearchSelect :info="'在线状态'" :title="'微信状态'" :options="cityList" />
     <SearchInput :infos="['微信登录名']" />
     <Divider dashed />
     <ButtonList :buttonListInfos="setButtonListInfos" />
@@ -137,17 +128,16 @@ export default {
   },
   methods: {
     async getData() {
-      const { data } = await this.$http.get("saccount")
-      const res = data.data
-      const length = res.length
+      const { data } = await this.$http.getSaccount()
+      const length = data.length
       for (let i = 0; i < length; i++) {
         this.data.push({
-          serialNumber: res[i].serialNumber,
-          wechatNumber: res[i].wechatNumber,
-          accountStatus: res[i].accountStatus,
-          isAuthentication: res[i].isAuthentication,
-          isAutoReply: res[i].isAutoReply,
-          autoReplyTemplate: res[i].autoReplyTemplate
+          serialNumber: data[i].serialNumber,
+          wechatNumber: data[i].wechatNumber,
+          accountStatus: data[i].accountStatus,
+          isAuthentication: data[i].isAuthentication,
+          isAutoReply: data[i].isAutoReply,
+          autoReplyTemplate: data[i].autoReplyTemplate
         })
       }
       return this.data

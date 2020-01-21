@@ -1,4 +1,5 @@
 <template>
+  <!-- 标签管理 -->
   <div class="Tag">
     <SearchInput :infos="['标签名称']" />
     <Divider dashed />
@@ -33,7 +34,7 @@ export default {
       TagColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { align: "center", key: "tagName", title: "标签名称" },
+        { align: "center", key: "tag_name", title: "标签名称" },
         {
           width: 230,
           title: "操作",
@@ -89,21 +90,20 @@ export default {
   },
   methods: {
     async getData() {
-      const { data } = await this.$http.get("tag")
-      const res = data.data
-      const length = res.length
+      const { data } = await this.$http.getAllTag()
+      const length = data.length
       for (let i = 0; i < length; i++) {
         this.data.push({
-          serialNumber: res[i].serialNumber,
-          tagName: res[i].tagName
+          serialNumber: data[i].serialNumber,
+          tag_name: data[i].tag_name
         })
       }
       return this.data
     },
-    tagEdit({ tagName }) {
+    tagEdit({ tag_name }) {
       this.tagEditData = {
         title: "编辑标签",
-        transmiData: [{ model: tagName, placeholder: "标签名称" }]
+        transmiData: [{ model: tag_name, placeholder: "标签名称" }]
       }
       this.$refs["TagEditModal"].isShowInputModal = true
     },

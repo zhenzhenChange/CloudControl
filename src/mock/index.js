@@ -4,9 +4,9 @@ const groupingData = Mock.mock({
   "data|10": [
     {
       "serialNumber|+1": 1, // 序号，自增
-      groupName: "@cname", // 分组名称
-      "groupSortNumber|1-100": 2, // 排序数字
-      groupCreateTime: "@datetime()" // 创建时间
+      group_name: "@cname", // 分组名称
+      "group_id|1-100": 2, // 排序数字
+      group_create_date: "@datetime()" // 创建时间
     }
   ]
 })
@@ -48,7 +48,7 @@ const TagData = Mock.mock({
   "data|10": [
     {
       "serialNumber|+1": 1, // 序号，自增
-      tagName: "@ctitle(6)" // 标签名称
+      tag_name: "@ctitle(6)" // 标签名称
     }
   ]
 })

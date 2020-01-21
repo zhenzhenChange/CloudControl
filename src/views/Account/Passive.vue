@@ -1,34 +1,15 @@
 <template>
+  <!-- 被动请求 -->
   <div class="Passive">
     <RangeDatePicker />
     <Divider dashed />
-    <SearchSelect
-      :info="'分组'"
-      :title="'账号分组'"
-      class="float-left"
-      :options="cityList"
-    />
-    <SearchSelect
-      :info="'账号'"
-      :title="'所属账号'"
-      class="float-left"
-      :options="cityList"
-    />
-    <SearchSelect
-      :info="'标签'"
-      :title="'所属标签'"
-      class="float-left"
-      :options="cityList"
-    />
-    <SearchSelect
-      :info="'状态'"
-      :title="'通过状态'"
-      class="float-left"
-      :options="cityList"
-    />
+    <SearchSelect :info="'分组'" :title="'账号分组'" :options="cityList" />
+    <SearchSelect :info="'账号'" :title="'所属账号'" :options="cityList" />
+    <SearchSelect :info="'标签'" :title="'所属标签'" :options="cityList" />
+    <SearchSelect :info="'状态'" :title="'通过状态'" :options="cityList" />
     <SearchInput :infos="['微信登录名']" />
     <Divider dashed />
-    <ButtonList :buttonListInfos="confirmButtonListInfos" />
+    <ButtonList :listBatch="batch" :buttonListInfos="confirmButtonListInfos" />
     <Divider class="float-left" dashed />
     <PagedTable ref="PassivePagedTable" :dataColumns="PassiveColumns" />
   </div>
@@ -39,6 +20,9 @@ export default {
   data() {
     return {
       data: [],
+      batch: true,
+      radio: false,
+      selectionData: [],
       cityList: [
         { value: "New York", label: "New York" },
         { value: "London", label: "London" },
@@ -46,6 +30,10 @@ export default {
         { value: "Ottawa", label: "Ottawa" },
         { value: "Paris", label: "Paris" },
         { value: "Canberra", label: "Canberra" }
+      ],
+      confirmButtonListInfos: [
+        { type: "error", icon: "md-trash", name: "删除" },
+        { type: "success", icon: "md-done-all", name: "通过请求" }
       ],
       PassiveColumns: [
         { width: 60, align: "center", type: "selection" },
@@ -134,9 +122,10 @@ export default {
                 "Button",
                 {
                   props: {
-                    type: "error",
                     size: "small",
-                    icon: "md-trash"
+                    type: "error",
+                    icon: "md-trash",
+                    disabled: this.radio
                   },
                   style: { marginRight: "5px" },
                   on: {
@@ -149,9 +138,10 @@ export default {
                 "Button",
                 {
                   props: {
-                    type: "success",
                     size: "small",
-                    icon: "md-checkmark"
+                    type: "success",
+                    icon: "md-checkmark",
+                    disabled: this.radio
                   },
                   style: { marginRight: "5px" },
                   on: {
@@ -163,10 +153,6 @@ export default {
             ])
           }
         }
-      ],
-      confirmButtonListInfos: [
-        { type: "error", icon: "md-trash", name: "删除" },
-        { type: "success", icon: "md-done-all", name: "通过请求" }
       ]
     }
   },
@@ -178,22 +164,21 @@ export default {
   },
   methods: {
     async getData() {
-      const { data } = await this.$http.get("passive")
-      const res = data.data
-      const length = res.length
+      const { data } = await this.$http.getPassive()
+      const length = data.length
       for (let i = 0; i < length; i++) {
         this.data.push({
-          serialNumber: res[i].serialNumber,
-          subordinateAccount: res[i].subordinateAccount,
-          friendName: res[i].friendName,
-          friendWxId: res[i].friendWxId,
-          sex: res[i].sex,
-          autograph: res[i].autograph,
-          city: res[i].city,
-          addSource: res[i].addSource,
-          aCall: res[i].aCall,
-          state: res[i].state,
-          createTime: res[i].createTime
+          serialNumber: data[i].serialNumber,
+          subordinateAccount: data[i].subordinateAccount,
+          friendName: data[i].friendName,
+          friendWxId: data[i].friendWxId,
+          sex: data[i].sex,
+          autograph: data[i].autograph,
+          city: data[i].city,
+          addSource: data[i].addSource,
+          aCall: data[i].aCall,
+          state: data[i].state,
+          createTime: data[i].createTime
         })
       }
       return this.data

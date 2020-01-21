@@ -54,11 +54,9 @@ export default {
       this.$parent.batch = true
     },
     selectionChange(selection) {
-      selection.length === 0
-        ? (this.$parent.batch = true)
-        : (this.$parent.batch = false)
-      this.$parent.radio = !this.$parent.batch
-      this.$parent.selectionData = selection
+      const length = selection.length
+      length ? (this.$parent.mutex = true) : (this.$parent.mutex = false)
+      this.$parent.selectedData = selection
     }
   }
 }

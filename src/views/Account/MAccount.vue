@@ -1,17 +1,8 @@
 <template>
+  <!-- 账号管理 -->
   <div class="MAccount">
-    <SearchSelect
-      :info="'分组'"
-      :title="'账号分组'"
-      class="float-left"
-      :options="cityList"
-    />
-    <SearchSelect
-      :info="'在线状态'"
-      :title="'微信状态'"
-      class="float-left"
-      :options="cityList"
-    />
+    <SearchSelect :info="'分组'" :title="'账号分组'" :options="cityList" />
+    <SearchSelect :info="'在线状态'" :title="'微信状态'" :options="cityList" />
     <SearchInput :infos="['微信登录名', '代理IP']" />
     <Divider dashed />
     <CDButton :batch="batch" />
@@ -231,24 +222,23 @@ export default {
   },
   methods: {
     async getData() {
-      const { data } = await this.$http.get("maccount")
-      const res = data.data
-      const length = res.length
+      const { data } = await this.$http.getAccountInfo()
+      const length = data.length
       for (let i = 0; i < length; i++) {
         this.data.push({
-          serialNumber: res[i].serialNumber,
-          lockState: res[i].lockState,
-          accountStatus: res[i].accountStatus,
-          wechatLoginName: res[i].wechatLoginName,
-          password: res[i].password,
-          nickName: res[i].nickName,
-          wxId: res[i].wxId,
-          wechatNumber: res[i].wechatNumber,
-          autograph: res[i].autograph,
-          subordinate: res[i].subordinate,
-          sex: res[i].sex,
-          city: res[i].city,
-          equipmentType: res[i].equipmentType
+          serialNumber: data[i].serialNumber,
+          lockState: data[i].lockState,
+          accountStatus: data[i].accountStatus,
+          wechatLoginName: data[i].wechatLoginName,
+          password: data[i].password,
+          nickName: data[i].nickName,
+          wxId: data[i].wxId,
+          wechatNumber: data[i].wechatNumber,
+          autograph: data[i].autograph,
+          subordinate: data[i].subordinate,
+          sex: data[i].sex,
+          city: data[i].city,
+          equipmentType: data[i].equipmentType
         })
       }
       return this.data

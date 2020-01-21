@@ -1,46 +1,67 @@
 <template>
-  <!-- 删除对话确认模态窗复用组件 -->
+  <!-- 对话确认模态窗 -->
   <Modal
     width="330"
+    :closable="false"
     :mask-closable="false"
-    v-model="isShowConfirmModal"
+    v-model="isShowModal"
     @on-visible-change="visibleChange"
     class-name="vertical-center-modal"
   >
     <p slot="header">
-      <Icon color="#ed4014" type="md-trash" class="mr-5" />{{ title }}
+      <Icon
+        :type="config.icon"
+        :color="config.color"
+        class="mr-5 header-icon"
+      />{{ config.title }}
     </p>
     <div class="text-center">
-      <p>确定要删除这{{ total.length }}条数据吗？</p>
+      <p>确定要{{ config.operation }}吗？</p>
     </div>
     <div slot="footer">
-      <Button icon="md-remove-circle">取消</Button>
-      <Button type="error" icon="md-trash" @click="remove">删除</Button>
+      <Button icon="md-remove-circle" @click="catchBtn">取消</Button>
+      <Button :type="config.btnType" :icon="config.btnIcon" @click="tryBtn">
+        {{ config.btnText }}
+      </Button>
     </div>
   </Modal>
 </template>
 
 <script>
 export default {
-  name: "ConfirmModal",
-  props: {
-    total: Array,
-    title: String
-  },
+  name: "CommonConfirmModal",
+  props: { data: Array, config: Object },
   data() {
     return {
-      isShowConfirmModal: false
+      isShowModal: false
     }
   },
   methods: {
     visibleChange(value) {
-      if (!value) {
-        this.isShowConfirmModal = false
-      }
+      value ? "" : (this.isShowModal = false)
     },
-    remove() {
-      // console.log(this.total)
+    tryBtn() {
+      let group_id = []
+      if (this.data.length === 1) {
+        group_id = this.data
+        return
+      }
+      this.data.forEach(item => group_id.push(item.group_id))
+    },
+    catchBtn() {
+      if (this.data.length === 1) {
+        this.$parent.selectedData = []
+      }
+      this.isShowModal = false
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.header-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: -0.05em;
+}
+</style>

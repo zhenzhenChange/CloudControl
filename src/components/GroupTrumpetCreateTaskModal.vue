@@ -15,12 +15,7 @@
       </Input>
     </div>
     <div class="task-select">
-      <SearchSelect
-        :info="'分组'"
-        :title="'账号分组'"
-        class="float-left"
-        :options="options"
-      />
+      <SearchSelect :info="'分组'" :title="'账号分组'" :options="options" />
       <Button class="ml--20" type="primary" shape="circle" icon="md-refresh" />
     </div>
     <div class="radio mt-10">

@@ -1,4 +1,5 @@
 <template>
+  <!-- 小号互聊 -->
   <div class="Trumpet">
     <RangeDatePicker />
     <Divider dashed />
@@ -12,6 +13,7 @@
       :config="createTaskConfig"
       ref="TrumpetCreateTaskModal"
     />
+    <GroupEditModal ref="TrumpetEditModal" :data="trumpetEditData" />
   </div>
 </template>
 
@@ -28,11 +30,16 @@ export default {
         { value: "Paris", label: "Paris" },
         { value: "Canberra", label: "Canberra" }
       ],
+      trumpetEditData: {},
       createTaskConfig: {
         label: "添加方式",
         reallyText: "两两互加",
         fakeText: "添加号码"
       },
+
+      TrumpetButtonListInfos: [
+        { type: "primary", icon: "md-add", name: "创建任务" }
+      ],
       TrumpetColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
@@ -91,7 +98,7 @@ export default {
           title: "操作",
           fixed: "right",
           align: "center",
-          render: (h /*params*/) => {
+          render: (h, params) => {
             return h("div", [
               h(
                 "Button",
@@ -118,7 +125,9 @@ export default {
                   },
                   style: { marginRight: "5px" },
                   on: {
-                    click: () => {}
+                    click: () => {
+                      this.trumpetEdit(params.row)
+                    }
                   }
                 },
                 "修改"
@@ -140,9 +149,6 @@ export default {
             ])
           }
         }
-      ],
-      TrumpetButtonListInfos: [
-        { type: "primary", icon: "md-add", name: "创建任务" }
       ]
     }
   },
@@ -154,25 +160,34 @@ export default {
   },
   methods: {
     async getData() {
-      const { data } = await this.$http.get("trumpet")
-      const res = data.data
-      const length = res.length
+      const { data } = await this.$http.getTrumpet()
+      const length = data.length
       for (let i = 0; i < length; i++) {
         this.data.push({
-          serialNumber: res[i].serialNumber,
-          taskNumber: res[i].taskNumber,
-          taskName: res[i].taskName,
-          addWay: res[i].addWay,
-          interchatTime: res[i].interchatTime,
-          interchatInterval: res[i].interchatInterval,
-          automaticChat: res[i].automaticChat,
-          pairNumber: res[i].pairNumber,
-          successRequest: res[i].successRequest,
-          errorRequest: res[i].errorRequest,
-          adopt: res[i].adopt
+          serialNumber: data[i].serialNumber,
+          taskNumber: data[i].taskNumber,
+          taskName: data[i].taskName,
+          addWay: data[i].addWay,
+          interchatTime: data[i].interchatTime,
+          interchatInterval: data[i].interchatInterval,
+          automaticChat: data[i].automaticChat,
+          pairNumber: data[i].pairNumber,
+          successRequest: data[i].successRequest,
+          errorRequest: data[i].errorRequest,
+          adopt: data[i].adopt
         })
       }
       return this.data
+    },
+    trumpetEdit({ interchatTime, interchatInterval }) {
+      this.trumpetEditData = {
+        title: "编辑任务",
+        transmiData: [
+          { model: interchatTime, placeholder: "互聊时间" },
+          { model: interchatInterval, placeholder: "互聊间隔" }
+        ]
+      }
+      this.$refs["TrumpetEditModal"].isShowInputModal = true
     },
     createTask() {
       this.$refs["TrumpetCreateTaskModal"].isShowCreateModal = true

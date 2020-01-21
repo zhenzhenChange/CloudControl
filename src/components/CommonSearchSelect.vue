@@ -32,6 +32,7 @@ export default {
 
 <style lang="scss" scoped>
 .SearchSelect {
+  float: left;
   .title {
     float: left;
     height: 32px;
