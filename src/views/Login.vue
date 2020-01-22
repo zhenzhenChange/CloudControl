@@ -2,14 +2,14 @@
   <div class="login">
     <Card class="login-card">
       <p slot="title"><Icon type="md-cloud-done" />请登录</p>
-      <Form ref="loginForm" :model="loginForm" :rules="loginRules" inline>
+      <Form :model="loginForm" inline>
         <FormItem prop="username">
           <Input
             clearable
             type="text"
             size="large"
             placeholder="username"
-            v-model="loginForm.username"
+            v-model="loginForm.user_account"
           >
             <Icon type="ios-person-outline" slot="prepend"></Icon>
           </Input>
@@ -20,7 +20,7 @@
             size="large"
             type="password"
             placeholder="password"
-            v-model="loginForm.password"
+            v-model="loginForm.user_pwd"
           >
             <Icon type="ios-lock-outline" slot="prepend"></Icon>
           </Input>
@@ -31,7 +31,7 @@
             type="info"
             shape="circle"
             icon="ios-radio-outline"
-            @click="submitLogin('loginForm')"
+            @click="submitLogin"
             >登录</Button
           >
         </FormItem>
@@ -45,43 +45,19 @@ export default {
   data() {
     return {
       loginForm: {
-        username: "",
-        password: ""
-      },
-      loginRules: {
-        username: [
-          {
-            required: true,
-            trigger: "blur",
-            message: "请填写用户名"
-          }
-        ],
-        password: [
-          {
-            required: true,
-            trigger: "blur",
-            message: "请填写密码"
-          },
-          {
-            min: 6,
-            type: "string",
-            trigger: "blur",
-            message: "密码长度不能少于6位"
-          }
-        ]
+        user_account: "100001",
+        user_pwd: "100001"
       }
     }
   },
   methods: {
-    submitLogin(name) {
-      this.$refs[name].validate(valid => {
-        if (valid) {
-          this.$router.push("/grouping")
-          this.$Message.success("登录成功!")
-        } else {
-          this.$Message.error("未知错误!")
-        }
-      })
+    async submitLogin() {
+      const { msg, data } = await this.$http.post("/login", this.loginForm)
+      if (msg === "登录成功") {
+        this.$router.push("/grouping")
+        this.$store.commit("SaveUserID", data.user_id)
+      }
+      this.$Message.success(msg)
     }
   }
 }

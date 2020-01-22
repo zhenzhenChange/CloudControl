@@ -89,11 +89,11 @@ const passiveData = Mock.mock({
   ]
 })
 
-Mock.mock("/grouping", "get", () => {
+Mock.mock("/account/getAllGroup", "get", () => {
   return groupingData
 })
 
-Mock.mock("/maccount", "get", () => {
+Mock.mock("/account/deleteAccount", "get", () => {
   return mAccountData
 })
 
@@ -101,7 +101,7 @@ Mock.mock("/saccount", "get", () => {
   return SAccountData
 })
 
-Mock.mock("/tag", "get", () => {
+Mock.mock("/account/getAllTag", "get", () => {
   return TagData
 })
 

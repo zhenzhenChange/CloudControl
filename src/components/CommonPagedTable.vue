@@ -1,9 +1,10 @@
 <template>
   <!-- 集合分页的表格复用组件 -->
-  <div class="PagedTable">
+  <div class="PagedTable mt-10">
     <Table
       stripe
       border
+      ref="CommonTable"
       :data="tableData"
       :columns="dataColumns"
       @on-select-all="selectAll"
@@ -29,9 +30,7 @@
 <script>
 export default {
   name: "PagedTable",
-  props: {
-    dataColumns: Array
-  },
+  props: { dataColumns: Array },
   data() {
     return {
       tableData: []
@@ -56,7 +55,7 @@ export default {
     selectionChange(selection) {
       const length = selection.length
       length ? (this.$parent.mutex = true) : (this.$parent.mutex = false)
-      this.$parent.selectedData = selection
+      this.$parent.operationData = selection
     }
   }
 }

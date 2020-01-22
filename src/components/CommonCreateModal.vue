@@ -2,7 +2,7 @@
   <Modal
     width="600"
     :mask-closable="false"
-    v-model="isShowMAccountCreateModal"
+    v-model="isShowCreateModal"
     @on-visible-change="visibleChange"
     class-name="vertical-center-modal"
   >
@@ -34,7 +34,7 @@
     >
     </Input>
     <div slot="footer">
-      <Button icon="md-remove-circle">取消</Button>
+      <Button icon="md-remove-circle" @click="catchClick">取消</Button>
       <Button type="success" icon="md-checkmark">确定</Button>
     </div>
   </Modal>
@@ -42,7 +42,7 @@
 
 <script>
 export default {
-  name: "MAccountCreateModal",
+  name: "CommonCreateModal",
   props: {
     infos: Array,
     title: String
@@ -76,14 +76,12 @@ export default {
         }
       ],
       accountData: "",
-      isShowMAccountCreateModal: false
+      isShowCreateModal: false
     }
   },
   methods: {
     visibleChange(value) {
-      if (!value) {
-        this.isShowMAccountCreateModal = false
-      }
+      value ? "" : (this.isShowCreateModal = false)
     },
     handleBeforeUpload(file) {
       const reader = new FileReader()
@@ -92,6 +90,9 @@ export default {
         this.accountData = reader.result
       }
       return false
+    },
+    catchClick() {
+      this.isShowCreateModal = false
     }
   }
 }

@@ -3,21 +3,16 @@
   <div class="Tag">
     <SearchInput :infos="['标签名称']" />
     <Divider dashed />
-    <CDButton :batch="batch" />
-    <InputModal :title="'添加标签'" ref="TagInputModal" :infos="['标签名称']" />
-    <ConfirmModal
-      :title="'删除标签'"
-      :total="selectionData"
-      ref="TagConfirmModal"
+    <ButtonList :buttonListInfos="buttonListInfos" />
+    <CommonEditModal :config="editConfig" ref="GroupingEditModal" />
+    <CommonConfirmModal
+      :data="operationData"
+      :config="operationConfig"
+      ref="ConfirmModal"
     />
     <Divider class="float-left" dashed />
-    <PagedTable ref="TagPagedTable" :dataColumns="TagColumns" />
-    <GroupEditModal ref="TagEditModal" :data="tagEditData" />
-    <GroupRemoveModal
-      :title="'删除分组'"
-      :dataSign="dataSign"
-      ref="TagRemoveModal"
-    />
+    <UnCheckButton :el="refEl" />
+    <PagedTable :ref="refEl" :dataColumns="TagColumns" />
   </div>
 </template>
 
@@ -26,11 +21,22 @@ export default {
   data() {
     return {
       data: [],
-      batch: true,
-      radio: false,
-      dataSign: {},
-      tagEditData: {},
-      selectionData: [],
+      mutex: false,
+      operationData: [],
+      refEl: "TagPagedTable",
+      buttonListInfos: [
+        { id: "remove", name: "删除", icon: "md-trash", type: "error" },
+        { id: "add", name: "添加", icon: "md-add-circle", type: "primary" }
+      ],
+      editConfig: {
+        icon: "md-add-circle",
+        color: "#2D8CF0",
+        title: "添加标签",
+        isUpdate: false,
+        inputInfos: [{ desc: "标签名称", label: "标签名称", value: null }],
+        tryBtn: "确定"
+      },
+      operationConfig: {},
       TagColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
@@ -48,12 +54,12 @@ export default {
                     size: "small",
                     type: "primary",
                     icon: "md-create",
-                    disabled: this.radio
+                    disabled: this.mutex
                   },
                   style: { marginRight: "5px" },
                   on: {
                     click: () => {
-                      this.tagEdit(params.row)
+                      this.update(params.row)
                     }
                   }
                 },
@@ -66,11 +72,11 @@ export default {
                     type: "error",
                     size: "small",
                     icon: "md-trash",
-                    disabled: this.radio
+                    disabled: this.mutex
                   },
                   on: {
                     click: () => {
-                      this.tagRemove(params.row)
+                      this.remove(params.row)
                     }
                   }
                 },
@@ -86,11 +92,11 @@ export default {
     this.getData()
   },
   mounted() {
-    this.$refs["TagPagedTable"].tableData = this.data
+    this.$refs[this.refEl].tableData = this.data
   },
   methods: {
     async getData() {
-      const { data } = await this.$http.getAllTag()
+      const { data } = await this.$http.get("/account/getAllTag")
       const length = data.length
       for (let i = 0; i < length; i++) {
         this.data.push({
@@ -100,22 +106,25 @@ export default {
       }
       return this.data
     },
-    tagEdit({ tag_name }) {
-      this.tagEditData = {
-        title: "编辑标签",
-        transmiData: [{ model: tag_name, placeholder: "标签名称" }]
+    update({ tag_name }) {
+      this.editConfig.title = "编辑标签"
+      this.editConfig.icon = "md-create"
+      this.editConfig.isUpdate = true
+      this.editConfig.inputInfos[0].value = tag_name
+      this.$refs["GroupingEditModal"].isShowEditModal = true
+    },
+    remove({ tag_name }) {
+      this.operationConfig = {
+        icon: "md-trash",
+        color: "#ED4014",
+        title: "删除",
+        operation: "删除",
+        btnType: "error",
+        btnIcon: "md-trash",
+        btnText: "删除"
       }
-      this.$refs["TagEditModal"].isShowInputModal = true
-    },
-    tagRemove(arg) {
-      this.dataSign = arg
-      this.$refs["TagRemoveModal"].isShowConfirmModal = true
-    },
-    addModalVisibleChange() {
-      this.$refs["TagInputModal"].isShowInputModal = true
-    },
-    deleteModalVisibleChange() {
-      this.$refs["TagConfirmModal"].isShowConfirmModal = true
+      this.operationData.push(tag_name)
+      this.$refs["ConfirmModal"].isShowConfirmModal = true
     }
   }
 }

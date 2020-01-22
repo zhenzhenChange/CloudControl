@@ -6,7 +6,7 @@ import router from "./router"
 import DayFormat from "dayjs"
 import ViewUI from "view-design"
 
-import "./mock/index.js"
+// import "./mock/index.js"
 import "./assets/css/style.scss"
 import "view-design/dist/styles/iview.css"
 

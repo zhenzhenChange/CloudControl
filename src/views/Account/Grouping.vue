@@ -4,40 +4,37 @@
     <SearchInput :infos="['分组名称']" />
     <Divider dashed />
     <ButtonList :buttonListInfos="buttonListInfos" />
-    <InputModal
-      :title="'添加分组'"
-      ref="GroupingInputModal"
-      :infos="['分组名称', '排序数字']"
-    />
+    <CommonEditModal :config="editConfig" ref="GroupingEditModal" />
     <CommonConfirmModal
-      :config="config"
-      :data="selectedData"
-      ref="GroupingDeleteModal"
+      :data="operationData"
+      :config="operationConfig"
+      ref="ConfirmModal"
     />
     <Divider class="float-left" dashed />
-    <PagedTable ref="GroupingPagedTable" :dataColumns="GroupingColumns" />
-    <!-- 模态窗 -->
-    <GroupEditModal ref="GroupEditModal" :data="groupEditData" />
+    <UnCheckButton :el="refEl" />
+    <PagedTable :ref="refEl" :dataColumns="GroupingColumns" />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   data() {
     return {
       data: [],
       mutex: false,
-      selectedData: [],
-      groupEditData: {},
-      config: {
-        icon: "md-trash",
-        color: "#ED4014",
-        title: "删除分组",
-        operation: "删除",
-        btnType: "error",
-        btnIcon: "md-trash",
-        btnText: "删除"
+      operationData: [],
+      refEl: "GroupingPagedTable",
+      editConfig: {
+        icon: "md-add-circle",
+        color: "#2D8CF0",
+        title: "添加分组",
+        isUpdate: false,
+        inputInfos: [{ desc: "分组名称", label: "分组名称", value: null }],
+        editData: {},
+        tryBtn: "确定"
       },
+      operationConfig: {},
       buttonListInfos: [
         { id: "remove", name: "删除", icon: "md-trash", type: "error" },
         { id: "add", name: "添加", icon: "md-add-circle", type: "primary" }
@@ -45,19 +42,18 @@ export default {
       GroupingColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { align: "center", title: "分组名称", key: "group_name" },
-        { sortable: true, align: "center", title: "排序数字", key: "group_id" },
+        { align: "center", title: "分组名称", key: "groupName" },
         {
           sortable: true,
           align: "center",
           title: "创建时间",
-          key: "group_create_date",
+          key: "groupCreateDate",
           render: (h, params) => {
             return h(
               "div",
               this.$options.filters.date(
                 this.$refs["GroupingPagedTable"].tableData[params.index]
-                  .group_create_date
+                  .groupCreateDate
               )
             )
           }
@@ -71,11 +67,16 @@ export default {
               h(
                 "Button",
                 {
-                  props: { size: "small", type: "primary", icon: "md-create" },
+                  props: {
+                    size: "small",
+                    type: "primary",
+                    icon: "md-create",
+                    disabled: this.mutex
+                  },
                   style: { marginRight: "5px" },
                   on: {
                     click: () => {
-                      this.groupEdit(params.row)
+                      this.update(params.row)
                     }
                   }
                 },
@@ -92,7 +93,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.groupRemove(params.row)
+                      this.remove(params.row)
                     }
                   }
                 },
@@ -108,41 +109,49 @@ export default {
     this.getData()
   },
   mounted() {
-    this.$refs["GroupingPagedTable"].tableData = this.data
+    this.$refs[this.refEl].tableData = this.data
+  },
+  computed: {
+    ...mapState({
+      userID: state => state.userID
+    })
   },
   methods: {
     async getData() {
-      const { data } = await this.$http.getAllGroup()
-      const length = data.length
+      const res = await this.$http.get("/account/getAllGroup", {
+        params: { user_id: 100001 }
+      })
+      const length = res.length
       for (let i = 0; i < length; i++) {
         this.data.push({
-          serialNumber: data[i].serialNumber,
-          group_name: data[i].group_name,
-          group_id: data[i].group_id,
-          group_create_date: data[i].group_create_date
+          serialNumber: i + 1,
+          groupName: res[i].groupName,
+          groupId: res[i].groupId,
+          groupCreateDate: res[i].groupCreateDate
         })
       }
       return this.data
     },
-    groupEdit({ group_name, group_id }) {
-      this.groupEditData = {
-        title: "编辑分组",
-        transmiData: [
-          { model: group_name, placeholder: "分组名称" },
-          { model: group_id, placeholder: "排序数字" }
-        ]
+    update({ groupName, groupId }) {
+      this.editConfig.title = "编辑分组"
+      this.editConfig.icon = "md-create"
+      this.editConfig.isUpdate = true
+      this.editConfig.inputInfos[0].value = groupName
+      this.$refs["GroupingEditModal"].groupId = groupId
+      this.$refs["GroupingEditModal"].isShowEditModal = true
+    },
+    remove({ groupId }) {
+      this.operationConfig = {
+        icon: "md-trash",
+        color: "#ED4014",
+        title: "删除",
+        operation: "删除",
+        btnType: "error",
+        btnIcon: "md-trash",
+        btnText: "删除"
       }
-      this.$refs["GroupEditModal"].isShowInputModal = true
-    },
-    groupRemove({ group_id }) {
-      this.selectedData.push(group_id)
-      this.$refs["GroupingDeleteModal"].isShowModal = true
-    },
-    addModalVisibleChange() {
-      this.$refs["GroupingInputModal"].isShowInputModal = true
-    },
-    deleteModalVisibleChange() {
-      this.$refs["GroupingConfirmModal"].isShowConfirmModal = true
+      this.operationData.push(groupId)
+      this.$refs["ConfirmModal"].isShowConfirmModal = true
     }
   }
 }

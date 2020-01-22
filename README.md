@@ -32,3 +32,10 @@ npm run lint
 - ② 刷新页面默认路由未更换 √
 - ③ 面包屑导航 ×
 - ④ 菜单栏子路由不对应父路由高亮与展开 ×
+
+
+### API BUG
+
+- ① 添加分组不能传中文字符（/account/addGroup）×
+- ② 修改分组不能传中文字符（/account/updateGroup） ×
+- ③ 分组信息时间异常问题（/account/getAllGroup ×
