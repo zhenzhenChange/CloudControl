@@ -6,6 +6,6 @@ module.exports = {
         changeOrigin: true
       }
     }
-  },
-  publicPath: "/cloud-control/"
+  }
+  // publicPath: "/cloud-control/"
 }

@@ -44,10 +44,7 @@
 export default {
   data() {
     return {
-      loginForm: {
-        user_account: "100001",
-        user_pwd: "100001"
-      }
+      loginForm: { user_account: "admin", user_pwd: "123456" }
     }
   },
   methods: {
@@ -55,7 +52,7 @@ export default {
       const { msg, data } = await this.$http.post("/login", this.loginForm)
       if (msg === "登录成功") {
         this.$router.push("/grouping")
-        this.$store.commit("SaveUserID", data.user_id)
+        this.$store.commit("saveID", data.user_id)
       }
       this.$Message.success(msg)
     }

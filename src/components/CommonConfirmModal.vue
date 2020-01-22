@@ -41,18 +41,21 @@ export default {
       value ? "" : (this.isShowConfirmModal = false)
     },
     async tryClick() {
+      const parent = this.$parent
       let IDArray = []
       if (this.data.length === 1) {
-        IDArray.push(String(this.data[0]))
+        IDArray.push(this.data[0])
       } else {
         this.data.forEach(item => IDArray.push(String(item.groupId)))
       }
       const deleteData = { group_id: IDArray, user_id: 100001 }
       const { msg } = await this.$http.post("/account/deleteGroup", deleteData)
+      parent.operationData = []
       if (msg) {
-        this.$parent.getData()
+        parent.getData()
         this.$Message.success("删除成功！")
         this.isShowConfirmModal = false
+        parent.$refs[parent.refEl].$refs["CommonTable"].selectAll(false)
       }
     },
     catchClick() {

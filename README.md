@@ -36,6 +36,7 @@ npm run lint
 
 ### API BUG
 
-- ① 添加分组不能传中文字符（/account/addGroup）×
-- ② 修改分组不能传中文字符（/account/updateGroup） ×
-- ③ 分组信息时间异常问题（/account/getAllGroup ×
+- ① 添加分组不能传中文字符（/account/addGroup）√
+- ② 修改分组不能传中文字符（/account/updateGroup） √
+- ③ 分组信息时间异常问题（/account/getAllGroup） ×
+- ④ 返回的信息没有转成对象（如：“{'code': 0, 'msg':'修改成功'}”）×

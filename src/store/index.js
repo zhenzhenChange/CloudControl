@@ -5,18 +5,17 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    userID: "" || localStorage.getItem("userID")
+    user_id: "" || localStorage.getItem("user_id")
   },
   mutations: {
-    SaveUserID: (state, userID) => {
-      state.userID = userID
-      localStorage.setItem("userID", userID)
+    saveID: (state, user_id) => {
+      state.user_id = user_id
+      localStorage.setItem("user_id", user_id)
     }
   },
-  actions: {},
-  modules: {
-    userID: state => {
-      state.userID
+  getters: {
+    user_id: state => {
+      state.user_id
     }
   }
 })

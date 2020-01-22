@@ -16,16 +16,30 @@
       />
       {{ config.title }}
     </p>
-    <Input
-      clearable
-      :key="index"
-      class="mb-10"
-      v-model="inputInfo.value"
-      :placeholder="`请输入${inputInfo.desc}`"
-      v-for="(inputInfo, index) in config.inputInfos"
-    >
-      <span slot="prepend">{{ inputInfo.label }}</span>
-    </Input>
+    <div v-if="!config.isUpdate">
+      <Input
+        clearable
+        :key="index"
+        class="mb-10"
+        v-model="value"
+        :placeholder="`请输入${inputInfo.desc}`"
+        v-for="(inputInfo, index) in config.inputInfos"
+      >
+        <span slot="prepend">{{ inputInfo.label }}</span>
+      </Input>
+    </div>
+    <div v-if="config.isUpdate">
+      <Input
+        clearable
+        :key="index"
+        class="mb-10"
+        v-model="inputInfo.model"
+        :placeholder="`请输入${inputInfo.desc}`"
+        v-for="(inputInfo, index) in config.inputInfos"
+      >
+        <span slot="prepend">{{ inputInfo.label }}</span>
+      </Input>
+    </div>
     <div slot="footer">
       <Button icon="md-remove-circle" @click="catchClick">取消</Button>
       <Button type="success" icon="md-checkmark" @click="tryClick">
@@ -36,15 +50,20 @@
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   name: "CommonEditModal",
   props: { config: Object },
   data() {
     return {
-      groupId: "",
-      userID: "",
+      value: "",
       isShowEditModal: false
     }
+  },
+  computed: {
+    ...mapState({
+      user_id: state => state.user_id
+    })
   },
   methods: {
     visibleChange(value) {
@@ -56,8 +75,8 @@ export default {
     },
     catchClick() {
       this.config.isUpdate
-        ? this.$parent.editConfig.inputInfos.forEach(
-            info => (info.value = null)
+        ? this.$parent.updateConfig.inputInfos.forEach(
+            info => (info.model = "")
           )
         : ""
 
@@ -65,21 +84,23 @@ export default {
     },
     async create() {
       const createData = {
-        group_name: this.config.inputInfos[0].value,
-        user_id: 100001
+        group_name: this.value,
+        user_id: this.user_id
       }
       const { msg } = await this.$http.post("/account/addGroup", createData)
+      this.value = ""
       if (msg) {
         this.$parent.getData()
         this.$Message.success("添加成功！")
       }
     },
     async update() {
-      const updateData = {
-        group_name: this.config.inputInfos[0].value,
-        group_id: this.groupId,
-        user_id: 100001
+      let updateData = {}
+      for (let key in this.config.updateData) {
+        updateData = { [key]: this.config.updateData[key] }
       }
+      updateData[this.config.updateArgs] = this.config.inputInfos[0].model
+      updateData = Object.assign({}, updateData, { user_id: this.user_id })
       const res = await this.$http.post("/account/updateGroup", updateData)
       if (res) {
         this.$parent.getData()

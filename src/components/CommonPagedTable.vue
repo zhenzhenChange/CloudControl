@@ -4,8 +4,8 @@
     <Table
       stripe
       border
+      :data="data"
       ref="CommonTable"
-      :data="tableData"
       :columns="dataColumns"
       @on-select-all="selectAll"
       @on-selection-change="selectionChange"
@@ -18,7 +18,7 @@
           show-sizer
           show-elevator
           :current="1"
-          :total="tableData.length"
+          :total="data.length"
           @on-change="changePage"
           @on-page-size-change="changeSize"
         />
@@ -30,15 +30,10 @@
 <script>
 export default {
   name: "PagedTable",
-  props: { dataColumns: Array },
-  data() {
-    return {
-      tableData: []
-    }
-  },
+  props: { data: Array, dataColumns: Array },
   methods: {
     changePage() {
-      this.tableData = this.$parent.data
+      // this.tableData = this.$parent.data
     },
     changeSize(pageSize) {
       this.$parent.batch = true

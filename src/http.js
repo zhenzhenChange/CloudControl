@@ -3,7 +3,6 @@ import axios from "axios"
 
 const http = axios.create({
   baseURL: "/api",
-  // baseURL: "/",
   timeout: 5000
 })
 

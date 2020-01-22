@@ -22,21 +22,13 @@ export default {
     clickEvent(btnID) {
       const parent = this.$parent
       const parentRefs = parent.$refs
-      if (btnID === "remove" || btnID === "up" || btnID === "down") {
+      if (btnID === "remove-g" || btnID === "up" || btnID === "down") {
         if (!parent.operationData.length) {
           this.$Message.warning("请先勾选要处理的数据～")
           return
         }
-        if (btnID === "remove") {
-          parent.operationConfig = {
-            icon: "md-trash",
-            color: "#ED4014",
-            title: "删除分组",
-            operation: "删除",
-            btnType: "error",
-            btnIcon: "md-trash",
-            btnText: "删除"
-          }
+        if (btnID === "remove-g") {
+          parent.remove(null)
         } else if (btnID === "up") {
           parent.operationConfig = {
             icon: "ios-trending-up",
@@ -59,8 +51,16 @@ export default {
           }
         }
         parentRefs["ConfirmModal"].isShowConfirmModal = true
-      } else if (btnID === "add") {
-        parentRefs["GroupingEditModal"].isShowEditModal = true
+      } else if (btnID === "create-g") {
+        parent.updateConfig = {
+          icon: "md-add-circle",
+          color: "#2D8CF0",
+          title: "添加分组",
+          isUpdate: false,
+          tryBtn: "确定",
+          inputInfos: [{ desc: "分组名称", label: "分组名称" }]
+        }
+        parent.create()
       } else if (btnID === "create") {
         parentRefs["CreateModal"].isShowCreateModal = true
       }
