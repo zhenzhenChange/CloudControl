@@ -17,8 +17,8 @@
           show-total
           show-sizer
           show-elevator
-          :current="1"
-          :total="data.length"
+          :current="current"
+          :total="length"
           @on-change="changePage"
           @on-page-size-change="changeSize"
         />
@@ -30,16 +30,16 @@
 <script>
 export default {
   name: "PagedTable",
-  props: { data: Array, dataColumns: Array },
+  props: { data: Array, length: Number, current: Number, dataColumns: Array },
   methods: {
-    changePage() {
-      // this.tableData = this.$parent.data
+    changePage(index) {
+      let _start = (index - 1) * this.$parent.pageSize
+      let _end = index * this.$parent.pageSize
+      this.$parent.pageData = this.$parent.data.slice(_start, _end)
+      this.$parent.pageCurrent = index
     },
     changeSize(pageSize) {
-      this.$parent.batch = true
-      this.$parent.radio = !this.$parent.batch
-      this.$parent.pageSize = pageSize
-      this.changePage()
+      this.$parent.changeSize(pageSize)
     },
     selectAll() {
       this.$parent.batch = false

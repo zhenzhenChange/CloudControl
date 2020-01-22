@@ -93,7 +93,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  // base: "/cloud-control/",
+  base: "/cloud-control/",
   mode: "history",
   routes
 })

@@ -12,7 +12,13 @@
     />
     <Divider class="float-left" dashed />
     <UnCheckButton :el="refEl" />
-    <PagedTable :ref="refEl" :data="data" :dataColumns="GroupingColumns" />
+    <PagedTable
+      :ref="refEl"
+      :data="pageData"
+      :current="pageCurrent"
+      :length="data.length"
+      :dataColumns="GroupingColumns"
+    />
   </div>
 </template>
 
@@ -22,6 +28,9 @@ export default {
   data() {
     return {
       data: [],
+      pageData: [],
+      pageSize: 10,
+      pageCurrent: 1,
       mutex: false,
       updateConfig: {},
       operationData: [],
@@ -110,6 +119,9 @@ export default {
           groupCreateDate: this.$options.filters.date(item.groupCreateDate)
         })
       })
+      for (let i = 0; i < this.pageSize; i++) {
+        this.pageData.push(this.data[i])
+      }
     },
     create() {
       this.$refs["GroupingEditModal"].isShowEditModal = true
@@ -141,13 +153,37 @@ export default {
         operation: "删除",
         btnType: "error",
         btnIcon: "md-trash",
-        btnText: "删除"
+        btnText: "删除",
+        url: "/account/deleteGroup",
+        deleteArgs: "group_id"
       }
       if (row) {
         const { groupId: group_id } = row
+        this.operationConfig.type = "single"
         this.operationData.push(String(group_id))
       }
       this.$refs["ConfirmModal"].isShowConfirmModal = true
+    },
+    async search(value) {
+      const res = await this.$http.get("/account/getGroupByName", {
+        params: {
+          group_name: value,
+          user_id: this.user_id
+        }
+      })
+      this.data = []
+      res.forEach((item, index) => {
+        this.data.push({
+          serialNumber: index + 1,
+          groupName: item.groupName,
+          groupId: item.groupId,
+          groupCreateDate: this.$options.filters.date(item.groupCreateDate)
+        })
+      })
+    },
+    changeSize(pageSize) {
+      this.pageSize = pageSize
+      // this.getData()
     }
   }
 }

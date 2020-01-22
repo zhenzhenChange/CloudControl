@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   name: "CommonConfirmModal",
   props: { data: Array, config: Object },
@@ -36,30 +37,37 @@ export default {
       isShowConfirmModal: false
     }
   },
+  computed: {
+    ...mapState({
+      user_id: state => state.user_id
+    })
+  },
   methods: {
     visibleChange(value) {
       value ? "" : (this.isShowConfirmModal = false)
     },
     async tryClick() {
+      const IDArray = []
       const parent = this.$parent
-      let IDArray = []
-      if (this.data.length === 1) {
+      if (this.config.type === "single") {
         IDArray.push(this.data[0])
       } else {
         this.data.forEach(item => IDArray.push(String(item.groupId)))
       }
-      const deleteData = { group_id: IDArray, user_id: 100001 }
-      const { msg } = await this.$http.post("/account/deleteGroup", deleteData)
-      parent.operationData = []
+      let operationData = { [this.config.deleteArgs]: IDArray }
+      operationData = Object.assign({}, operationData, {
+        user_id: this.user_id
+      })
+      const { msg } = await this.$http.post(this.config.url, operationData)
       if (msg) {
         parent.getData()
-        this.$Message.success("删除成功！")
+        this.$Message.success(`${this.config.operation}成功！`)
         this.isShowConfirmModal = false
         parent.$refs[parent.refEl].$refs["CommonTable"].selectAll(false)
       }
     },
     catchClick() {
-      if (this.data.length === 1) {
+      if (this.config.type === "single") {
         this.$parent.operationData = []
       }
       this.isShowConfirmModal = false

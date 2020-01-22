@@ -5,20 +5,41 @@
       clearable
       :key="index"
       class="mr-10"
+      v-model="value"
+      @on-change="change"
       :placeholder="`请输入${info}`"
       v-for="(info, index) in infos"
     >
       <span slot="prepend">{{ info }}</span>
     </Input>
-    <Button type="primary" shape="circle" icon="ios-search" />
+    <Button type="primary" shape="circle" icon="ios-search" @click="search" />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   name: "SearchInput",
-  props: {
-    infos: Array
+  props: { infos: Array },
+  data() {
+    return {
+      value: ""
+    }
+  },
+  computed: {
+    ...mapState({ user_id: state => state.user_id })
+  },
+  methods: {
+    search() {
+      if (!this.value) {
+        this.$parent.getData()
+        return
+      }
+      this.$parent.search(this.value)
+    },
+    change() {
+      this.value ? "" : this.$parent.getData()
+    }
   }
 }
 </script>
