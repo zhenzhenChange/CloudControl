@@ -52,7 +52,9 @@ export default {
       if (this.config.type === "single") {
         IDArray.push(this.data[0])
       } else {
-        this.data.forEach(item => IDArray.push(String(item.groupId)))
+        this.data.forEach(item =>
+          IDArray.push(String(item[this.config.looperArgs]))
+        )
       }
       let operationData = { [this.config.deleteArgs]: IDArray }
       operationData = Object.assign({}, operationData, {
@@ -62,8 +64,9 @@ export default {
       if (msg) {
         parent.getData()
         this.$Message.success(`${this.config.operation}成功！`)
+        parent.$refs["Search"].keyWords = ""
         this.isShowConfirmModal = false
-        parent.$refs[parent.refEl].$refs["CommonTable"].selectAll(false)
+        parent.$refs[parent.pagedTableRef].$refs["CommonTable"].selectAll(false)
       }
     },
     catchClick() {

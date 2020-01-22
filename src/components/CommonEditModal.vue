@@ -79,29 +79,24 @@ export default {
             info => (info.model = "")
           )
         : ""
-
       this.isShowEditModal = false
     },
-    async create() {
-      const createData = {
-        group_name: this.value,
-        user_id: this.user_id
-      }
-      const { msg } = await this.$http.post("/account/addGroup", createData)
-      this.value = ""
-      if (msg) {
-        this.$parent.getData()
-        this.$Message.success("添加成功！")
-      }
+    create() {
+      this.$parent.create()
     },
     async update() {
       let updateData = {}
-      for (let key in this.config.updateData) {
-        updateData = { [key]: this.config.updateData[key] }
+      const config = this.config
+      const args = config.updateArgs
+      const length = args.length
+      for (let key in config.updateData) {
+        updateData[key] = config.updateData[key]
       }
-      updateData[this.config.updateArgs] = this.config.inputInfos[0].model
+      for (let i = 0; i < length; i++) {
+        updateData[args[i]] = config.inputInfos[i].model
+      }
       updateData = Object.assign({}, updateData, { user_id: this.user_id })
-      const res = await this.$http.post("/account/updateGroup", updateData)
+      const res = await this.$http.post(config.url, updateData)
       if (res) {
         this.$parent.getData()
         this.$Message.success("修改成功!")

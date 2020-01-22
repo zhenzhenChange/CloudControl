@@ -5,7 +5,7 @@
       clearable
       :key="index"
       class="mr-10"
-      v-model="value"
+      v-model="keyWords"
       @on-change="change"
       :placeholder="`请输入${info}`"
       v-for="(info, index) in infos"
@@ -23,7 +23,7 @@ export default {
   props: { infos: Array },
   data() {
     return {
-      value: ""
+      keyWords: ""
     }
   },
   computed: {
@@ -31,14 +31,14 @@ export default {
   },
   methods: {
     search() {
-      if (!this.value) {
+      if (!this.keyWords) {
         this.$parent.getData()
         return
       }
-      this.$parent.search(this.value)
+      this.$parent.getData(this.keyWords)
     },
     change() {
-      this.value ? "" : this.$parent.getData()
+      this.keyWords ? "" : this.$parent.getData()
     }
   }
 }

@@ -22,23 +22,15 @@ export default {
     clickEvent(btnID) {
       const parent = this.$parent
       const parentRefs = parent.$refs
-      if (btnID === "remove-g" || btnID === "up" || btnID === "down") {
+      if (btnID === "remove-g" || btnID === "remove-a") {
         if (!parent.operationData.length) {
           this.$Message.warning("请先勾选要处理的数据～")
           return
         }
         if (btnID === "remove-g") {
           parent.remove(null)
-        } else if (btnID === "up") {
-          parent.operationConfig = {
-            icon: "ios-trending-up",
-            color: "#19BE6B",
-            title: "一键上线",
-            operation: "上线",
-            btnType: "success",
-            btnIcon: "md-checkmark",
-            btnText: "确定"
-          }
+        } else if (btnID === "remove-a") {
+          parent.remove(null)
         } else if (btnID === "down") {
           parent.operationConfig = {
             icon: "ios-trending-down",
@@ -60,9 +52,17 @@ export default {
           tryBtn: "确定",
           inputInfos: [{ desc: "分组名称", label: "分组名称" }]
         }
-        parent.create()
-      } else if (btnID === "create") {
-        parentRefs["CreateModal"].isShowCreateModal = true
+        parent.$refs[parent.editModalRef].isShowEditModal = true
+      } else if (btnID === "create-a") {
+        parent.updateConfig = {
+          icon: "md-add-circle",
+          color: "#2D8CF0",
+          title: "添加标签",
+          isUpdate: false,
+          tryBtn: "确定",
+          inputInfos: [{ desc: "标签名称", label: "标签名称" }]
+        }
+        parent.$refs[parent.editModalRef].isShowEditModal = true
       }
     }
   }

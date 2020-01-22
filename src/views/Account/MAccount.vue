@@ -7,8 +7,8 @@
     <Divider dashed />
     <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider dashed />
-    <UnCheckButton :el="refEl" />
-    <PagedTable :ref="refEl" :dataColumns="MAccountColumns" />
+    <UnCheckButton :el="pagedTableRef" />
+    <PagedTable :ref="pagedTableRef" :dataColumns="MAccountColumns" />
     <CommonConfirmModal
       ref="ConfirmModal"
       :data="operationData"
@@ -26,7 +26,7 @@ export default {
       mutex: false,
       operationData: [],
       operationConfig: {},
-      refEl: "MAccountPagedTable",
+      pagedTableRef: "MAccountPagedTable",
       cityList: [
         { value: "New York", label: "New York" },
         { value: "London", label: "London" },
@@ -171,7 +171,7 @@ export default {
     this.getData()
   },
   mounted() {
-    this.$refs[this.refEl].tableData = this.data
+    this.$refs[this.pagedTableRef].tableData = this.data
   },
   methods: {
     async getData() {

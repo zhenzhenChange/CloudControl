@@ -17,8 +17,7 @@
           show-total
           show-sizer
           show-elevator
-          :current="current"
-          :total="length"
+          :total="data.length"
           @on-change="changePage"
           @on-page-size-change="changeSize"
         />
@@ -30,7 +29,7 @@
 <script>
 export default {
   name: "PagedTable",
-  props: { data: Array, length: Number, current: Number, dataColumns: Array },
+  props: { data: Array, dataColumns: Array },
   methods: {
     changePage(index) {
       let _start = (index - 1) * this.$parent.pageSize
