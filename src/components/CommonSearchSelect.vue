@@ -7,6 +7,7 @@
       clearable
       filterable
       class="select"
+      v-model="value"
       :style="config.width ? `width:${config.width}` : 'width:200px;'"
       :placeholder="`请选择${config.info}`"
     >
@@ -23,7 +24,12 @@
 <script>
 export default {
   name: "SearchSelect",
-  props: { config: Object }
+  props: { config: Object },
+  data() {
+    return {
+      value: ""
+    }
+  }
 }
 </script>
 

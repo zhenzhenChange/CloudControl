@@ -39,7 +39,8 @@ npm run lint
 
 - ① 添加分组不能传中文字符（/account/addGroup）√
 - ② 修改分组不能传中文字符（/account/updateGroup） √
-- ③ 分组信息时间异常问题（/account/getAllGroup） ×
+- ③ 服务器时区时间异常 ×
 - ④ 返回的信息没有转成对象（如：“{'code': 0, 'msg':'修改成功'}”）（目前仅在/account/...下的API出现这种情况） ×
 - ⑤ 限制数据量（分页） ×
 - ⑥ 素材管理板块没有相应的（修改、删除、获取API） ×
+- ⑦ 添加账号数据无需返回密码（/account/addAccount） ×

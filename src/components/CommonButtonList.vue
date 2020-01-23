@@ -18,18 +18,39 @@
 export default {
   name: "ButtonList",
   props: { buttonListInfos: Array },
+  data() {
+    return {
+      commonConfig: {
+        icon: "md-trash",
+        color: "#ED4014",
+        title: "删除",
+        operation: "删除",
+        btnType: "error",
+        btnIcon: "md-trash",
+        btnText: "删除"
+      }
+    }
+  },
   methods: {
     clickEvent(btnID) {
       const parent = this.$parent
       const parentRefs = parent.$refs
-      if (btnID === "remove-g" || btnID === "remove-a") {
+      if (
+        btnID === "remove-g" ||
+        btnID === "remove-t" ||
+        btnID === "remove-m"
+      ) {
         if (!parent.operationData.length) {
           this.$Message.warning("请先勾选要处理的数据～")
           return
         }
         if (btnID === "remove-g") {
-          parent.remove(null)
-        } else if (btnID === "remove-a") {
+          parent.operationConfig = this.commonConfig
+          parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
+        } else if (btnID === "remove-t") {
+          parent.operationConfig = this.commonConfig
+          parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
+        } else if (btnID === "remove-m") {
           parent.remove(null)
         } else if (btnID === "down") {
           parent.operationConfig = {
@@ -42,7 +63,7 @@ export default {
             btnText: "确定"
           }
         }
-        parentRefs["ConfirmModal"].isShowConfirmModal = true
+        parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
       } else if (btnID === "create-g") {
         parent.updateConfig = {
           icon: "md-add-circle",
@@ -52,8 +73,8 @@ export default {
           tryBtn: "确定",
           inputInfos: [{ desc: "分组名称", label: "分组名称" }]
         }
-        parent.$refs[parent.editModalRef].isShowEditModal = true
-      } else if (btnID === "create-a") {
+        parentRefs[parent.EditModalRef].isShowEditModal = true
+      } else if (btnID === "create-t") {
         parent.updateConfig = {
           icon: "md-add-circle",
           color: "#2D8CF0",
@@ -62,7 +83,17 @@ export default {
           tryBtn: "确定",
           inputInfos: [{ desc: "标签名称", label: "标签名称" }]
         }
-        parent.$refs[parent.editModalRef].isShowEditModal = true
+        parentRefs[parent.EditModalRef].isShowEditModal = true
+      } else if (btnID === "create") {
+        parent.createConfig = {
+          title: "批量上传账号",
+          createConfig: {
+            title: "所属分组",
+            info: "分组",
+            options: parent.GroupData
+          }
+        }
+        parentRefs[parent.createModalRef].isShowCreateModal = true
       } else if (btnID === "newSpace") {
         parent.selectModalConfig = {
           icon: "md-send",
@@ -82,7 +113,7 @@ export default {
           tryIcon: "ios-send",
           tryBtn: "发布"
         }
-        parent.$refs[parent.selectRef].isShowSelectModal = true
+        parentRefs[parent.selectRef].isShowSelectModal = true
       }
     }
   }

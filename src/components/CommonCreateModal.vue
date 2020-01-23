@@ -7,14 +7,16 @@
     class-name="vertical-center-modal"
   >
     <p slot="header">
-      <Icon color="#2d8cf0" type="md-add-circle" class="mr-5" />{{ title }}
+      <Icon color="#2d8cf0" type="md-add-circle" class="mr-5" />
+      {{ config.title }}
     </p>
-    <SearchSelect
-      :info="'分组'"
-      :title="'所属分组'"
-      class="float-left"
-      :options="cityList"
-    />
+    <div v-if="config.createConfig">
+      <SearchSelect
+        ref="select"
+        class="float-left"
+        :config="config.createConfig"
+      />
+    </div>
     <Button class="ml--20" type="primary" shape="circle" icon="md-refresh" />
     <div class="upload mt-10 mb-10">
       <span class="title mr-10">账号数据</span>
@@ -35,7 +37,7 @@
     </Input>
     <div slot="footer">
       <Button icon="md-remove-circle" @click="catchClick">取消</Button>
-      <Button type="success" icon="md-checkmark">确定</Button>
+      <Button type="success" icon="md-checkmark" @click="tryClick">确定</Button>
     </div>
   </Modal>
 </template>
@@ -43,38 +45,9 @@
 <script>
 export default {
   name: "CommonCreateModal",
-  props: {
-    infos: Array,
-    title: String
-  },
+  props: { config: Object },
   data() {
     return {
-      cityList: [
-        {
-          value: "New York",
-          label: "New York"
-        },
-        {
-          value: "London",
-          label: "London"
-        },
-        {
-          value: "Sydney",
-          label: "Sydney"
-        },
-        {
-          value: "Ottawa",
-          label: "Ottawa"
-        },
-        {
-          value: "Paris",
-          label: "Paris"
-        },
-        {
-          value: "Canberra",
-          label: "Canberra"
-        }
-      ],
       accountData: "",
       isShowCreateModal: false
     }
@@ -92,7 +65,12 @@ export default {
       return false
     },
     catchClick() {
+      this.accountData = ""
+      this.$refs["select"].value = ""
       this.isShowCreateModal = false
+    },
+    tryClick() {
+      this.$parent.uploadData(this.accountData, this.$refs["select"].value)
     }
   }
 }

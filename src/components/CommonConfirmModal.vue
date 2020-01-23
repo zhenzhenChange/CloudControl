@@ -31,48 +31,25 @@
 import { mapState } from "vuex"
 export default {
   name: "CommonConfirmModal",
-  props: { data: Array, config: Object },
+  props: { config: Object },
   data() {
     return {
+      params: null,
       isShowConfirmModal: false
     }
   },
   computed: {
-    ...mapState({
-      user_id: state => state.user_id
-    })
+    ...mapState({ user_id: state => state.user_id })
   },
   methods: {
     visibleChange(value) {
       value ? "" : (this.isShowConfirmModal = false)
     },
-    async tryClick() {
-      const IDArray = []
-      const parent = this.$parent
-      if (this.config.type === "single") {
-        IDArray.push(this.data[0])
-      } else {
-        this.data.forEach(item =>
-          IDArray.push(String(item[this.config.looperArgs]))
-        )
-      }
-      let operationData = { [this.config.deleteArgs]: IDArray }
-      operationData = Object.assign({}, operationData, {
-        user_id: this.user_id
-      })
-      const { msg } = await this.$http.post(this.config.url, operationData)
-      if (msg) {
-        parent.getData()
-        this.$Message.success(`${this.config.operation}成功！`)
-        parent.$refs["Search"].keyWords = ""
-        this.isShowConfirmModal = false
-        parent.$refs[parent.pagedTableRef].$refs["CommonTable"].selectAll(false)
-      }
+    tryClick() {
+      this.$parent.remove(this.params)
+      this.params = null
     },
     catchClick() {
-      if (this.config.type === "single") {
-        this.$parent.operationData = []
-      }
       this.isShowConfirmModal = false
     }
   }

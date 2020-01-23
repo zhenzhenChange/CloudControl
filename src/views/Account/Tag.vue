@@ -1,18 +1,18 @@
 <template>
   <!-- 标签管理 -->
   <div class="Tag">
-    <SearchInput ref="Search" :infos="['标签名称']" />
+    <SearchInput :ref="SearchInputRef" :infos="['标签名称']" />
     <Divider dashed />
     <ButtonList :buttonListInfos="buttonListInfos" />
-    <CommonEditModal :config="updateConfig" :ref="editModalRef" />
+    <CommonEditModal :config="updateConfig" :ref="EditModalRef" />
     <CommonConfirmModal
-      ref="ConfirmModal"
       :data="operationData"
+      :ref="ConfirmModalRef"
       :config="operationConfig"
     />
     <Divider class="float-left" dashed />
-    <UnCheckButton :el="pagedTableRef" />
-    <PagedTable :ref="pagedTableRef" :data="data" :dataColumns="TagColumns" />
+    <UnCheckButton ref="UnCheckButton" :el="PagedTableRef" />
+    <PagedTable :ref="PagedTableRef" :data="data" :dataColumns="TagColumns" />
   </div>
 </template>
 
@@ -24,11 +24,13 @@ export default {
       data: [],
       mutex: false,
       operationData: [],
-      editModalRef: "TagEditModal",
-      pagedTableRef: "TagPagedTable",
+      EditModalRef: "TagEditModal",
+      PagedTableRef: "TagPagedTable",
+      SearchInputRef: "TagSearchInput",
+      ConfirmModalRef: "TagConfirmModal",
       buttonListInfos: [
-        { id: "remove-a", name: "删除", icon: "md-trash", type: "error" },
-        { id: "create-a", name: "添加", icon: "md-add-circle", type: "primary" }
+        { id: "remove-t", name: "删除", icon: "md-trash", type: "error" },
+        { id: "create-t", name: "添加", icon: "md-add-circle", type: "primary" }
       ],
       updateConfig: {
         icon: "md-add-circle",
@@ -38,7 +40,15 @@ export default {
         inputInfos: [{ desc: "标签名称", label: "标签名称", value: null }],
         tryBtn: "确定"
       },
-      operationConfig: {},
+      operationConfig: {
+        icon: "md-trash",
+        color: "#ED4014",
+        title: "删除",
+        operation: "删除",
+        btnType: "error",
+        btnIcon: "md-trash",
+        btnText: "删除"
+      },
       TagColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
@@ -79,7 +89,9 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.remove(params.row)
+                      const { tagId: tag_id } = params.row
+                      this.$refs[this.ConfirmModalRef].isShowConfirmModal = true
+                      this.$refs[this.ConfirmModalRef].params = tag_id
                     }
                   }
                 },
@@ -122,10 +134,10 @@ export default {
       })
     },
     async create() {
-      const editModal = this.$refs[this.editModalRef]
+      const editModal = this.$refs[this.EditModalRef]
       const createData = { tag_name: editModal.value, user_id: this.user_id }
       const { msg } = await this.$http.post("/account/addTag", createData)
-      this.$refs[this.editModalRef].value = ""
+      this.$refs[this.EditModalRef].value = ""
       if (msg) {
         this.getData()
         this.$Message.success("添加成功！")
@@ -143,27 +155,27 @@ export default {
         updateArgs: ["tag_name"],
         url: "/account/updateTag"
       }
-      this.$refs[this.editModalRef].isShowEditModal = true
+      this.$refs[this.EditModalRef].isShowEditModal = true
     },
-    remove(row) {
-      this.operationConfig = {
-        icon: "md-trash",
-        color: "#ED4014",
-        title: "删除",
-        operation: "删除",
-        btnType: "error",
-        btnIcon: "md-trash",
-        btnText: "删除",
-        url: "/account/deleteTag",
-        deleteArgs: "tag_id",
-        looperArgs: "tagId"
+    async remove(params) {
+      let TagIDArray = []
+      const ref = this.$refs
+      if (params) {
+        TagIDArray.push(String(params))
+      } else {
+        TagIDArray = this.operationData.map(item => String(item.tagId))
       }
-      if (row) {
-        const { tagId: tag_id } = row
-        this.operationConfig.type = "single"
-        this.operationData.push(String(tag_id))
+      const { msg } = await this.$http.post("/account/deleteTag", {
+        tag_id: TagIDArray,
+        user_id: this.user_id
+      })
+      if (msg) {
+        this.getData()
+        ref["UnCheckButton"].unCheck()
+        this.$Message.success(`删除成功！`)
+        ref[this.SearchInputRef].keyWords = ""
+        ref[this.ConfirmModalRef].isShowConfirmModal = false
       }
-      this.$refs["ConfirmModal"].isShowConfirmModal = true
     }
   }
 }

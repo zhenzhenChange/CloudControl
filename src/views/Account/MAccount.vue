@@ -1,42 +1,38 @@
 <template>
   <!-- 账号管理 -->
   <div class="MAccount">
-    <SearchSelect :info="'分组'" :title="'账号分组'" :options="cityList" />
-    <SearchSelect :info="'在线状态'" :title="'微信状态'" :options="cityList" />
-    <SearchInput :infos="['微信登录名', '代理IP']" />
-    <Divider dashed />
     <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider dashed />
     <UnCheckButton :el="pagedTableRef" />
-    <PagedTable :ref="pagedTableRef" :dataColumns="MAccountColumns" />
+    <PagedTable
+      :data="data"
+      :ref="pagedTableRef"
+      :dataColumns="MAccountColumns"
+    />
     <CommonConfirmModal
       ref="ConfirmModal"
       :data="operationData"
       :config="operationConfig"
     />
-    <CommonCreateModal ref="CreateModal" :title="'添加账号'" />
+    <CommonCreateModal :ref="createModalRef" :config="createConfig" />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   data() {
     return {
       data: [],
+      GroupData: [],
       mutex: false,
+      createConfig: {},
+      createModalRef: "CreateModal",
       operationData: [],
       operationConfig: {},
       pagedTableRef: "MAccountPagedTable",
-      cityList: [
-        { value: "New York", label: "New York" },
-        { value: "London", label: "London" },
-        { value: "Sydney", label: "Sydney" },
-        { value: "Ottawa", label: "Ottawa" },
-        { value: "Paris", label: "Paris" },
-        { value: "Canberra", label: "Canberra" }
-      ],
       buttonListInfos: [
-        { id: "remove", name: "删除", icon: "md-trash", type: "error" },
+        { id: "remove-m", name: "删除", icon: "md-trash", type: "error" },
         { id: "create", name: "添加", icon: "md-add-circle", type: "primary" },
         { id: "up", name: "一键上线", icon: "md-trending-up", type: "warning" },
         {
@@ -170,31 +166,57 @@ export default {
   created() {
     this.getData()
   },
-  mounted() {
-    this.$refs[this.pagedTableRef].tableData = this.data
+  computed: {
+    ...mapState({ user_id: state => state.user_id })
   },
   methods: {
     async getData() {
-      const { data } = await this.$http.get("/account/deleteAccount")
-      const length = data.length
-      for (let i = 0; i < length; i++) {
+      const res = await this.$http.get("/account/getAllGroup", {
+        params: { user_id: this.user_id }
+      })
+      res.forEach((item, index) => {
         this.data.push({
-          serialNumber: data[i].serialNumber,
-          lockState: data[i].lockState,
-          accountStatus: data[i].accountStatus,
-          wechatLoginName: data[i].wechatLoginName,
-          password: data[i].password,
-          nickName: data[i].nickName,
-          wxId: data[i].wxId,
-          wechatNumber: data[i].wechatNumber,
-          autograph: data[i].autograph,
-          subordinate: data[i].subordinate,
-          sex: data[i].sex,
-          city: data[i].city,
-          equipmentType: data[i].equipmentType
+          serialNumber: index + 1,
+          lockState: item.groupName,
+          accountStatus: item.groupName,
+          wechatLoginName: item.groupName,
+          password: item.groupName,
+          nickName: item.groupName,
+          wxId: item.groupName,
+          wechatNumber: item.groupName,
+          autograph: item.groupName,
+          subordinate: item.groupName,
+          sex: item.groupName,
+          city: item.groupName,
+          equipmentType: item.groupName
         })
-      }
-      return this.data
+        this.GroupData.push({ label: item.groupName, value: item.groupId })
+      })
+    },
+    async uploadData(accountData, group_id) {
+      let list = []
+      let str = accountData.split(/\n/g)
+      list = str
+        .map(item => item.split(/----/g))
+        .map(item => {
+          return { account: item[0], password: item[1], a16Data64: item[2] }
+        })
+      list.forEach((item, index) => {
+        if (!item.account || !item.password || !item.a16Data64) {
+          list.splice(index, 1)
+        }
+      })
+      const { data } = await this.$http.post("/account/addAccount", {
+        list,
+        groupId: String(group_id),
+        userId: this.user_id
+      })
+      this.$refs[this.createModalRef].accountData = ""
+      this.$refs[this.createModalRef].isShowCreateModal = false
+      this.$refs[this.createModalRef].$refs["select"].value = ""
+      this.$Message.info(
+        `已成功添加${data.success.length}条数据，失败${data.error.length}条`
+      )
     },
     online({ wxId }) {
       this.operationConfig = {
@@ -207,6 +229,21 @@ export default {
         btnText: "确定"
       }
       this.operationData.push(wxId)
+      this.$refs["ConfirmModal"].isShowConfirmModal = true
+    },
+    remove() {
+      this.operationConfig = {
+        icon: "md-trash",
+        color: "#ED4014",
+        title: "删除",
+        operation: "删除",
+        btnType: "error",
+        btnIcon: "md-trash",
+        btnText: "删除",
+        url: "/account/deleteAccount",
+        deleteArgs: "request_type",
+        looperArgs: "wxids"
+      }
       this.$refs["ConfirmModal"].isShowConfirmModal = true
     }
   }

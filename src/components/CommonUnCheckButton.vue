@@ -8,10 +8,9 @@ export default {
   props: { el: String },
   methods: {
     unCheck() {
-      this.$parent.$refs[this.el].$refs["CommonTable"].selectAll(false)
+      const parentRef = this.$parent.$refs
+      parentRef[this.el].$refs[parentRef[this.el].TableRef].selectAll(false)
     }
   }
 }
 </script>
-
-<style></style>

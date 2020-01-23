@@ -1,13 +1,14 @@
 <template>
   <div class="PullGroup">
-    <RangeDatePicker />
+    <SearchInput :infos="['微信群']" />
     <Divider dashed />
-    <SearchSelect :title="'订单状态'" :info="'状态'" :options="cityList" />
-    <SearchInput :infos="['任务名称']" />
-    <Divider dashed />
-    <ButtonList :buttonListInfos="ActionButtonListInfos" />
+    <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider />
-    <PagedTable ref="PullGroupPagedTable" :dataColumns="PullGroupColumns" />
+    <PagedTable
+      :data="data"
+      :ref="PagedTableRef"
+      :dataColumns="PullGroupColumns"
+    />
   </div>
 </template>
 
@@ -15,100 +16,40 @@
 export default {
   data() {
     return {
+      data: [],
+      PagedTableRef: "PullGroupPagedTable",
+      buttonListInfos: [
+        { id: "pull", type: "primary", icon: "md-add", name: "邀请进群" },
+        { id: "create-p", type: "primary", icon: "md-add", name: "创建群聊" }
+      ],
       PullGroupColumns: [
+        { width: 60, align: "center", type: "selection" },
+        { width: 70, align: "center", title: "序号", key: "mAccountNumber" },
+        { align: "center", title: "订单ID", key: "mAccountNumber" },
+        { align: "center", title: "任务名称", key: "mAccountNumber" },
+        { align: "center", title: "微信数", key: "mAccountNumber" },
+        { align: "center", title: "拉群标签", key: "mAccountNumber" },
+        { align: "center", title: "拉群类型", key: "mAccountNumber" },
+        { align: "center", title: "群最终人数", key: "mAccountNumber" },
+        { align: "center", title: "总拉群数", key: "mAccountNumber" },
+        { align: "center", title: "合格群数", key: "mAccountNumber" },
+        { align: "center", title: "不合格群数", key: "mAccountNumber" },
+        { align: "center", title: "创建时间", key: "mAccountNumber" },
+        { align: "center", title: "结束时间", key: "mAccountNumber" },
+        { align: "center", title: "当前状态", key: "mAccountNumber" },
         {
-          type: "selection",
-          width: 60,
-          align: "center"
-        },
-        {
-          title: "序号",
-          width: 70,
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "订单ID",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "任务名称",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "微信数",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "拉群标签",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "拉群类型",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "群最终人数",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "总拉群数",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "合格群数",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "不合格群数",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "创建时间",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "结束时间",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "当前状态",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "操作",
-          key: "groupAction",
           width: 250,
           align: "center",
+          title: "操作",
           render: (h /*params*/) => {
             return h("div", [
               h(
                 "Button",
                 {
-                  props: {
-                    type: "primary",
-                    size: "small",
-                    icon: "md-eye"
-                  },
-                  style: {
-                    marginRight: "5px"
-                  },
+                  props: { type: "primary", size: "small", icon: "md-eye" },
+                  style: { marginRight: "5px" },
                   on: {
-                    click: () => {
-                      // this.show(params.index)
-                    }
+                    click: () => {}
                   }
                 },
                 "查看"
@@ -121,13 +62,9 @@ export default {
                     size: "small",
                     icon: "md-aperture"
                   },
-                  style: {
-                    marginRight: "5px"
-                  },
+                  style: { marginRight: "5px" },
                   on: {
-                    click: () => {
-                      // this.remove(params.index)
-                    }
+                    click: () => {}
                   }
                 },
                 "运行"
@@ -135,49 +72,8 @@ export default {
             ])
           }
         }
-      ],
-      ActionButtonListInfos: [
-        {
-          type: "info",
-          icon: "md-download",
-          name: "导出报表"
-        },
-        {
-          type: "primary",
-          icon: "md-add",
-          name: "创建任务"
-        }
-      ],
-      cityList: [
-        {
-          value: "New York",
-          label: "New York"
-        },
-        {
-          value: "London",
-          label: "London"
-        },
-        {
-          value: "Sydney",
-          label: "Sydney"
-        },
-        {
-          value: "Ottawa",
-          label: "Ottawa"
-        },
-        {
-          value: "Paris",
-          label: "Paris"
-        },
-        {
-          value: "Canberra",
-          label: "Canberra"
-        }
       ]
     }
-  },
-  mounted() {
-    this.$refs["PullGroupPagedTable"].tableData = this.mockTableData()
   },
   methods: {
     mockTableData() {

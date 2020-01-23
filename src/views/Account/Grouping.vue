@@ -1,20 +1,20 @@
 <template>
   <!-- 分组管理 -->
   <div class="Grouping">
-    <SearchInput ref="Search" :infos="['分组名称']" />
+    <SearchInput :ref="SearchInputRef" :infos="['分组名称']" />
     <Divider dashed />
     <ButtonList :buttonListInfos="buttonListInfos" />
-    <CommonEditModal :config="updateConfig" :ref="editModalRef" />
+    <CommonEditModal :config="updateConfig" :ref="EditModalRef" />
     <CommonConfirmModal
-      ref="ConfirmModal"
       :data="operationData"
+      :ref="ConfirmModalRef"
       :config="operationConfig"
     />
     <Divider class="float-left" dashed />
-    <UnCheckButton :el="pagedTableRef" />
+    <UnCheckButton ref="UnCheckButton" :el="PagedTableRef" />
     <PagedTable
       :data="data"
-      :ref="pagedTableRef"
+      :ref="PagedTableRef"
       :dataColumns="GroupingColumns"
     />
   </div>
@@ -29,9 +29,19 @@ export default {
       mutex: false,
       updateConfig: {},
       operationData: [],
-      operationConfig: {},
-      editModalRef: "GroupingEditModal",
-      pagedTableRef: "GroupingPagedTable",
+      operationConfig: {
+        icon: "md-trash",
+        color: "#ED4014",
+        title: "删除",
+        operation: "删除",
+        btnType: "error",
+        btnIcon: "md-trash",
+        btnText: "删除"
+      },
+      EditModalRef: "GroupingEditModal",
+      PagedTableRef: "GroupingPagedTable",
+      SearchInputRef: "GroupingSearchInput",
+      ConfirmModalRef: "GroupingConfirmModal",
       buttonListInfos: [
         { id: "remove-g", name: "删除", icon: "md-trash", type: "error" },
         { id: "create-g", name: "添加", icon: "md-add-circle", type: "primary" }
@@ -81,7 +91,9 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.remove(params.row)
+                      const { groupId: group_id } = params.row
+                      this.$refs[this.ConfirmModalRef].isShowConfirmModal = true
+                      this.$refs[this.ConfirmModalRef].params = group_id
                     }
                   }
                 },
@@ -122,10 +134,10 @@ export default {
       })
     },
     async create() {
-      const editModal = this.$refs[this.editModalRef]
+      const editModal = this.$refs[this.EditModalRef]
       const createData = { group_name: editModal.value, user_id: this.user_id }
       const { msg } = await this.$http.post("/account/addGroup", createData)
-      this.$refs[this.editModalRef].value = ""
+      this.$refs[this.EditModalRef].value = ""
       if (msg) {
         this.getData()
         this.$Message.success("添加成功！")
@@ -145,27 +157,27 @@ export default {
         updateArgs: ["group_name"],
         url: "/account/updateGroup"
       }
-      this.$refs[this.editModalRef].isShowEditModal = true
+      this.$refs[this.EditModalRef].isShowEditModal = true
     },
-    remove(row) {
-      this.operationConfig = {
-        icon: "md-trash",
-        color: "#ED4014",
-        title: "删除",
-        operation: "删除",
-        btnType: "error",
-        btnIcon: "md-trash",
-        btnText: "删除",
-        url: "/account/deleteGroup",
-        deleteArgs: "group_id",
-        looperArgs: "groupId"
+    async remove(params) {
+      let GroupIDArray = []
+      const ref = this.$refs
+      if (params) {
+        GroupIDArray.push(String(params))
+      } else {
+        GroupIDArray = this.operationData.map(item => String(item.groupId))
       }
-      if (row) {
-        const { groupId: group_id } = row
-        this.operationConfig.type = "single"
-        this.operationData.push(String(group_id))
+      const { msg } = await this.$http.post("/account/deleteGroup", {
+        group_id: GroupIDArray,
+        user_id: this.user_id
+      })
+      if (msg) {
+        this.getData()
+        ref["UnCheckButton"].unCheck()
+        this.$Message.success(`删除成功！`)
+        ref[this.SearchInputRef].keyWords = ""
+        ref[this.ConfirmModalRef].isShowConfirmModal = false
       }
-      this.$refs["ConfirmModal"].isShowConfirmModal = true
     }
   }
 }

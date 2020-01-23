@@ -5,11 +5,9 @@
       stripe
       border
       :data="data"
-      ref="CommonTable"
+      :ref="TableRef"
       :columns="dataColumns"
-      @on-select-all="selectAll"
       @on-selection-change="selectionChange"
-      @on-select-all-cancel="selectAllCancel"
     />
     <div class="page">
       <div>
@@ -30,26 +28,26 @@
 export default {
   name: "PagedTable",
   props: { data: Array, dataColumns: Array },
+  data() {
+    return {
+      TableRef: "CommonPagedTable"
+    }
+  },
   methods: {
     changePage(index) {
-      let _start = (index - 1) * this.$parent.pageSize
-      let _end = index * this.$parent.pageSize
-      this.$parent.pageData = this.$parent.data.slice(_start, _end)
-      this.$parent.pageCurrent = index
+      const parent = this.$parent
+      let _start = (index - 1) * parent.pageSize
+      let _end = index * parent.pageSize
+      parent.pageData = parent.data.slice(_start, _end)
+      parent.pageCurrent = index
     },
     changeSize(pageSize) {
       this.$parent.changeSize(pageSize)
     },
-    selectAll() {
-      this.$parent.batch = false
-    },
-    selectAllCancel() {
-      this.$parent.batch = true
-    },
     selectionChange(selection) {
-      const length = selection.length
-      length ? (this.$parent.mutex = true) : (this.$parent.mutex = false)
-      this.$parent.operationData = selection
+      const parent = this.$parent
+      parent.operationData = selection
+      selection.length ? (parent.mutex = true) : (parent.mutex = false)
     }
   }
 }

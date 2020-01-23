@@ -1,9 +1,7 @@
 <template>
   <!-- 账号设置 -->
   <div class="SAccount">
-    <SearchSelect :info="'分组'" :title="'所属分组'" :options="cityList" />
-    <SearchSelect :info="'在线状态'" :title="'微信状态'" :options="cityList" />
-    <SearchInput :infos="['微信登录名']" />
+    <SearchInput :infos="['微信ID']" />
     <Divider dashed />
     <ButtonList :buttonListInfos="setButtonListInfos" />
     <Divider dashed />
@@ -24,14 +22,6 @@ export default {
   data() {
     return {
       data: [],
-      cityList: [
-        { value: "New York", label: "New York" },
-        { value: "London", label: "London" },
-        { value: "Sydney", label: "Sydney" },
-        { value: "Ottawa", label: "Ottawa" },
-        { value: "Paris", label: "Paris" },
-        { value: "Canberra", label: "Canberra" }
-      ],
       requestSetConfig: {
         title: "好友请求设置",
         label: "加我为好友时是否需要验证：",
@@ -47,7 +37,10 @@ export default {
       setButtonListInfos: [
         { type: "success", icon: "md-settings", name: "好友请求设置" },
         { type: "success", icon: "md-settings", name: "自动回复设置" },
-        { type: "success", icon: "md-settings", name: "自动回复模板设置" }
+        { type: "success", icon: "md-settings", name: "自动回复模板设置" },
+        { type: "success", icon: "md-settings", name: "分配分组" },
+        { type: "success", icon: "md-settings", name: "分配标签" },
+        { type: "success", icon: "md-settings", name: "修改资料" }
       ],
       SAccountColumns: [
         { width: 60, align: "center", type: "selection" },

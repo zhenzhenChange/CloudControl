@@ -54,11 +54,6 @@ const routes = [
         component: () => import("../views/MailList/MailSet.vue")
       },
       {
-        path: "/group-chat",
-        name: "GroupChat",
-        component: () => import("../views/Group/GroupChat.vue")
-      },
-      {
         path: "/pull-group",
         name: "PullGroup",
         component: () => import("../views/Group/PullGroup.vue")

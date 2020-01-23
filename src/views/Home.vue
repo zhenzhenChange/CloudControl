@@ -17,7 +17,6 @@
         </Submenu>
         <Submenu name="Group">
           <template slot="title"><Icon type="ios-people" />群管理</template>
-          <MenuItem name="group-chat" to="/group-chat">群聊设置</MenuItem>
           <MenuItem name="pull-group" to="/pull-group">群拉好友</MenuItem>
         </Submenu>
         <Submenu name="Marketing">
