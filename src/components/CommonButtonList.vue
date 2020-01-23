@@ -44,25 +44,7 @@ export default {
           this.$Message.warning("请先勾选要处理的数据～")
           return
         }
-        if (btnID === "remove-g") {
-          parent.operationConfig = this.commonConfig
-          parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
-        } else if (btnID === "remove-t") {
-          parent.operationConfig = this.commonConfig
-          parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
-        } else if (btnID === "remove-m") {
-          parent.remove(null)
-        } else if (btnID === "down") {
-          parent.operationConfig = {
-            icon: "ios-trending-down",
-            color: "#19BE6B",
-            title: "一键下线",
-            operation: "下线",
-            btnType: "success",
-            btnIcon: "md-checkmark",
-            btnText: "确定"
-          }
-        }
+        parent.operationConfig = this.commonConfig
         parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
       } else if (btnID === "create-g") {
         parent.updateConfig = {
@@ -84,7 +66,7 @@ export default {
           inputInfos: [{ desc: "标签名称", label: "标签名称" }]
         }
         parentRefs[parent.EditModalRef].isShowEditModal = true
-      } else if (btnID === "create") {
+      } else if (btnID === "create-m") {
         parent.createConfig = {
           title: "批量上传账号",
           createConfig: {
@@ -93,7 +75,7 @@ export default {
             options: parent.GroupData
           }
         }
-        parentRefs[parent.createModalRef].isShowCreateModal = true
+        parentRefs[parent.CreateModalRef].isShowCreateModal = true
       } else if (btnID === "newSpace") {
         parent.selectModalConfig = {
           icon: "md-send",
@@ -114,6 +96,34 @@ export default {
           tryBtn: "发布"
         }
         parentRefs[parent.selectRef].isShowSelectModal = true
+      } else if (btnID === "up") {
+        parent.operationConfig = {
+          icon: "ios-trending-up",
+          color: "#19BE6B",
+          title: "一键上线",
+          operation: "上线",
+          btnType: "success",
+          btnIcon: "md-checkmark",
+          btnText: "确定"
+        }
+        if (parent.operationData.length) {
+          parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
+        } else {
+          parent.selectConfig = {
+            width: "400",
+            icon: "md-arrow-round-up",
+            color: "#2D8CF0",
+            title: "按分组上线",
+            selectConfig1: {
+              title: "账号分组",
+              info: "分组",
+              options: parent.GroupData
+            },
+            tryIcon: "md-checkmark",
+            tryBtn: "确定"
+          }
+          parentRefs[parent.SelectModalRef].isShowSelectModal = true
+        }
       }
     }
   }

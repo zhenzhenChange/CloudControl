@@ -44,3 +44,4 @@ npm run lint
 - ⑤ 限制数据量（分页） ×
 - ⑥ 素材管理板块没有相应的（修改、删除、获取API） ×
 - ⑦ 添加账号数据无需返回密码（/account/addAccount） ×
+- ⑧ 一键按分组登录失败（/account/loginMulti）传的参数是：{"group_id": "117","request_type": "0"} ×

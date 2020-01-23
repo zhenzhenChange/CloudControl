@@ -3,18 +3,19 @@
   <div class="MAccount">
     <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider dashed />
-    <UnCheckButton :el="pagedTableRef" />
+    <UnCheckButton :el="PagedTableRef" />
     <PagedTable
       :data="data"
-      :ref="pagedTableRef"
+      :ref="PagedTableRef"
       :dataColumns="MAccountColumns"
     />
     <CommonConfirmModal
-      ref="ConfirmModal"
+      :ref="ConfirmModalRef"
       :data="operationData"
       :config="operationConfig"
     />
-    <CommonCreateModal :ref="createModalRef" :config="createConfig" />
+    <CommonSelectModal :ref="SelectModalRef" :config="selectConfig" />
+    <CommonCreateModal :ref="CreateModalRef" :config="createConfig" />
   </div>
 </template>
 
@@ -24,16 +25,24 @@ export default {
   data() {
     return {
       data: [],
-      GroupData: [],
       mutex: false,
+      GroupData: [],
+      selectConfig: {},
       createConfig: {},
-      createModalRef: "CreateModal",
       operationData: [],
       operationConfig: {},
-      pagedTableRef: "MAccountPagedTable",
+      PagedTableRef: "MAccountPagedTable",
+      CreateModalRef: "MAccountCreateModal",
+      SelectModalRef: "MAccountSelectModal",
+      ConfirmModalRef: "MAccountConfirmModal",
       buttonListInfos: [
         { id: "remove-m", name: "删除", icon: "md-trash", type: "error" },
-        { id: "create", name: "添加", icon: "md-add-circle", type: "primary" },
+        {
+          id: "create-m",
+          name: "添加",
+          icon: "md-add-circle",
+          type: "primary"
+        },
         { id: "up", name: "一键上线", icon: "md-trending-up", type: "warning" },
         {
           id: "down",
@@ -211,9 +220,9 @@ export default {
         groupId: String(group_id),
         userId: this.user_id
       })
-      this.$refs[this.createModalRef].accountData = ""
-      this.$refs[this.createModalRef].isShowCreateModal = false
-      this.$refs[this.createModalRef].$refs["select"].value = ""
+      this.$refs[this.CreateModalRef].accountData = ""
+      this.$refs[this.CreateModalRef].isShowCreateModal = false
+      this.$refs[this.CreateModalRef].$refs["select"].value = ""
       this.$Message.info(
         `已成功添加${data.success.length}条数据，失败${data.error.length}条`
       )
@@ -230,6 +239,20 @@ export default {
       }
       this.operationData.push(wxId)
       this.$refs["ConfirmModal"].isShowConfirmModal = true
+    },
+    async onlineByGroup(params) {
+      const { msg, data } = await this.$http.post("/account/loginMulti", {
+        group_id: String(params),
+        list: [{}],
+        request_type: "0"
+      })
+      if (msg === "everything is OK") {
+        this.$Message.info(
+          `成功登录账号${data.success.length}个，失败${data.error.length}个！`
+        )
+      }
+      this.$refs[this.SelectModalRef].$refs["SearchSelect1"].value = ""
+      this.$refs[this.SelectModalRef].isShowSelectModal = false
     },
     remove() {
       this.operationConfig = {

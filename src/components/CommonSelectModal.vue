@@ -1,6 +1,6 @@
 <template>
   <Modal
-    width="600"
+    :width="config.width ? config.width : 600"
     :closable="false"
     :mask-closable="false"
     v-model="isShowSelectModal"
@@ -16,7 +16,7 @@
       {{ config.title }}
     </p>
     <div class="mt-10" v-if="config.selectConfig1">
-      <SearchSelect :config="config.selectConfig1" />
+      <SearchSelect ref="SearchSelect1" :config="config.selectConfig1" />
       <div class="clear-both"></div>
     </div>
     <div class="mt-10 " v-if="config.selectConfig2">
@@ -52,10 +52,10 @@ export default {
       value ? "" : (this.isShowModal = false)
     },
     tryClick() {
-      console.log(this.config)
-      this.isShowSelectModal = false
+      this.$parent.onlineByGroup(this.$refs["SearchSelect1"].value)
     },
     catchClick() {
+      this.$refs["SearchSelect1"].value = ""
       this.isShowSelectModal = false
     }
   }
