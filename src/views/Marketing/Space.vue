@@ -1,75 +1,64 @@
 <template>
   <div class="Space">
-    <RangeDatePicker />
+    <ButtonList :buttonListInfos="buttonListInfos" />
+    <CommonSelectModal :ref="selectRef" :config="selectModalConfig" />
     <Divider dashed />
-    <SearchSelect :title="'发布状态'" :info="'发布状态'" />
-    <SearchInput :infos="['发布内容']" />
-    <Divider />
-    <ButtonList :buttonListInfos="CreateNewSpaceButtonInfo" />
-    <Divider dashed />
-    <PagedTable ref="SpacePagedTable" :dataColumns="SpaceColumns" />
+    <PagedTable :data="data" :ref="pagedTableRef" :dataColumns="SpaceColumns" />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   data() {
     return {
-      CreateNewSpaceButtonInfo: [
-        {
-          type: "primary",
-          icon: "md-add",
-          name: "新建朋友圈"
-        }
+      data: [],
+      groups: [],
+      selectModalConfig: {},
+      selectRef: "SpaceSelectModal",
+      pagedTableRef: "SpacePagedTable",
+      buttonListInfos: [
+        { id: "newSpace", name: "朋友圈发布", icon: "md-send", type: "primary" }
       ],
       SpaceColumns: [
         {
-          type: "selection",
-          width: 60,
-          align: "center"
-        },
-        {
-          title: "序号",
-          width: 70,
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
           title: "发布账号",
           align: "center",
-          key: "mAccountNumber"
+          key: "groupName"
         },
         {
           title: "发布内容",
           align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "发布状态",
-          align: "center",
-          key: "mAccountNumber"
+          key: "groupId"
         },
         {
           title: "发布时间",
           align: "center",
-          key: "mAccountNumber"
+          key: "groupCreateDate"
         }
       ]
     }
   },
-  mounted() {
-    this.$refs["SpacePagedTable"].tableData = this.mockTableData()
+  created() {
+    this.getData()
+  },
+  computed: {
+    ...mapState({ user_id: state => state.user_id })
   },
   methods: {
-    mockTableData() {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          mAccountNumber: Math.floor(Math.random() * 100 + 1),
-          mAccountSortNumber: Math.floor(Math.random() * 100 + 1)
+    async getData() {
+      const res = await this.$http.get("/account/getAllGroup", {
+        params: { user_id: this.user_id }
+      })
+      this.data = []
+      res.forEach(item => {
+        this.data.push({
+          groupName: item.groupName,
+          groupId: item.groupId,
+          groupCreateDate: this.$options.filters.date(item.groupCreateDate)
         })
-      }
-      return data
+        this.groups.push({ label: item.groupName, value: item.groupId })
+      })
     }
   }
 }

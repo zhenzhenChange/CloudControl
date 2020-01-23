@@ -44,24 +44,14 @@ const routes = [
         component: () => import("../views/Account/Tag.vue")
       },
       {
-        path: "/trumpet",
-        name: "Trumpet",
-        component: () => import("../views/Account/Trumpet.vue")
-      },
-      {
-        path: "/passive",
-        name: "Passive",
-        component: () => import("../views/Account/Passive.vue")
-      },
-      {
         path: "/friends",
         name: "Friends",
         component: () => import("../views/MailList/Friends.vue")
       },
       {
-        path: "/fans",
-        name: "Fans",
-        component: () => import("../views/MailList/Fans.vue")
+        path: "/mail",
+        name: "MailSet",
+        component: () => import("../views/MailList/MailSet.vue")
       },
       {
         path: "/group-chat",
@@ -72,11 +62,6 @@ const routes = [
         path: "/pull-group",
         name: "PullGroup",
         component: () => import("../views/Group/PullGroup.vue")
-      },
-      {
-        path: "/inter-chat",
-        name: "InterChat",
-        component: () => import("../views/Group/InterChat.vue")
       },
       {
         path: "/space",

@@ -6,22 +6,19 @@
         <Submenu name="Account">
           <template slot="title"><Icon type="md-person" />账户</template>
           <MenuItem name="grouping" to="/grouping">分组管理</MenuItem>
+          <MenuItem name="tag" to="/tag">标签管理</MenuItem>
           <MenuItem name="m-account" to="/m-account">账号管理</MenuItem>
           <MenuItem name="s-account" to="/s-account">账号设置</MenuItem>
-          <MenuItem name="tag" to="/tag">标签管理</MenuItem>
-          <MenuItem name="trumpet" to="/trumpet">小号互聊</MenuItem>
-          <MenuItem name="passive" to="/passive">被动请求</MenuItem>
         </Submenu>
         <Submenu name="MailList">
           <template slot="title"><Icon type="md-call" />通讯录</template>
+          <MenuItem name="mail-set" to="/mail">通讯录管理</MenuItem>
           <MenuItem name="friends" to="/friends">好友管理</MenuItem>
-          <MenuItem name="fans" to="/fans">加粉订单</MenuItem>
         </Submenu>
         <Submenu name="Group">
           <template slot="title"><Icon type="ios-people" />群管理</template>
-          <MenuItem name="group-chat" to="/group-chat">群聊列表</MenuItem>
-          <MenuItem name="pull-group" to="/pull-group">拉群订单</MenuItem>
-          <MenuItem name="inter-chat" to="/inter-chat">群互聊</MenuItem>
+          <MenuItem name="group-chat" to="/group-chat">群聊设置</MenuItem>
+          <MenuItem name="pull-group" to="/pull-group">群拉好友</MenuItem>
         </Submenu>
         <Submenu name="Marketing">
           <template slot="title"><Icon type="md-settings" />营销管理</template>

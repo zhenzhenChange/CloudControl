@@ -1,39 +1,35 @@
 <template>
   <div class="login">
     <Card class="login-card">
-      <p slot="title"><Icon type="md-cloud-done" />请登录</p>
+      <p slot="title"><Icon type="md-cloud-done" />欢迎登录后台管理系统</p>
       <Form :model="loginForm" inline>
-        <FormItem prop="username">
+        <FormItem>
           <Input
             clearable
             type="text"
             size="large"
-            placeholder="username"
+            placeholder="账号"
             v-model="loginForm.user_account"
           >
-            <Icon type="ios-person-outline" slot="prepend"></Icon>
+            <Icon type="md-person" slot="prepend" />
           </Input>
         </FormItem>
-        <FormItem prop="password">
+        <FormItem>
           <Input
             clearable
             size="large"
             type="password"
-            placeholder="password"
+            placeholder="密码"
             v-model="loginForm.user_pwd"
           >
-            <Icon type="ios-lock-outline" slot="prepend"></Icon>
+            <Icon type="md-lock" slot="prepend" />
           </Input>
         </FormItem>
         <br />
         <FormItem>
-          <Button
-            type="info"
-            shape="circle"
-            icon="ios-radio-outline"
-            @click="submitLogin"
-            >登录</Button
-          >
+          <Button type="info" @click="login" shape="circle" icon="md-log-in">
+            登录
+          </Button>
         </FormItem>
       </Form>
     </Card>
@@ -48,7 +44,7 @@ export default {
     }
   },
   methods: {
-    async submitLogin() {
+    async login() {
       const { msg, data } = await this.$http.post("/login", this.loginForm)
       if (msg === "登录成功") {
         this.$router.push("/grouping")

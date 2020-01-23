@@ -1,35 +1,34 @@
 <template>
   <div class="MaterialTabsContent">
-    <SearchSelect :title="'模板类型'" :info="'类型'" :options="SelectInfo" />
-    <SearchInput :infos="InputInfo" />
-    <Divider dashed />
     <ButtonList :buttonListInfos="TabsButtonListInfo" />
     <Divider />
-    <PagedTable ref="TabsContentPagedTable" :dataColumns="TabsContentColumns" />
+    <PagedTable
+      :data="data"
+      ref="pagedTableRef"
+      :dataColumns="TabsContentColumns"
+    />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   name: "MaterialTabsContent",
-  props: {
-    InputInfo: Array,
-    SelectInfo: Array,
-    ButtonName: String,
-    TableColumnsTitle: String
-  },
+  props: { TableColumnsTitle: String },
   data() {
     return {
+      data: [],
+      pagedTableRef: "TabsContentPagedTable",
+      TabsButtonListInfo: [
+        { type: "primary", icon: "md-add", name: "添加" },
+        { type: "error", icon: "md-trash", name: "删除" }
+      ],
       TabsContentColumns: [
         { width: 60, align: "center", type: "selection" },
-        { width: 70, title: "序号", align: "center", key: "mAccountNumber" },
-        {
-          align: "center",
-          key: "mAccountNumber",
-          title: this.TableColumnsTitle
-        },
-        { align: "center", title: "模板分类", key: "mAccountNumber" },
-        { align: "center", title: "创建时间", key: "mAccountNumber" },
+        { width: 70, align: "center", title: "序号", key: "serialNumber" },
+        { align: "center", title: "名称", key: "groupName" },
+        { align: "center", title: "模板分类", key: "groupId" },
+        { align: "center", title: "创建时间", key: "groupCreateDate" },
         {
           width: 250,
           title: "操作",
@@ -68,26 +67,29 @@ export default {
             ])
           }
         }
-      ],
-      TabsButtonListInfo: [
-        { icon: "md-add", type: "primary", name: `添加${this.ButtonName}` },
-        { type: "error", icon: "md-trash", name: `删除${this.ButtonName}` }
       ]
     }
   },
-  mounted() {
-    this.$refs["TabsContentPagedTable"].tableData = this.mockTableData()
+  created() {
+    this.getData()
+  },
+  computed: {
+    ...mapState({ user_id: state => state.user_id })
   },
   methods: {
-    mockTableData() {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          mAccountNumber: Math.floor(Math.random() * 100 + 1),
-          mAccountSortNumber: Math.floor(Math.random() * 100 + 1)
+    async getData() {
+      const res = await this.$http.get("/account/getAllGroup", {
+        params: { user_id: this.user_id }
+      })
+      this.data = []
+      res.forEach((item, index) => {
+        this.data.push({
+          serialNumber: index + 1,
+          groupName: item.groupName,
+          groupId: item.groupId,
+          groupCreateDate: this.$options.filters.date(item.groupCreateDate)
         })
-      }
-      return data
+      })
     }
   }
 }

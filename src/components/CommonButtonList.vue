@@ -63,6 +63,26 @@ export default {
           inputInfos: [{ desc: "标签名称", label: "标签名称" }]
         }
         parent.$refs[parent.editModalRef].isShowEditModal = true
+      } else if (btnID === "newSpace") {
+        parent.selectModalConfig = {
+          icon: "md-send",
+          color: "#2D8CF0",
+          title: "朋友圈发布",
+          selectConfig1: {
+            title: "账号分组",
+            info: "分组",
+            options: parent.groups
+          },
+          selectConfig2: {
+            title: "素材模板",
+            info: "素材",
+            options: parent.groups,
+            width: "300px"
+          },
+          tryIcon: "ios-send",
+          tryBtn: "发布"
+        }
+        parent.$refs[parent.selectRef].isShowSelectModal = true
       }
     }
   }
