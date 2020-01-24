@@ -1,7 +1,7 @@
 <template>
   <!-- 对话确认模态窗 -->
   <Modal
-    width="330"
+    width="400"
     :closable="false"
     :mask-closable="false"
     v-model="isShowConfirmModal"
@@ -46,8 +46,17 @@ export default {
       value ? "" : (this.isShowConfirmModal = false)
     },
     tryClick() {
-      this.$parent.remove(this.params)
-      this.params = null
+      if (this.params) {
+        this.$parent.remove(this.params)
+        this.params = null
+      }
+      if (this.config.params === "onByID") {
+        this.$parent.onlineByWXID(this.config.paramsValue)
+      } else if (this.config.params === "onNo") {
+        this.$parent.onlineByWXID(null)
+      } else if (this.config.params === "offNo") {
+        this.$parent.offlineByWXID()
+      }
     },
     catchClick() {
       this.isShowConfirmModal = false

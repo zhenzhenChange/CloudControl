@@ -39,20 +39,23 @@ export default {
   props: { config: Object },
   data() {
     return {
+      params: null,
       isShowSelectModal: false
     }
   },
   computed: {
-    ...mapState({
-      user_id: state => state.user_id
-    })
+    ...mapState({ user_id: state => state.user_id })
   },
   methods: {
     visibleChange(value) {
       value ? "" : (this.isShowModal = false)
     },
     tryClick() {
-      this.$parent.onlineByGroup(this.$refs["SearchSelect1"].value)
+      if (this.params === "online") {
+        this.$parent.onlineByGroup(this.$refs["SearchSelect1"].value)
+      } else if (this.params === "offline") {
+        this.$parent.offlineByGroup(this.$refs["SearchSelect1"].value)
+      }
     },
     catchClick() {
       this.$refs["SearchSelect1"].value = ""

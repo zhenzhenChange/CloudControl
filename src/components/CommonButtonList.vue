@@ -97,16 +97,17 @@ export default {
         }
         parentRefs[parent.selectRef].isShowSelectModal = true
       } else if (btnID === "up") {
-        parent.operationConfig = {
-          icon: "ios-trending-up",
-          color: "#19BE6B",
-          title: "一键上线",
-          operation: "上线",
-          btnType: "success",
-          btnIcon: "md-checkmark",
-          btnText: "确定"
-        }
         if (parent.operationData.length) {
+          parent.operationConfig = {
+            icon: "ios-trending-up",
+            color: "#19BE6B",
+            title: "一键上线",
+            operation: "上线（已自动筛选离线且有效账号）",
+            btnType: "success",
+            btnIcon: "md-checkmark",
+            btnText: "确定",
+            params: "onNo"
+          }
           parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
         } else {
           parent.selectConfig = {
@@ -122,6 +123,37 @@ export default {
             tryIcon: "md-checkmark",
             tryBtn: "确定"
           }
+          parentRefs[parent.SelectModalRef].params = "online"
+          parentRefs[parent.SelectModalRef].isShowSelectModal = true
+        }
+      } else if (btnID === "down") {
+        if (parent.operationData.length) {
+          parent.operationConfig = {
+            icon: "ios-trending-down",
+            color: "#19BE6B",
+            title: "一键下线",
+            operation: "下线（已自动筛选有微信ID且在线账号）",
+            btnType: "success",
+            btnIcon: "md-checkmark",
+            btnText: "确定",
+            params: "offNo"
+          }
+          parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
+        } else {
+          parent.selectConfig = {
+            width: "400",
+            icon: "md-arrow-round-up",
+            color: "#2D8CF0",
+            title: "按分组下线",
+            selectConfig1: {
+              title: "账号分组",
+              info: "分组",
+              options: parent.GroupData
+            },
+            tryIcon: "md-checkmark",
+            tryBtn: "确定"
+          }
+          parentRefs[parent.SelectModalRef].params = "offline"
           parentRefs[parent.SelectModalRef].isShowSelectModal = true
         }
       }

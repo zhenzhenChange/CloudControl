@@ -40,8 +40,12 @@ npm run lint
 - ① 添加分组不能传中文字符（/account/addGroup）√
 - ② 修改分组不能传中文字符（/account/updateGroup） √
 - ③ 服务器时区时间异常 ×
-- ④ 返回的信息没有转成对象（如：“{'code': 0, 'msg':'修改成功'}”）（目前仅在/account/...下的API出现这种情况） ×
+- ④ 返回的信息没有转成对象 ×
+  - 目前仅在（/account/...）下的API出现这种情况
+  - 返回的数据：{'code': 0, 'msg':'修改成功'}
 - ⑤ 限制数据量（分页） ×
 - ⑥ 素材管理板块没有相应的（修改、删除、获取API） ×
 - ⑦ 添加账号数据无需返回密码（/account/addAccount） ×
-- ⑧ 一键按分组登录失败（/account/loginMulti）传的参数是：{"group_id": "117","request_type": "0"} ×
+- ⑧ 一键按分组下线返回的数据中的data字段为空（/account/logout） ×
+  - 传的参数：{"groupId":"118","wxids":[],"requestType":"0"}
+  - 返回的数据：{"code":-1,"data":{"error":[],"success":[]},"msg":"全部失败"}

@@ -25,6 +25,7 @@ export default {
   data() {
     return {
       data: [],
+      params: "",
       mutex: false,
       GroupData: [],
       selectConfig: {},
@@ -39,7 +40,7 @@ export default {
         { id: "remove-m", name: "删除", icon: "md-trash", type: "error" },
         {
           id: "create-m",
-          name: "添加",
+          name: "上传账号数据",
           icon: "md-add-circle",
           type: "primary"
         },
@@ -54,92 +55,80 @@ export default {
       MAccountColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
+        { width: 130, title: "账号", align: "center", key: "account" },
         {
-          width: 120,
-          title: "锁状态",
+          width: 180,
           align: "center",
-          key: "lockState",
+          tooltip: true,
+          title: "账号A16数据",
+          key: "account62A16"
+        },
+        {
+          width: 100,
+          align: "center",
+          title: "好友数",
+          key: "accountFriendCount"
+        },
+        {
+          width: 130,
+          align: "center",
+          title: "账号是否有效",
+          key: "accountIsValid",
           render: (h, params) => {
             const row = params.row
-            const color = row.lockState ? "success" : "error"
-            const text = row.lockState ? "正常" : "锁定"
-            return h("Tag", { props: { type: "dot", color } }, text)
-          }
-        },
-        {
-          width: 120,
-          align: "center",
-          title: "账号状态",
-          key: "accountStatus",
-          render: (h, params) => {
-            const row = params.row
-            const color = row.accountStatus ? "success" : "error"
-            const text = row.accountStatus ? "正常" : "离线"
-            return h("Tag", { props: { type: "dot", color } }, text)
-          }
-        },
-        {
-          width: 150,
-          tooltip: true,
-          align: "center",
-          title: "微信登录名",
-          key: "wechatLoginName"
-        },
-        { width: 120, align: "center", title: "密码", key: "password" },
-        { width: 120, align: "center", title: "昵称", key: "nickName" },
-        {
-          width: 120,
-          tooltip: true,
-          align: "center",
-          title: "WXID",
-          key: "wxId"
-        },
-        {
-          width: 120,
-          tooltip: true,
-          align: "center",
-          title: "微信号",
-          key: "wechatNumber"
-        },
-        {
-          width: 150,
-          tooltip: true,
-          align: "center",
-          title: "签名",
-          key: "autograph"
-        },
-        {
-          width: 120,
-          tooltip: true,
-          align: "center",
-          title: "所属分组",
-          key: "subordinate"
-        },
-        {
-          width: 120,
-          key: "sex",
-          title: "性别",
-          align: "center",
-          render: (h, params) => {
-            const row = params.row
-            const color = row.sex ? "success" : "magenta"
-            const text = row.sex ? "男" : "女"
+            const color = row.accountIsValid ? "success" : "error"
+            const text = row.accountIsValid ? "正常" : "无效"
             return h("Tag", { props: { type: "border", color } }, text)
           }
         },
         {
-          width: 120,
-          tooltip: true,
+          width: 130,
           align: "center",
-          title: "城市",
-          key: "city"
+          tooltip: true,
+          title: "密码",
+          key: "accountPwd"
+        },
+        {
+          width: 130,
+          align: "center",
+          title: "登录状态",
+          key: "accountState",
+          render: (h, params) => {
+            const row = params.row
+            const color = row.accountState ? "success" : "error"
+            const text = row.accountState ? "在线" : "离线"
+            return h("Tag", { props: { type: "dot", color } }, text)
+          }
+        },
+        {
+          width: 180,
+          align: "center",
+          tooltip: true,
+          title: "微信ID",
+          key: "accountWxid"
         },
         {
           width: 150,
-          tooltip: true,
           align: "center",
-          title: "设备类型",
-          key: "equipmentType"
+          tooltip: true,
+          title: "所属分组",
+          key: "groupName"
+        },
+        { width: 100, align: "center", title: "分组ID", key: "groupId" },
+        {
+          width: 150,
+          align: "center",
+          tooltip: true,
+          title: "所属标签",
+          key: "tagName"
+        },
+        { width: 100, align: "center", title: "标签ID", key: "tagId" },
+        {
+          width: 150,
+          align: "center",
+          tooltip: true,
+          title: "操作人",
+          key: "userId"
         },
         {
           width: 230,
@@ -160,11 +149,40 @@ export default {
                   style: { marginRight: "5px" },
                   on: {
                     click: () => {
-                      this.online(params.row)
+                      this.operationConfig = {
+                        icon: "ios-trending-up",
+                        color: "#19BE6B",
+                        title: "上线",
+                        operation: "上线",
+                        btnType: "success",
+                        btnIcon: "md-checkmark",
+                        btnText: "确定",
+                        params: "onByID",
+                        paramsValue: params.row
+                      }
+                      this.$refs[this.ConfirmModalRef].isShowConfirmModal = true
                     }
                   }
                 },
                 "上线"
+              ),
+              h(
+                "Button",
+                {
+                  props: {
+                    size: "small",
+                    type: "error",
+                    disabled: this.mutex,
+                    icon: "md-trash"
+                  },
+                  style: { marginRight: "5px" },
+                  on: {
+                    click: () => {
+                      this.remove(params.row)
+                    }
+                  }
+                },
+                "删除"
               )
             ])
           }
@@ -180,27 +198,156 @@ export default {
   },
   methods: {
     async getData() {
+      const { data } = await this.$http.post("/account/loginMulti", {
+        group_id: "118",
+        list: [{}],
+        request_type: "0"
+      })
+      const loginData = [...data.error, ...data.success]
+      loginData.forEach((item, index) => {
+        this.data.push({
+          serialNumber: index + 1,
+          account: item.account,
+          account62A16: item.account62A16,
+          accountFriendCount: item.accountFriendCount,
+          accountIsValid: item.accountIsValid,
+          accountPwd: item.accountPwd,
+          accountState: item.accountState,
+          accountWxid:
+            item.accountWxid === "error"
+              ? "无微信ID或信息异常"
+              : item.accountWxid,
+          groupName: item.groupName,
+          tagName: item.tagName,
+          groupId: item.groupId,
+          tagId: item.tagId,
+          userId: item.userId
+        })
+      })
       const res = await this.$http.get("/account/getAllGroup", {
         params: { user_id: this.user_id }
       })
-      res.forEach((item, index) => {
-        this.data.push({
-          serialNumber: index + 1,
-          lockState: item.groupName,
-          accountStatus: item.groupName,
-          wechatLoginName: item.groupName,
-          password: item.groupName,
-          nickName: item.groupName,
-          wxId: item.groupName,
-          wechatNumber: item.groupName,
-          autograph: item.groupName,
-          subordinate: item.groupName,
-          sex: item.groupName,
-          city: item.groupName,
-          equipmentType: item.groupName
-        })
+      res.forEach(item => {
         this.GroupData.push({ label: item.groupName, value: item.groupId })
       })
+    },
+    async onlineByWXID(row) {
+      let arr = []
+      let WXIDArray = []
+      const ref = this.$refs
+      if (row) {
+        if (row.accountState) {
+          ref[this.ConfirmModalRef].isShowConfirmModal = false
+          this.$Message.info("该账号已在线，无须再次上线！")
+          return
+        }
+        arr.push(row)
+      } else {
+        arr = this.operationData.filter(item => {
+          return item.accountIsValid && !item.accountState
+        })
+      }
+      arr.forEach(item => {
+        WXIDArray.push({
+          account: item.account,
+          a16_data62: item.account62A16,
+          pwd: item.accountPwd
+        })
+      })
+      const { data } = await this.$http.post("/account/loginMulti", {
+        group_id: "",
+        list: WXIDArray,
+        request_type: "1"
+      })
+      if (row) {
+        let msg = ""
+        msg = data.success.length ? "成功" : "失败"
+        this.$Message.info(`上线${msg}！`)
+        ref[this.ConfirmModalRef].isShowConfirmModal = false
+        return
+      }
+      this.$Message.info(
+        `成功上线账号${data.success.length}个，失败${data.error.length}个！`
+      )
+      ref[this.PagedTableRef].$refs[ref[this.PagedTableRef].TableRef].selectAll(
+        false
+      )
+      ref[this.ConfirmModalRef].isShowConfirmModal = false
+    },
+    async onlineByGroup(params) {
+      const { data } = await this.$http.post("/account/loginMulti", {
+        group_id: String(params),
+        list: [{}],
+        request_type: "0"
+      })
+      this.$Message.info(
+        `成功登录账号${data.success.length}个，失败${data.error.length}个！`
+      )
+      this.$refs[this.SelectModalRef].$refs["SearchSelect1"].value = ""
+      this.$refs[this.SelectModalRef].isShowSelectModal = false
+    },
+    async offlineByWXID() {
+      let arr = []
+      const WXIDArray = []
+      const ref = this.$refs
+      arr = this.operationData.filter(item => {
+        return item.accountWxid !== "无微信ID或信息异常" && item.accountState
+      })
+      arr.forEach(item => {
+        WXIDArray.push(item.accountWxid)
+      })
+      const { data } = await this.$http.post("/account/logout", {
+        groupId: 0,
+        wxids: WXIDArray,
+        requestType: "1"
+      })
+      this.$Message.info(
+        `成功下线账号${data.success.length}个，失败${data.error.length}个！`
+      )
+      ref[this.PagedTableRef].$refs[ref[this.PagedTableRef].TableRef].selectAll(
+        false
+      )
+      ref[this.ConfirmModalRef].isShowConfirmModal = false
+    },
+    async offlineByGroup(params) {
+      const { data } = await this.$http.post("/account/logout", {
+        groupId: String(params),
+        wxids: [],
+        requestType: "0"
+      })
+      this.$Message.info(
+        `成功下线账号${data.success.length}个，失败${data.error.length}个！`
+      )
+      this.$refs[this.SelectModalRef].$refs["SearchSelect1"].value = ""
+      this.$refs[this.SelectModalRef].isShowSelectModal = false
+    },
+    async removeByWXID() {
+      this.operationConfig = {
+        icon: "md-trash",
+        color: "#ED4014",
+        title: "删除",
+        operation: "删除",
+        btnType: "error",
+        btnIcon: "md-trash",
+        btnText: "删除",
+        url: "/account/deleteAccount",
+        deleteArgs: "request_type",
+        looperArgs: "wxids"
+      }
+    },
+    async removeByGroup() {
+      this.operationConfig = {
+        icon: "md-trash",
+        color: "#ED4014",
+        title: "删除",
+        operation: "删除",
+        btnType: "error",
+        btnIcon: "md-trash",
+        btnText: "删除",
+        url: "/account/deleteAccount",
+        deleteArgs: "request_type",
+        looperArgs: "wxids"
+      }
     },
     async uploadData(accountData, group_id) {
       let list = []
@@ -226,48 +373,6 @@ export default {
       this.$Message.info(
         `已成功添加${data.success.length}条数据，失败${data.error.length}条`
       )
-    },
-    online({ wxId }) {
-      this.operationConfig = {
-        icon: "ios-trending-up",
-        color: "#19BE6B",
-        title: "上线",
-        operation: "上线",
-        btnType: "success",
-        btnIcon: "md-checkmark",
-        btnText: "确定"
-      }
-      this.operationData.push(wxId)
-      this.$refs["ConfirmModal"].isShowConfirmModal = true
-    },
-    async onlineByGroup(params) {
-      const { msg, data } = await this.$http.post("/account/loginMulti", {
-        group_id: String(params),
-        list: [{}],
-        request_type: "0"
-      })
-      if (msg === "everything is OK") {
-        this.$Message.info(
-          `成功登录账号${data.success.length}个，失败${data.error.length}个！`
-        )
-      }
-      this.$refs[this.SelectModalRef].$refs["SearchSelect1"].value = ""
-      this.$refs[this.SelectModalRef].isShowSelectModal = false
-    },
-    remove() {
-      this.operationConfig = {
-        icon: "md-trash",
-        color: "#ED4014",
-        title: "删除",
-        operation: "删除",
-        btnType: "error",
-        btnIcon: "md-trash",
-        btnText: "删除",
-        url: "/account/deleteAccount",
-        deleteArgs: "request_type",
-        looperArgs: "wxids"
-      }
-      this.$refs["ConfirmModal"].isShowConfirmModal = true
     }
   }
 }

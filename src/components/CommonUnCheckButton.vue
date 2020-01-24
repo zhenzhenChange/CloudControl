@@ -1,5 +1,5 @@
 <template>
-  <Button type="info" @click="unCheck">取消选中</Button>
+  <Button type="info" icon="md-remove-circle" @click="unCheck">取消选中</Button>
 </template>
 
 <script>
