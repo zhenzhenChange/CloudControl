@@ -242,6 +242,11 @@ export default {
           this.$Message.info("该账号已在线，无须再次上线！")
           return
         }
+        if (!row.accountIsValid) {
+          ref[this.ConfirmModalRef].isShowConfirmModal = false
+          this.$Message.info("此账号为无效账号！")
+          return
+        }
         arr.push(row)
       } else {
         arr = this.operationData.filter(item => {

@@ -55,6 +55,8 @@ export default {
         this.$parent.onlineByGroup(this.$refs["SearchSelect1"].value)
       } else if (this.params === "offline") {
         this.$parent.offlineByGroup(this.$refs["SearchSelect1"].value)
+      } else if (this.params === "send") {
+        this.$parent.sendFriendSpace(this.$refs["SearchSelect1"].value)
       }
     },
     catchClick() {

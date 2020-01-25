@@ -49,4 +49,6 @@ npm run lint
   - 传的参数：{"groupId":"118","wxids":[],"requestType":"0"}
   - 返回的数据：{"code":-1,"data":{"error":[],"success":[]},"msg":"全部失败"}
 - ⑨ 设置个人信息素材头像上传超长时间未响应 （/marketing/setInfo） ×
-- ⑨ 设置设置朋友圈素材图片上传超长时间未响应 （/marketing/setFriendCricle） ×
+- ⑩ 设置设置朋友圈素材图片上传超长时间未响应 （/marketing/setFriendCricle） ×
+- 11. 提交微信群URL后台的接受方式是FormData，应改为json格式（/group/setGroupURL） ×
+- 12. 是否需要微信群的信息展示API ×

@@ -1,9 +1,9 @@
 <template>
   <div class="Space">
     <ButtonList :buttonListInfos="buttonListInfos" />
-    <CommonSelectModal :ref="selectRef" :config="selectModalConfig" />
+    <CommonSelectModal :ref="SelectModalRef" :config="selectModalConfig" />
     <Divider dashed />
-    <PagedTable :data="data" :ref="pagedTableRef" :dataColumns="SpaceColumns" />
+    <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="SpaceColumns" />
   </div>
 </template>
 
@@ -15,8 +15,8 @@ export default {
       data: [],
       groups: [],
       selectModalConfig: {},
-      selectRef: "SpaceSelectModal",
-      pagedTableRef: "SpacePagedTable",
+      SelectModalRef: "SpaceSelectModal",
+      PagedTableRef: "SpacePagedTable",
       buttonListInfos: [
         { id: "newSpace", name: "朋友圈发布", icon: "md-send", type: "primary" }
       ],
@@ -59,6 +59,13 @@ export default {
         })
         this.groups.push({ label: item.groupName, value: item.groupId })
       })
+    },
+    async sendFriendSpace(params) {
+      const { data } = await this.$http.post("/account/sendFriendCircle", {
+        group_id: String(params),
+        user_id: this.user_id
+      })
+      console.log(data)
     }
   }
 }

@@ -78,6 +78,7 @@ export default {
         parentRefs[parent.CreateModalRef].isShowCreateModal = true
       } else if (btnID === "newSpace") {
         parent.selectModalConfig = {
+          width: 350,
           icon: "md-send",
           color: "#2D8CF0",
           title: "朋友圈发布",
@@ -86,16 +87,11 @@ export default {
             info: "分组",
             options: parent.groups
           },
-          selectConfig2: {
-            title: "素材模板",
-            info: "素材",
-            options: parent.groups,
-            width: "300px"
-          },
           tryIcon: "ios-send",
           tryBtn: "发布"
         }
-        parentRefs[parent.selectRef].isShowSelectModal = true
+        parentRefs[parent.SelectModalRef].params = "send"
+        parentRefs[parent.SelectModalRef].isShowSelectModal = true
       } else if (btnID === "up") {
         if (parent.operationData.length) {
           parent.operationConfig = {
@@ -158,6 +154,8 @@ export default {
           parentRefs[parent.SelectModalRef].params = "offline"
           parentRefs[parent.SelectModalRef].isShowSelectModal = true
         }
+      } else if (btnID === "create-p") {
+        parent.isShowUrlModal = true
       }
     }
   }
