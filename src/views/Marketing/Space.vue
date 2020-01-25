@@ -47,11 +47,11 @@ export default {
   },
   methods: {
     async getData() {
-      const res = await this.$http.get("/account/getAllGroup", {
+      const { data } = await this.$http.get("/account/getAllGroup", {
         params: { user_id: this.user_id }
       })
       this.data = []
-      res.forEach(item => {
+      data.forEach(item => {
         this.data.push({
           groupName: item.groupName,
           groupId: item.groupId,

@@ -224,10 +224,10 @@ export default {
           userId: item.userId
         })
       })
-      const res = await this.$http.get("/account/getAllGroup", {
+      const { data: GroupData } = await this.$http.get("/account/getAllGroup", {
         params: { user_id: this.user_id }
       })
-      res.forEach(item => {
+      GroupData.forEach(item => {
         this.GroupData.push({ label: item.groupName, value: item.groupId })
       })
     },

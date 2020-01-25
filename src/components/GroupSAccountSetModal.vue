@@ -26,9 +26,7 @@
 <script>
 export default {
   name: "SAccountSetModal",
-  props: {
-    config: Object
-  },
+  props: { config: Object },
   data() {
     return {
       value: this.config.reallyText,

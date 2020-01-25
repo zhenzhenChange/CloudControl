@@ -124,7 +124,7 @@ export default {
         })
       }
       this.data = []
-      res.forEach((item, index) => {
+      res.data.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,
           groupName: item.groupName,
@@ -153,7 +153,7 @@ export default {
         inputInfos: [
           { desc: "分组名称", label: "分组名称", model: group_name }
         ],
-        updateData: { group_id },
+        updateData: { group_id: String(group_id) },
         updateArgs: ["group_name"],
         url: "/account/updateGroup"
       }

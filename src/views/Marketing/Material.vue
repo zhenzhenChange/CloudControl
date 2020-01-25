@@ -1,63 +1,197 @@
 <template>
   <Tabs class="Material">
-    <TabPane label="朋友圈素材" icon="md-paper">
-      <MaterialTabsContent
-        :InputInfo="['素材内容']"
-        :TableColumnsTitle="'素材内容'"
-      />
+    <TabPane label="朋友圈素材" icon="md-people">
+      <Card class="template-card">
+        <p slot="title" class="title">素材模板</p>
+        <Input
+          clearable
+          size="large"
+          placeholder="请填写标题"
+          v-model="template.title"
+        >
+          <span slot="prepend">标题</span>
+        </Input>
+        <Input
+          class="mt-10"
+          type="textarea"
+          placeholder="请填写内容"
+          v-model="template.content"
+          :autosize="{ minRows: 5, maxRows: 10 }"
+        >
+        </Input>
+        <SpaceUpload
+          :uploadLimit="9"
+          ref="SpaceUpload"
+          :desc="'最多可上传9张图片'"
+        />
+        <div class="mt-10">
+          <Button
+            long
+            size="large"
+            type="success"
+            @click="saveTemplate"
+            :loading="templateLoading"
+            >保存</Button
+          >
+        </div>
+      </Card>
     </TabPane>
-    <TabPane label="快捷消息模板" icon="md-images">
-      <MaterialTabsContent
-        :InputInfo="['消息模板']"
-        :TableColumnsTitle="'消息模板'"
-      />
+    <TabPane label="快捷消息模板" icon="md-information-circle">
+      <Card class="template-card">
+        <p slot="title" class="title">快捷消息模板</p>
+        <Input
+          class="mt-10"
+          type="textarea"
+          v-model="quickInfo.content"
+          placeholder="请设置快捷消息模板"
+          :autosize="{ minRows: 5, maxRows: 10 }"
+        >
+        </Input>
+        <div class="mt-10">
+          <Button
+            long
+            size="large"
+            type="success"
+            @click="saveQuickInfo"
+            :loading="quickLoading"
+            >保存</Button
+          >
+        </div>
+      </Card>
     </TabPane>
-    <TabPane label="个人信息模板" icon="md-link">
-      <MaterialTabsContent
-        :InputInfo="['个人信息']"
-        :TableColumnsTitle="'个人信息'"
-      />
+    <TabPane label="个人信息模板" icon="md-person">
+      <Card class="template-card">
+        <p slot="title" class="title">个人信息模板</p>
+        <Input
+          clearable
+          size="large"
+          type="password"
+          placeholder="请设置密码"
+          v-model="personInfo.pwd"
+        >
+          <span slot="prepend">密码模板</span>
+        </Input>
+        <Input
+          clearable
+          size="large"
+          class="mt-10"
+          placeholder="请设置昵称"
+          v-model="personInfo.nickname"
+        >
+          <span slot="prepend">昵称模板</span>
+        </Input>
+        <Input
+          clearable
+          class="mt-10"
+          type="textarea"
+          placeholder="请设置个性签名"
+          v-model="personInfo.signature"
+          :autosize="{ minRows: 5, maxRows: 10 }"
+        >
+        </Input>
+        <SpaceUpload :uploadLimit="1" :desc="'上传头像'" ref="UploadAvatar" />
+        <div class="mt-10">
+          <Button
+            long
+            size="large"
+            type="success"
+            @click="savePersonInfo"
+            :loading="personLoading"
+            >保存</Button
+          >
+        </div>
+      </Card>
     </TabPane>
-    <TabPane label="验证信息模板" icon="md-mic">
-      <MaterialTabsContent
-        :InputInfo="['验证信息']"
-        :TableColumnsTitle="'验证信息'"
-      />
+    <TabPane label="验证信息模板" icon="md-paper-plane">
+      <Card class="template-card">
+        <p slot="title" class="title">验证信息模板</p>
+        <Input
+          class="mt-10"
+          type="textarea"
+          v-model="verifyInfo.content"
+          placeholder="请设置验证消息模板"
+          :autosize="{ minRows: 5, maxRows: 10 }"
+        >
+        </Input>
+        <div class="mt-10">
+          <Button
+            long
+            size="large"
+            type="success"
+            @click="saveVerifyInfo"
+            :loading="verifyLoading"
+            >保存</Button
+          >
+        </div>
+      </Card>
     </TabPane>
   </Tabs>
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   data() {
     return {
-      SelectOptions: [
-        {
-          value: "New York",
-          label: "New York"
-        },
-        {
-          value: "London",
-          label: "London"
-        },
-        {
-          value: "Sydney",
-          label: "Sydney"
-        },
-        {
-          value: "Ottawa",
-          label: "Ottawa"
-        },
-        {
-          value: "Paris",
-          label: "Paris"
-        },
-        {
-          value: "Canberra",
-          label: "Canberra"
-        }
-      ]
+      quickLoading: false,
+      verifyLoading: false,
+      personLoading: false,
+      templateLoading: false,
+      quickInfo: { content: "" },
+      verifyInfo: { content: "" },
+      template: { title: "", content: "", picURL: [] },
+      personInfo: { pwd: "", nickname: "", signature: "", avatarUrl: "" }
+    }
+  },
+  computed: {
+    ...mapState({ user_id: state => state.user_id })
+  },
+  methods: {
+    async saveTemplate() {
+      // this.saveLoading = true
+      this.template.user_id = this.user_id
+      this.template.picURL = this.$refs.SpaceUpload.uploadList
+      const res = await this.$http.post(
+        "/marketing/setFriendCricle",
+        this.template
+      )
+      this.$Message.info(res.msg)
+    },
+    async saveQuickInfo() {
+      this.quickInfo.user_id = this.user_id
+      const { msg } = await this.$http.post(
+        "/marketing/setSendMsg",
+        this.quickInfo
+      )
+      this.$Message.info(msg)
+    },
+    async savePersonInfo() {
+      this.personInfo.user_id = this.user_id
+      this.personInfo.avatarUrl = this.$refs.UploadAvatar.uploadList[0]
+      const res = await this.$http.post("/marketing/setInfo", this.personInfo)
+      this.$Message.info(res.msg)
+    },
+    async saveVerifyInfo() {
+      this.verifyInfo.user_id = this.user_id
+      console.log(this.verifyInfo)
+      const { msg } = await this.$http.post(
+        "/marketing/setAddMsg",
+        this.verifyInfo
+      )
+      this.$Message.info(msg)
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.Material {
+  .template-card {
+    width: 500px;
+    margin: 0 auto;
+    .title {
+      text-align: center;
+    }
+  }
+}
+</style>

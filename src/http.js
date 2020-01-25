@@ -1,10 +1,7 @@
 import Vue from "vue"
 import axios from "axios"
 
-const http = axios.create({
-  baseURL: "/api",
-  timeout: 5000
-})
+const http = axios.create({ baseURL: "/api" })
 
 http.interceptors.request.use(
   config => config,
@@ -12,7 +9,7 @@ http.interceptors.request.use(
 )
 
 http.interceptors.response.use(
-  res => res.data,
+  res => (res.data ? res.data : res),
   err => {
     const status = err.response.status
     const msg = err.response.msg
@@ -22,7 +19,7 @@ http.interceptors.response.use(
       )
     }
     if (msg) {
-      Vue.prototype.$Message.error(`${msg}`)
+      Vue.prototype.$Message.error(msg)
     }
     return Promise.reject(err)
   }

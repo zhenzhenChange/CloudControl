@@ -23,8 +23,4 @@ componentsContext.keys().forEach(component => {
   Vue.component(componentConfig.name, componentConfig)
 })
 
-new Vue({
-  store,
-  router,
-  render: h => h(App)
-}).$mount("#app")
+new Vue({ store, router, render: h => h(App) }).$mount("#app")

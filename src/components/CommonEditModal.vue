@@ -61,9 +61,7 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      user_id: state => state.user_id
-    })
+    ...mapState({ user_id: state => state.user_id })
   },
   methods: {
     visibleChange(value) {

@@ -49,6 +49,8 @@ export default {
       if (this.params) {
         this.$parent.remove(this.params)
         this.params = null
+      } else {
+        this.$parent.remove(null)
       }
       if (this.config.params === "onByID") {
         this.$parent.onlineByWXID(this.config.paramsValue)
