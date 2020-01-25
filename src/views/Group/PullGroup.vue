@@ -134,8 +134,7 @@ export default {
       let grpUrl = []
       this.urlArea.split(/\n/g).forEach(item => grpUrl.push(item))
       grpUrl = grpUrl.filter(item => item !== "")
-      const res = await this.$http.post("/group/setGroupURL", { grpUrl })
-      console.log(res)
+      await this.$http.post("/group/setGroupURL", { grpUrl })
     },
     catchClick() {
       this.isShowUrlModal = false

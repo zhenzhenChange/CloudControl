@@ -61,11 +61,10 @@ export default {
       })
     },
     async sendFriendSpace(params) {
-      const { data } = await this.$http.post("/account/sendFriendCircle", {
+      await this.$http.post("/account/sendFriendCircle", {
         group_id: String(params),
         user_id: this.user_id
       })
-      console.log(data)
     }
   }
 }
