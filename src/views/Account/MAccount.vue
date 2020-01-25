@@ -158,7 +158,8 @@ export default {
                         btnIcon: "md-checkmark",
                         btnText: "确定",
                         params: "onByID",
-                        paramsValue: params.row
+                        paramsValue: params.row,
+                        flag: true
                       }
                       this.$refs[this.ConfirmModalRef].isShowConfirmModal = true
                     }

@@ -106,7 +106,8 @@ export default {
             btnType: "success",
             btnIcon: "md-checkmark",
             btnText: "确定",
-            params: "onNo"
+            params: "onNo",
+            flag: true
           }
           parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
         } else {
@@ -136,7 +137,8 @@ export default {
             btnType: "success",
             btnIcon: "md-checkmark",
             btnText: "确定",
-            params: "offNo"
+            params: "offNo",
+            flag: true
           }
           parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
         } else {

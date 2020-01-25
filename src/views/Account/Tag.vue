@@ -107,9 +107,7 @@ export default {
     this.getData(null)
   },
   computed: {
-    ...mapState({
-      user_id: state => state.user_id
-    })
+    ...mapState({ user_id: state => state.user_id })
   },
   methods: {
     async getData(keyWords) {
@@ -122,6 +120,7 @@ export default {
         res = await this.$http.get("/account/getAllTag", {
           params: { user_id: this.user_id }
         })
+        res = res.data
       }
       this.data = []
       res.forEach((item, index) => {
