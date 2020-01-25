@@ -173,7 +173,6 @@ export default {
     },
     async saveVerifyInfo() {
       this.verifyInfo.user_id = this.user_id
-      console.log(this.verifyInfo)
       const { msg } = await this.$http.post(
         "/marketing/setAddMsg",
         this.verifyInfo
