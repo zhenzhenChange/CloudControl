@@ -182,7 +182,7 @@ export default {
     },
     async inviteTag() {
       this.isShowRadioModal = false
-      const res = await this.$http.get("/group/enterGroup", {
+      await this.$http.get("/group/enterGroup", {
         params: {
           tagId: this.$refs["RadioSelect"].value,
           opType: this.opType === "一手" ? 0 : 1
