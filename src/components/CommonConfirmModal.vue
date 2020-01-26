@@ -35,6 +35,7 @@ export default {
   data() {
     return {
       params: null,
+      configParams: null,
       isShowConfirmModal: false
     }
   },
@@ -68,6 +69,8 @@ export default {
         this.$parent.requestSetByWXID()
       } else if (this.config.params === "changeMeansByWXID") {
         this.$parent.changeMeansByWXID()
+      } else if (this.config.params === "addMailFriend") {
+        this.$parent.addMailFriend(this.configParams)
       }
     },
     catchClick() {

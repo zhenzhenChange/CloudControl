@@ -52,12 +52,12 @@ export default {
       SelectModalRef: "SAccountSelectModal",
       ConfirmModalRef: "SAccountConfirmModal",
       buttonListInfos: [
-        {
+        /* {
           id: "request",
           type: "success",
           icon: "md-settings",
           name: "好友请求设置"
-        },
+        }, */
         {
           id: "GroupChange",
           type: "success",
@@ -69,13 +69,13 @@ export default {
           type: "success",
           icon: "md-settings",
           name: "标签更变"
-        },
+        } /* ,
         {
           id: "ChangeMeans",
           type: "success",
           icon: "md-settings",
           name: "修改资料"
-        }
+        } */
       ],
       SAccountColumns: [
         { width: 60, align: "center", type: "selection" },
@@ -108,6 +108,43 @@ export default {
           align: "center",
           title: "标签ID",
           key: "tagId"
+        },
+        {
+          width: 350,
+          title: "操作",
+          align: "center",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "Button",
+                {
+                  props: { type: "success", icon: "md-settings" },
+                  style: { marginRight: "5px" },
+                  on: {
+                    click: () => {
+                      this.$refs["MailSet"].isShowConfirmModal = true
+                      this.$refs["MailSet"].configParams = params.row
+                    }
+                  }
+                },
+                "好友请求设置"
+              ),
+              h(
+                "Button",
+                {
+                  props: { type: "success", icon: "md-settings" },
+                  style: { marginRight: "5px" },
+                  on: {
+                    click: () => {
+                      this.$refs["MailSet"].isShowConfirmModal = true
+                      this.$refs["MailSet"].configParams = params.row
+                    }
+                  }
+                },
+                "修改资料"
+              )
+            ])
+          }
         }
       ]
     }

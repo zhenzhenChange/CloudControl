@@ -296,6 +296,8 @@ export default {
           parentRefs[parent.SelectModalRef].params = "changeMeansByGroup"
           parentRefs[parent.SelectModalRef].isShowSelectModal = true
         }
+      } else if (btnID === "uploadMailList") {
+        parent.isShowModal = true
       }
     }
   }

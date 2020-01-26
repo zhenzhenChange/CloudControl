@@ -1,8 +1,8 @@
 <template>
   <div class="Space">
-    <ButtonList :buttonListInfos="buttonListInfos" />
+    <!-- <ButtonList :buttonListInfos="buttonListInfos" /> -->
     <CommonSelectModal :ref="SelectModalRef" :config="selectModalConfig" />
-    <Divider dashed />
+    <!-- <Divider dashed /> -->
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="SpaceColumns" />
   </div>
 </template>
@@ -21,20 +21,44 @@ export default {
         { id: "newSpace", name: "朋友圈发布", icon: "md-send", type: "primary" }
       ],
       SpaceColumns: [
+        { width: 70, align: "center", title: "序号", key: "serialNumber" },
         {
-          title: "发布账号",
+          title: "分组名称",
           align: "center",
           key: "groupName"
         },
         {
-          title: "发布内容",
+          title: "分组ID",
           align: "center",
           key: "groupId"
         },
         {
-          title: "发布时间",
+          title: "创建时间",
           align: "center",
           key: "groupCreateDate"
+        },
+        {
+          width: 230,
+          title: "操作",
+          align: "center",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "Button",
+                {
+                  props: { type: "primary", icon: "md-send" },
+                  style: { marginRight: "5px" },
+                  on: {
+                    click: () => {
+                      this.$refs["MailSet"].isShowConfirmModal = true
+                      this.$refs["MailSet"].configParams = params.row
+                    }
+                  }
+                },
+                "朋友圈发布"
+              )
+            ])
+          }
         }
       ]
     }
@@ -51,8 +75,9 @@ export default {
         params: { user_id: this.user_id }
       })
       this.data = []
-      data.forEach(item => {
+      data.forEach((item, index) => {
         this.data.push({
+          serialNumber: index + 1,
           groupName: item.groupName,
           groupId: item.groupId,
           groupCreateDate: this.$options.filters.date(item.groupCreateDate)

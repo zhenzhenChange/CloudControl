@@ -1,166 +1,100 @@
 <template>
   <div class="Friends">
-    <Divider dashed />
-    <SearchSelect :title="'账号分组'" :info="'分组'" :options="cityList" />
-    <SearchSelect :title="'所属账号'" :info="'账号'" :options="cityList" />
-    <SearchSelect :title="'所属标签'" :info="'标签'" :options="cityList" />
-    <SearchInput :infos="['微信登录名']" />
-    <Divider dashed />
-    <ButtonList :buttonListInfos="confirmButtonListInfos" />
+    <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider class="float-left" dashed />
-    <PagedTable ref="FriendsPagedTable" :dataColumns="FriendsColumns" />
+    <PagedTable
+      :data="data"
+      :ref="PagedTableRef"
+      :dataColumns="FriendsColumns"
+    />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   data() {
     return {
-      cityList: [
-        {
-          value: "New York",
-          label: "New York"
-        },
-        {
-          value: "London",
-          label: "London"
-        },
-        {
-          value: "Sydney",
-          label: "Sydney"
-        },
-        {
-          value: "Ottawa",
-          label: "Ottawa"
-        },
-        {
-          value: "Paris",
-          label: "Paris"
-        },
-        {
-          value: "Canberra",
-          label: "Canberra"
-        }
-      ],
+      data: [],
+      PagedTableRef: "FriendsPagedTable",
       FriendsColumns: [
+        { width: 70, align: "center", title: "序号", key: "serialNumber" },
+        { align: "center", title: "标签名称", key: "tagName" },
+        { align: "center", title: "标签ID", key: "tagId" },
         {
-          type: "selection",
-          width: 60,
-          align: "center"
-        },
-        {
-          title: "序号",
-          width: 70,
+          sortable: true,
           align: "center",
-          key: "mAccountNumber"
+          title: "创建时间",
+          key: "tagCreateDate"
         },
         {
-          title: "好友昵称",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "好友微信号",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "所属账号",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "所属标签",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "被拉群次数",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "性别",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "签名",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "城市",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "添加来源",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
-          title: "添加时间",
-          align: "center",
-          key: "mAccountNumber"
-        },
-        {
+          width: 400,
           title: "操作",
-          key: "groupAction",
-          width: 250,
           align: "center",
-          render: (h /*params*/) => {
+          render: (h, params) => {
             return h("div", [
               h(
                 "Button",
                 {
-                  props: {
-                    type: "error",
-                    size: "small",
-                    icon: "md-trash"
-                  },
-                  style: {
-                    marginRight: "5px"
-                  },
+                  props: { type: "warning", icon: "md-send" },
+                  style: { marginRight: "5px" },
                   on: {
                     click: () => {
-                      // this.show(params.index)
+                      this.$refs["MailSet"].isShowConfirmModal = true
+                      this.$refs["MailSet"].configParams = params.row
                     }
                   }
                 },
-                "删除"
+                "发送添加好友请求"
+              ),
+              h(
+                "Button",
+                {
+                  props: { type: "info", icon: "md-paper-plane" },
+                  style: { marginRight: "5px" },
+                  on: {
+                    click: () => {
+                      this.$refs["MailSet"].isShowConfirmModal = true
+                      this.$refs["MailSet"].configParams = params.row
+                    }
+                  }
+                },
+                "群发好友"
               )
             ])
           }
         }
       ],
-      confirmButtonListInfos: [
+      buttonListInfos: [
         {
-          type: "error",
-          icon: "md-trash",
-          name: "删除"
-        },
-        {
-          type: "success",
-          icon: "md-pricetags",
-          name: "打标签"
+          id: "addByAcc",
+          type: "primary",
+          icon: "md-person-add",
+          name: "单个账号添加"
         }
       ]
     }
   },
-  mounted() {
-    this.$refs["FriendsPagedTable"].tableData = this.mockTableData()
+  created() {
+    this.initData()
+  },
+  computed: {
+    ...mapState({ user_id: state => state.user_id })
   },
   methods: {
-    mockTableData() {
-      let data = []
-      for (let i = 0; i < 10; i++) {
-        data.push({
-          mAccountNumber: Math.floor(Math.random() * 100 + 1),
-          mAccountSortNumber: Math.floor(Math.random() * 100 + 1)
+    async initData() {
+      this.data = []
+      const { data } = await this.$http.get("/account/getAllTag", {
+        params: { user_id: this.user_id }
+      })
+      data.forEach((item, index) => {
+        this.data.push({
+          serialNumber: index + 1,
+          tagName: item.tagName,
+          tagId: item.tagId,
+          tagCreateDate: this.$options.filters.date(item.tagCreateDate)
         })
-      }
-      return data
+      })
     }
   }
 }

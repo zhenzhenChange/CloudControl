@@ -99,55 +99,38 @@ export default {
       radioSelectConfig: {},
       PagedTableRef: "PullGroupPagedTable",
       buttonListInfos: [
-        { id: "pull", type: "primary", icon: "md-add", name: "邀请进群" },
+        // { id: "pull", type: "primary", icon: "md-add", name: "邀请进群" },
         { id: "create-p", type: "primary", icon: "md-add", name: "添加群链接" }
       ],
       PullGroupColumns: [
-        { width: 60, align: "center", type: "selection" },
-        { width: 70, align: "center", title: "序号", key: "mAccountNumber" },
-        { align: "center", title: "订单ID", key: "mAccountNumber" },
-        { align: "center", title: "任务名称", key: "mAccountNumber" },
-        { align: "center", title: "微信数", key: "mAccountNumber" },
-        { align: "center", title: "拉群标签", key: "mAccountNumber" },
-        { align: "center", title: "拉群类型", key: "mAccountNumber" },
-        { align: "center", title: "群最终人数", key: "mAccountNumber" },
-        { align: "center", title: "总拉群数", key: "mAccountNumber" },
-        { align: "center", title: "合格群数", key: "mAccountNumber" },
-        { align: "center", title: "不合格群数", key: "mAccountNumber" },
-        { align: "center", title: "创建时间", key: "mAccountNumber" },
-        { align: "center", title: "结束时间", key: "mAccountNumber" },
-        { align: "center", title: "当前状态", key: "mAccountNumber" },
+        { width: 70, align: "center", title: "序号", key: "serialNumber" },
+        { align: "center", title: "标签名称", key: "tagName" },
+        { align: "center", title: "标签ID", key: "tagId" },
         {
-          width: 250,
+          sortable: true,
           align: "center",
+          title: "创建时间",
+          key: "tagCreateDate"
+        },
+        {
+          width: 230,
           title: "操作",
-          render: (h /*params*/) => {
+          align: "center",
+          render: (h, params) => {
             return h("div", [
               h(
                 "Button",
                 {
-                  props: { type: "primary", size: "small", icon: "md-eye" },
+                  props: { type: "info", icon: "md-hand" },
                   style: { marginRight: "5px" },
                   on: {
-                    click: () => {}
+                    click: () => {
+                      this.$refs["MailSet"].isShowConfirmModal = true
+                      this.$refs["MailSet"].configParams = params.row
+                    }
                   }
                 },
-                "查看"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    type: "success",
-                    size: "small",
-                    icon: "md-aperture"
-                  },
-                  style: { marginRight: "5px" },
-                  on: {
-                    click: () => {}
-                  }
-                },
-                "运行"
+                "邀请进群"
               )
             ])
           }
@@ -163,11 +146,18 @@ export default {
   },
   methods: {
     async initData() {
-      const { data: TagData } = await this.$http.get("/account/getAllTag", {
+      this.data = []
+      const { data } = await this.$http.get("/account/getAllTag", {
         params: { user_id: this.user_id }
       })
-      TagData.forEach(item => {
+      data.forEach((item, index) => {
         this.TagData.push({ label: item.tagName, value: item.tagId })
+        this.data.push({
+          serialNumber: index + 1,
+          tagName: item.tagName,
+          tagId: item.tagId,
+          tagCreateDate: this.$options.filters.date(item.tagCreateDate)
+        })
       })
     },
     async tryClick() {
