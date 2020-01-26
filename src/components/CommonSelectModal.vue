@@ -15,17 +15,17 @@
       />
       {{ config.title }}
     </p>
-    <div class="mt-10" v-if="config.selectConfig1">
-      <SearchSelect ref="SearchSelect1" :config="config.selectConfig1" />
-      <div class="clear-both"></div>
-    </div>
-    <div class="mt-10 " v-if="config.selectConfig2">
-      <SearchSelect :config="config.selectConfig2" />
+    <div class="mt-10" v-if="config.selectConfig">
+      <SearchSelect ref="SearchSelect" :config="config.selectConfig" />
       <div class="clear-both"></div>
     </div>
     <div slot="footer">
       <Button icon="md-remove-circle" @click="catchClick">取消</Button>
-      <Button type="success" :icon="config.tryIcon" @click="tryClick">
+      <Button
+        @click="tryClick"
+        :icon="config.tryIcon"
+        :type="config.tryType ? config.tryType : 'success'"
+      >
         {{ config.tryBtn }}
       </Button>
     </div>
@@ -48,19 +48,29 @@ export default {
   },
   methods: {
     visibleChange(value) {
-      value ? "" : (this.isShowModal = false)
+      value ? "" : (this.isShowSelectModal = false)
     },
     tryClick() {
       if (this.params === "online") {
-        this.$parent.onlineByGroup(this.$refs["SearchSelect1"].value)
+        this.$parent.onlineByGroup(this.$refs["SearchSelect"].value)
       } else if (this.params === "offline") {
-        this.$parent.offlineByGroup(this.$refs["SearchSelect1"].value)
+        this.$parent.offlineByGroup(this.$refs["SearchSelect"].value)
       } else if (this.params === "send") {
-        this.$parent.sendFriendSpace(this.$refs["SearchSelect1"].value)
+        this.$parent.sendFriendSpace(this.$refs["SearchSelect"].value)
+      } else if (this.params === "removeByGroup") {
+        this.$parent.removeByGroup(this.$refs["SearchSelect"].value)
+      } else if (this.params === "moveGroup") {
+        this.$parent.moveGroup(this.$refs["SearchSelect"].value)
+      } else if (this.params === "moveTag") {
+        this.$parent.moveTag(this.$refs["SearchSelect"].value)
+      } else if (this.params === "request") {
+        this.$parent.requestSetByGroup(this.$refs["SearchSelect"].value)
+      } else if (this.params === "changeMeansByGroup") {
+        this.$parent.changeMeansByGroup(this.$refs["SearchSelect"].value)
       }
     },
     catchClick() {
-      this.$refs["SearchSelect1"].value = ""
+      this.$refs["SearchSelect"].value = ""
       this.isShowSelectModal = false
     }
   }

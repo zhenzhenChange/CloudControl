@@ -1,146 +1,241 @@
 <template>
   <!-- 账号设置 -->
   <div class="SAccount">
-    <SearchInput :infos="['微信ID']" />
+    <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider dashed />
-    <ButtonList :buttonListInfos="setButtonListInfos" />
-    <Divider dashed />
-    <PagedTable ref="SAccountPagedTable" :dataColumns="SAccountColumns" />
-    <SAccountSetModal
-      :config="requestSetConfig"
-      ref="SAccountRequestSetModal"
+    <div class="mb-10 config float-left mr-20">
+      <span class="mr-10">好友请求配置</span>
+      <RadioGroup v-model="isChecking">
+        <Radio label="是"></Radio>
+        <Radio label="否"></Radio>
+      </RadioGroup>
+    </div>
+    <div class="clear-both"></div>
+    <div class="mb-10 config">
+      <span class="mr-10">修改资料配置</span>
+      <RadioGroup v-model="isUpdateType">
+        <Radio label="修改密码"></Radio>
+        <Radio label="修改昵称"></Radio>
+        <Radio label="修改头像"></Radio>
+      </RadioGroup>
+    </div>
+    <div class="clear-both"></div>
+    <UnCheckButton class="mt-10" :el="PagedTableRef" />
+    <PagedTable
+      :data="data"
+      :ref="PagedTableRef"
+      :dataColumns="SAccountColumns"
     />
-    <SAccountSetModal
-      :config="autoReplySetConfig"
-      ref="SAccountAutoReplySetModal"
+    <CommonSelectModal ref="SAccountSelectModal" :config="selectConfig" />
+    <CommonConfirmModal
+      :data="operationData"
+      :ref="ConfirmModalRef"
+      :config="operationConfig"
     />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   data() {
     return {
       data: [],
-      requestSetConfig: {
-        title: "好友请求设置",
-        label: "加我为好友时是否需要验证：",
-        reallyText: "是",
-        fakeText: "否"
-      },
-      autoReplySetConfig: {
-        title: "自动回复设置",
-        label: "是否自动回复：",
-        reallyText: "开启",
-        fakeText: "关闭"
-      },
-      setButtonListInfos: [
-        { type: "success", icon: "md-settings", name: "好友请求设置" },
-        { type: "success", icon: "md-settings", name: "自动回复设置" },
-        { type: "success", icon: "md-settings", name: "自动回复模板设置" },
-        { type: "success", icon: "md-settings", name: "分配分组" },
-        { type: "success", icon: "md-settings", name: "分配标签" },
-        { type: "success", icon: "md-settings", name: "修改资料" }
+      TagData: [],
+      GroupData: [],
+      isChecking: "是",
+      isUpdateType: "修改密码",
+      selectConfig: {},
+      operationData: [],
+      operationConfig: {},
+      PagedTableRef: "SAccountPagedTable",
+      SelectModalRef: "SAccountSelectModal",
+      ConfirmModalRef: "SAccountConfirmModal",
+      buttonListInfos: [
+        {
+          id: "request",
+          type: "success",
+          icon: "md-settings",
+          name: "好友请求设置"
+        },
+        {
+          id: "GroupChange",
+          type: "success",
+          icon: "md-settings",
+          name: "分组更变"
+        },
+        {
+          id: "TagChange",
+          type: "success",
+          icon: "md-settings",
+          name: "标签更变"
+        },
+        {
+          id: "ChangeMeans",
+          type: "success",
+          icon: "md-settings",
+          name: "修改资料"
+        }
       ],
       SAccountColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { align: "center", title: "微信账号", key: "wechatNumber" },
+        { width: 130, align: "center", title: "账号", key: "account" },
         {
+          width: 200,
           align: "center",
-          title: "账号状态",
-          key: "accountStatus",
-          render: (h, params) => {
-            const row = params.row
-            const color = row.accountStatus ? "success" : "error"
-            const text = row.accountStatus ? "正常" : "离线"
-            return h("Tag", { props: { type: "dot", color } }, text)
-          }
-        },
-        {
-          align: "center",
-          title: "是否需要认证",
-          key: "isAuthentication",
-          render: (h, params) => {
-            const row = params.row
-            const color = row.isAuthentication ? "success" : "volcano"
-            const text = row.isAuthentication ? "是" : "否"
-            return h("Tag", { props: { type: "border", color } }, text)
-          }
-        },
-        {
-          align: "center",
-          title: "是否自动回复",
-          key: "isAutoReply",
-          render: (h, params) => {
-            const row = params.row
-            const color = row.isAutoReply ? "success" : "volcano"
-            const text = row.isAutoReply ? "是" : "否"
-            return h("Tag", { props: { type: "border", color } }, text)
-          }
+          title: "微信ID",
+          key: "accountWxid"
         },
         {
           tooltip: true,
           align: "center",
-          title: "自动回复模板",
-          key: "autoReplyTemplate"
+          title: "所属分组",
+          key: "groupName"
         },
         {
-          width: 130,
-          title: "操作",
           align: "center",
-          render: h => {
-            return h("div", [
-              h(
-                "Button",
-                {
-                  props: {
-                    size: "small",
-                    type: "primary",
-                    icon: "md-alert",
-                    disabled: this.radio
-                  },
-                  style: { marginRight: "5px" },
-                  on: {
-                    click: () => {}
-                  }
-                },
-                "未设置"
-              )
-            ])
-          }
+          title: "分组ID",
+          key: "groupId"
+        },
+        {
+          tooltip: true,
+          align: "center",
+          title: "所属标签",
+          key: "tagName"
+        },
+        {
+          align: "center",
+          title: "标签ID",
+          key: "tagId"
         }
       ]
     }
   },
   created() {
-    this.getData()
+    this.initData()
   },
-  mounted() {
-    this.$refs["SAccountPagedTable"].tableData = this.data
+  computed: {
+    ...mapState({ user_id: state => state.user_id })
   },
   methods: {
-    async getData() {
-      const { data } = await this.$http.getSaccount()
-      const length = data.length
-      for (let i = 0; i < length; i++) {
-        this.data.push({
-          serialNumber: data[i].serialNumber,
-          wechatNumber: data[i].wechatNumber,
-          accountStatus: data[i].accountStatus,
-          isAuthentication: data[i].isAuthentication,
-          isAutoReply: data[i].isAutoReply,
-          autoReplyTemplate: data[i].autoReplyTemplate
-        })
-      }
-      return this.data
+    async initData() {
+      this.data = []
+      const { data } = await this.$http.get("/account/getAccountInfo", {
+        params: { user_id: this.user_id }
+      })
+      data.forEach((item, index) => {
+        if (item.accountWxid) {
+          this.data.push({
+            serialNumber: index + 1,
+            account: item.account,
+            accountWxid: item.accountWxid
+              ? item.accountWxid
+              : "无微信ID或信息异常",
+            groupName: item.groupName ? item.groupName : "无",
+            tagName: item.tagName ? item.tagName : "无",
+            groupId: item.groupId ? item.groupId : "无",
+            tagId: item.tagId ? item.tagId : "无"
+          })
+        }
+      })
+      const { data: GroupData } = await this.$http.get("/account/getAllGroup", {
+        params: { user_id: this.user_id }
+      })
+      const { data: TagData } = await this.$http.get("/account/getAllTag", {
+        params: { user_id: this.user_id }
+      })
+      GroupData.forEach(item => {
+        this.GroupData.push({ label: item.groupName, value: item.groupId })
+      })
+      TagData.forEach(item => {
+        this.TagData.push({ label: item.tagName, value: item.tagId })
+      })
     },
-    requestAddFriend() {
-      this.$refs["SAccountRequestSetModal"].isShowSetModal = true
+    async moveGroup(groupId) {
+      const wxid_list = []
+      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
+      const { msg } = await this.$http.post("/account/setAccountGroup", {
+        wxid_list,
+        group_id: String(groupId)
+      })
+      this.$Message.success(msg)
+      this.$refs[this.SelectModalRef].isShowSelectModal = false
+      this.initData()
     },
-    autoReply() {
-      this.$refs["SAccountAutoReplySetModal"].isShowSetModal = true
+    async moveTag(tagId) {
+      const wxid_list = []
+      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
+      const { msg } = await this.$http.post("/account/setAccountTag", {
+        wxid_list,
+        tag_id: String(tagId)
+      })
+      this.$Message.success(msg)
+      this.$refs[this.SelectModalRef].isShowSelectModal = false
+      this.initData()
+    },
+    async requestSetByGroup(groupId) {
+      await this.$http.post("/account/setFriendRequest", {
+        group_id: String(groupId),
+        wxid_list: [],
+        type: this.isChecking === "是" ? 0 : 1,
+        request_type: 0
+      })
+      /* this.$Message.success(msg)
+      this.$refs[this.SelectModalRef].isShowSelectModal = false
+      this.initData() */
+    },
+    async requestSetByWXID() {
+      const wxid_list = []
+      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
+      await this.$http.post("/account/setFriendRequest", {
+        group_id: "",
+        wxid_list,
+        type: this.isChecking === "是" ? 0 : 1,
+        request_type: 1
+      })
+      /* this.$Message.success(msg)
+      this.$refs[this.SelectModalRef].isShowSelectModal = false
+      this.initData() */
+    },
+    async changeMeansByGroup(groupId) {
+      const changeType =
+        this.isUpdateType === "修改密码"
+          ? 2
+          : this.isUpdateType === "修改昵称"
+          ? 0
+          : 1
+      await this.$http.post("/account/changeDatum", {
+        group_id: String(groupId),
+        wxid_list: [],
+        change_type: changeType,
+        type: 0
+      })
+    },
+    async changeMeansByWXID() {
+      const changeType =
+        this.isUpdateType === "修改密码"
+          ? 2
+          : this.isUpdateType === "修改昵称"
+          ? 0
+          : 1
+      const wxid_list = []
+      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
+      await this.$http.post("/account/changeDatum", {
+        group_id: "",
+        wxid_list,
+        change_type: changeType,
+        type: 1
+      })
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.config {
+  .ivu-radio-group {
+    vertical-align: bottom;
+  }
+}
+</style>

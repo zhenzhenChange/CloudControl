@@ -60,6 +60,14 @@ export default {
         this.$parent.onlineByWXID(null)
       } else if (this.config.params === "offNo") {
         this.$parent.offlineByWXID()
+      } else if (this.config.params === "removeByIDs") {
+        this.$parent.removeByWXID(null)
+      } else if (this.config.params === "removeByID") {
+        this.$parent.removeByWXID(this.config.paramsValue)
+      } else if (this.config.params === "requestByWXID") {
+        this.$parent.requestSetByWXID()
+      } else if (this.config.params === "changeMeansByWXID") {
+        this.$parent.changeMeansByWXID()
       }
     },
     catchClick() {

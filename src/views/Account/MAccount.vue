@@ -179,7 +179,19 @@ export default {
                   style: { marginRight: "5px" },
                   on: {
                     click: () => {
-                      this.remove(params.row)
+                      this.operationConfig = {
+                        icon: "md-trash",
+                        color: "#ED4014",
+                        title: "删除",
+                        operation: "删除",
+                        btnType: "error",
+                        btnIcon: "md-trash",
+                        btnText: "删除",
+                        params: "removeByID",
+                        paramsValue: params.row,
+                        flag: true
+                      }
+                      this.$refs[this.ConfirmModalRef].isShowConfirmModal = true
                     }
                   }
                 },
@@ -192,36 +204,35 @@ export default {
     }
   },
   created() {
-    this.getData()
+    this.initData()
   },
   computed: {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
-    async getData() {
-      const { data } = await this.$http.post("/account/loginMulti", {
-        group_id: "118",
-        list: [{}],
-        request_type: "0"
+    async initData() {
+      this.data = []
+      const { data } = await this.$http.get("/account/getAccountInfo", {
+        params: { user_id: this.user_id }
       })
-      const loginData = [...data.error, ...data.success]
-      loginData.forEach((item, index) => {
+      data.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,
           account: item.account,
           account62A16: item.account62A16,
-          accountFriendCount: item.accountFriendCount,
+          accountFriendCount: item.accountFriendCount
+            ? item.accountFriendCount
+            : "无",
           accountIsValid: item.accountIsValid,
           accountPwd: item.accountPwd,
           accountState: item.accountState,
-          accountWxid:
-            item.accountWxid === "error"
-              ? "无微信ID或信息异常"
-              : item.accountWxid,
-          groupName: item.groupName,
-          tagName: item.tagName,
-          groupId: item.groupId,
-          tagId: item.tagId,
+          accountWxid: item.accountWxid
+            ? item.accountWxid
+            : "无微信ID或信息异常",
+          groupName: item.groupName ? item.groupName : "无",
+          tagName: item.tagName ? item.tagName : "无",
+          groupId: item.groupId ? item.groupId : "无",
+          tagId: item.tagId ? item.tagId : "无",
           userId: item.userId
         })
       })
@@ -249,9 +260,9 @@ export default {
         }
         arr.push(row)
       } else {
-        arr = this.operationData.filter(item => {
-          return item.accountIsValid && !item.accountState
-        })
+        arr = this.operationData.filter(
+          item => item.accountIsValid && !item.accountState
+        )
       }
       arr.forEach(item => {
         WXIDArray.push({
@@ -289,7 +300,7 @@ export default {
       this.$Message.info(
         `成功登录账号${data.success.length}个，失败${data.error.length}个！`
       )
-      this.$refs[this.SelectModalRef].$refs["SearchSelect1"].value = ""
+      this.$refs[this.SelectModalRef].$refs["SearchSelect"].value = ""
       this.$refs[this.SelectModalRef].isShowSelectModal = false
     },
     async offlineByWXID() {
@@ -324,36 +335,33 @@ export default {
       this.$Message.info(
         `成功下线账号${data.success.length}个，失败${data.error.length}个！`
       )
-      this.$refs[this.SelectModalRef].$refs["SearchSelect1"].value = ""
+      this.$refs[this.SelectModalRef].$refs["SearchSelect"].value = ""
       this.$refs[this.SelectModalRef].isShowSelectModal = false
     },
-    async removeByWXID() {
-      this.operationConfig = {
-        icon: "md-trash",
-        color: "#ED4014",
-        title: "删除",
-        operation: "删除",
-        btnType: "error",
-        btnIcon: "md-trash",
-        btnText: "删除",
-        url: "/account/deleteAccount",
-        deleteArgs: "request_type",
-        looperArgs: "wxids"
+    async removeByWXID(row) {
+      if (row) {
+        this.operationConfig = {
+          icon: "md-trash",
+          color: "#ED4014",
+          title: "删除",
+          operation: "删除",
+          btnType: "error",
+          btnIcon: "md-trash",
+          btnText: "删除"
+        }
       }
     },
-    async removeByGroup() {
-      this.operationConfig = {
-        icon: "md-trash",
-        color: "#ED4014",
-        title: "删除",
-        operation: "删除",
-        btnType: "error",
-        btnIcon: "md-trash",
-        btnText: "删除",
-        url: "/account/deleteAccount",
-        deleteArgs: "request_type",
-        looperArgs: "wxids"
-      }
+    async removeByGroup(groupID) {
+      const { data } = await this.$http.post("/account/deleteAccount", {
+        group_id: String(groupID),
+        wxids: [],
+        request_type: "0"
+      })
+      this.$Message.info(
+        `已成功删除${data.success.length}个账号，失败${data.error.length}!`
+      )
+      this.$refs[this.SelectModalRef].isShowSelectModal = false
+      this.$refs[this.SelectModalRef].$refs["SearchSelect"].value = ""
     },
     async uploadData(accountData, group_id) {
       let list = []
@@ -379,6 +387,7 @@ export default {
       this.$Message.info(
         `已成功添加${data.success.length}条数据，失败${data.error.length}条`
       )
+      this.initData()
     }
   }
 }

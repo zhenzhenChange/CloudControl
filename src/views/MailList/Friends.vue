@@ -1,6 +1,5 @@
 <template>
   <div class="Friends">
-    <RangeDatePicker />
     <Divider dashed />
     <SearchSelect :title="'账号分组'" :info="'分组'" :options="cityList" />
     <SearchSelect :title="'所属账号'" :info="'账号'" :options="cityList" />

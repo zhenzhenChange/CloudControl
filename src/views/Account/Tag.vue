@@ -104,13 +104,13 @@ export default {
     }
   },
   created() {
-    this.getData(null)
+    this.initData(null)
   },
   computed: {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
-    async getData(keyWords) {
+    async initData(keyWords) {
       let res = null
       if (keyWords) {
         res = await this.$http.get("/account/getTagByName", {
@@ -138,7 +138,7 @@ export default {
       const { msg } = await this.$http.post("/account/addTag", createData)
       this.$refs[this.EditModalRef].value = ""
       if (msg) {
-        this.getData()
+        this.initData()
         this.$Message.success("添加成功！")
       }
     },
@@ -155,6 +155,7 @@ export default {
         url: "/account/updateTag"
       }
       this.$refs[this.EditModalRef].isShowEditModal = true
+      this.$refs[this.EditModalRef].value = false
     },
     async remove(params) {
       let TagIDArray = []
@@ -169,7 +170,7 @@ export default {
         user_id: this.user_id
       })
       if (msg) {
-        this.getData()
+        this.initData()
         ref["UnCheckButton"].unCheck()
         this.$Message.success(`删除成功！`)
         ref[this.SearchInputRef].keyWords = ""

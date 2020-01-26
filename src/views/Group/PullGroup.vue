@@ -1,7 +1,5 @@
 <template>
   <div class="PullGroup">
-    <SearchInput :infos="['微信群']" />
-    <Divider dashed />
     <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider />
     <PagedTable
@@ -14,7 +12,6 @@
       :closable="false"
       :mask-closable="false"
       v-model="isShowUrlModal"
-      @on-visible-change="visibleChange"
       class-name="vertical-center-modal"
     >
       <p slot="header">
@@ -57,17 +54,49 @@
         </Button>
       </div>
     </Modal>
+    <Modal
+      width="400"
+      :closable="false"
+      :mask-closable="false"
+      v-model="isShowRadioModal"
+      class-name="vertical-center-modal"
+    >
+      <p slot="header">
+        <Icon type="md-add" color="#2D8CF0" class="mr-5 header-icon" />
+        按标签邀请入群
+      </p>
+      <SearchSelect ref="RadioSelect" :config="radioSelectConfig" />
+      <div class="clear-both"></div>
+      <div class="mt-10">
+        <span class="mr-10">类型选择</span>
+        <RadioGroup v-model="opType">
+          <Radio label="一手"></Radio>
+          <Radio label="二手"></Radio>
+        </RadioGroup>
+      </div>
+      <div slot="footer">
+        <Button icon="md-remove-circle" @click="catchClick">取消</Button>
+        <Button type="success" icon="md-checkmark" @click="inviteTag">
+          确定
+        </Button>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   data() {
     return {
       data: [],
       qrcode: "",
       urlArea: "",
+      TagData: [],
+      opType: "一手",
       isShowUrlModal: false,
+      isShowRadioModal: false,
+      radioSelectConfig: {},
       PagedTableRef: "PullGroupPagedTable",
       buttonListInfos: [
         { id: "pull", type: "primary", icon: "md-add", name: "邀请进群" },
@@ -126,9 +155,20 @@ export default {
       ]
     }
   },
+  created() {
+    this.initData()
+  },
+  computed: {
+    ...mapState({ user_id: state => state.user_id })
+  },
   methods: {
-    visibleChange(value) {
-      value ? "" : (this.isShowUrlModal = false)
+    async initData() {
+      const { data: TagData } = await this.$http.get("/account/getAllTag", {
+        params: { user_id: this.user_id }
+      })
+      TagData.forEach(item => {
+        this.TagData.push({ label: item.tagName, value: item.tagId })
+      })
     },
     async tryClick() {
       let grpUrl = []
@@ -138,6 +178,16 @@ export default {
     },
     catchClick() {
       this.isShowUrlModal = false
+      this.isShowRadioModal = false
+    },
+    async inviteTag() {
+      this.isShowRadioModal = false
+      const res = await this.$http.get("/group/enterGroup", {
+        params: {
+          tagId: this.$refs["RadioSelect"].value,
+          opType: this.opType === "一手" ? 0 : 1
+        }
+      })
     },
     handleQRCode() {
       this.qrcode = ""

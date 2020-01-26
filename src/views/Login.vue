@@ -1,7 +1,9 @@
 <template>
   <div class="login">
     <Card class="login-card">
-      <p slot="title"><Icon type="md-cloud-done" />欢迎登录后台管理系统</p>
+      <p slot="title">
+        <Icon type="md-cloud-done" class="mr-10" />欢迎登录后台管理系统
+      </p>
       <Form :model="loginForm" inline>
         <FormItem>
           <Input

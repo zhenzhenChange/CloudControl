@@ -40,13 +40,13 @@ export default {
     }
   },
   created() {
-    this.getData()
+    this.initData()
   },
   computed: {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
-    async getData() {
+    async initData() {
       const { data } = await this.$http.get("/account/getAllGroup", {
         params: { user_id: this.user_id }
       })

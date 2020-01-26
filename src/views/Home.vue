@@ -1,43 +1,47 @@
 <template>
   <div class="layout">
     <Sider class="sider">
-      <!-- :open-names="['Account']" -->
-      <Menu :active-name="show" ref="show" theme="dark" width="auto">
-        <Submenu name="Account">
-          <template slot="title"><Icon type="md-person" />账户</template>
-          <MenuItem name="grouping" to="/grouping">分组管理</MenuItem>
-          <MenuItem name="tag" to="/tag">标签管理</MenuItem>
-          <MenuItem name="m-account" to="/m-account">账号管理</MenuItem>
-          <MenuItem name="s-account" to="/s-account">账号设置</MenuItem>
-        </Submenu>
-        <Submenu name="MailList">
-          <template slot="title"><Icon type="md-call" />通讯录</template>
-          <MenuItem name="mail-set" to="/mail">通讯录管理</MenuItem>
-          <MenuItem name="friends" to="/friends">好友管理</MenuItem>
-        </Submenu>
-        <Submenu name="Group">
-          <template slot="title"><Icon type="ios-people" />群管理</template>
-          <MenuItem name="pull-group" to="/pull-group">群拉好友</MenuItem>
-        </Submenu>
-        <Submenu name="Marketing">
-          <template slot="title"><Icon type="md-settings" />营销管理</template>
-          <MenuItem name="space" to="/space">发朋友圈</MenuItem>
-          <MenuItem name="material" to="/material">素材管理</MenuItem>
+      <Menu
+        ref="show"
+        theme="dark"
+        width="auto"
+        @on-select="selectMenu"
+        :active-name="$route.path"
+      >
+        <Submenu
+          :key="index"
+          :name="index"
+          v-for="(subMenu, index) in subMenuList"
+        >
+          <template slot="title">
+            <Icon ref="Icon" :type="subMenu.type" />{{ subMenu.title }}
+          </template>
+          <MenuItem
+            :key="index"
+            ref="menuItem"
+            :to="menuItem.path"
+            :name="menuItem.path"
+            v-for="(menuItem, index) in subMenu.menuItem"
+          >
+            {{ menuItem.name }}
+          </MenuItem>
         </Submenu>
       </Menu>
     </Sider>
     <Layout class="layout">
-      <Header class="header"
-        >Cloud Platform Control ★ Your Can Really Code</Header
-      >
+      <Header class="header">
+        Cloud Platform Control ★ Your Can Really Code
+      </Header>
       <Content class="content">
         <Breadcrumb class="breadcrumb">
-          <!-- <BreadcrumbItem
-            :to="path(index)"
-            v-for="(item, index) in routes"
-            :key="index"
+          <BreadcrumbItem
             replace
-          >{{ item }}</BreadcrumbItem>-->
+            :key="index"
+            :to="item.path === '/home' ? '/data' : item.path"
+            v-for="(item, index) in routeList"
+          >
+            {{ item.name }}
+          </BreadcrumbItem>
         </Breadcrumb>
         <Card>
           <div class="card-div">
@@ -57,27 +61,67 @@ export default {
   name: "home",
   data() {
     return {
-      show: "grouping"
+      activeName: "",
+      routeList: [],
+      subMenuList: [
+        {
+          title: "账户",
+          type: "md-person",
+          menuItem: [
+            { name: "分组管理", path: "/grouping" },
+            { name: "标签管理", path: "/tag" },
+            { name: "账号管理", path: "/m-account" },
+            { name: "账号设置", path: "/s-account" }
+          ]
+        },
+        {
+          title: "通讯录",
+          type: "md-call",
+          menuItem: [
+            { name: "通讯录管理", path: "/mail" },
+            { name: "好友管理", path: "/friends" }
+          ]
+        },
+        {
+          title: "群管理",
+          type: "md-people",
+          menuItem: [{ name: "群拉好友", path: "/pull-group" }]
+        },
+        {
+          title: "营销管理",
+          type: "md-settings",
+          menuItem: [
+            { name: "发朋友圈", path: "/space" },
+            { name: "素材管理", path: "/material" }
+          ]
+        }
+      ]
     }
   },
   mounted() {
+    this.routeList = this.$route.matched
     this.$nextTick(() => {
-      this.show = this.$route.path.slice(1)
-      this.$refs.show.updateActiveName()
+      this.$refs.show.updateOpened()
+      const ref = this.$refs.menuItem
+      const length = ref.length
+      for (let i = 0; i < length; i++) {
+        if (ref[i].active) {
+          ref[i].$parent.opened = true
+        }
+      }
     })
-  }
-  /* data() {
-    return {
-      routes: this.$route.meta.name
+  },
+  watch: {
+    $route() {
+      this.routeList = []
+      this.routeList = this.$route.matched
     }
   },
-  computed: {
-    path() {
-      return function(index) {
-        return this.$route.meta.path[index]
-      }
+  methods: {
+    selectMenu(name) {
+      this.activeName = name
     }
-  } */
+  }
 }
 </script>
 

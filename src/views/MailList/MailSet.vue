@@ -1,6 +1,5 @@
 <template>
   <div class="Fans">
-    <RangeDatePicker />
     <Divider dashed />
     <SearchSelect :title="'订单状态'" :info="'订单状态'" />
     <SearchInput :infos="['任务名称']" />

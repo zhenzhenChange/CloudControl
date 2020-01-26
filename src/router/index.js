@@ -11,61 +11,57 @@ const routes = [
   { path: "/", name: "login", component: Login },
   {
     path: "/home",
-    name: "Home",
+    name: "首页",
     component: () => import("../views/Home.vue"),
     children: [
       {
-        path: "/main",
-        name: "Main",
-        component: () => import("../views/Main.vue"),
-        meta: {
-          name: ["首页", "分组管理", "账号管理"],
-          path: ["/", "/grouping", "/m-account"]
-        }
+        path: "/data",
+        name: "数据可视化",
+        component: () => import("../views/Data.vue")
       },
       {
         path: "/grouping",
-        name: "Grouping",
+        name: "分组管理",
         component: () => import("../views/Account/Grouping.vue")
       },
       {
         path: "/m-account",
-        name: "MAccount",
+        name: "账号管理",
         component: () => import("../views/Account/MAccount.vue")
       },
       {
         path: "/s-account",
-        name: "SAccount",
+        name: "账号设置",
         component: () => import("../views/Account/SAccount.vue")
       },
       {
         path: "/tag",
-        name: "Tag",
+        name: "标签管理",
         component: () => import("../views/Account/Tag.vue")
       },
       {
         path: "/friends",
-        name: "Friends",
+        name: "好友管理",
         component: () => import("../views/MailList/Friends.vue")
       },
       {
         path: "/mail",
-        name: "MailSet",
+        name: "通讯录管理",
         component: () => import("../views/MailList/MailSet.vue")
       },
       {
         path: "/pull-group",
-        name: "PullGroup",
+        name: "群拉好友",
         component: () => import("../views/Group/PullGroup.vue")
       },
       {
         path: "/space",
-        name: "Space",
+        name: "发朋友圈",
         component: () => import("../views/Marketing/Space.vue")
       },
       {
         path: "/material",
-        name: "Material",
+        name: "素材管理",
         component: () => import("../views/Marketing/Material.vue")
       }
     ]

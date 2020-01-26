@@ -32,13 +32,13 @@ export default {
   methods: {
     search() {
       if (!this.keyWords) {
-        this.$parent.getData()
+        this.$parent.initData()
         return
       }
-      this.$parent.getData(this.keyWords)
+      this.$parent.initData(this.keyWords)
     },
     change() {
-      this.keyWords ? "" : this.$parent.getData()
+      this.keyWords ? "" : this.$parent.initData()
     }
   }
 }

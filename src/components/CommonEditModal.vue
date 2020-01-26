@@ -42,7 +42,13 @@
     </div>
     <div slot="footer">
       <Button icon="md-remove-circle" @click="catchClick">取消</Button>
-      <Button type="success" icon="md-checkmark" @click="tryClick">
+      <Button
+        type="success"
+        ref="tryButton"
+        @click="tryClick"
+        :disabled="value === '' ? true : false"
+        icon="md-checkmark"
+      >
         {{ config.tryBtn }}
       </Button>
     </div>
@@ -96,9 +102,10 @@ export default {
       updateData = Object.assign({}, updateData, { user_id: this.user_id })
       const res = await this.$http.post(config.url, updateData)
       if (res) {
-        this.$parent.getData()
+        this.$parent.initData()
         this.$Message.success("修改成功!")
       }
+      this.value = ""
     }
   }
 }
