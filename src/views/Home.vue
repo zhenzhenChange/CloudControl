@@ -30,7 +30,7 @@
     </Sider>
     <Layout class="layout">
       <Header class="header">
-        Cloud Platform Control ★ Your Can Really Code
+        <span>云控营销管理平台</span>
         <CommonPoptipQRCode class="float-left" />
       </Header>
       <Content class="content">
@@ -52,7 +52,7 @@
           </div>
         </Card>
       </Content>
-      <Footer class="footer">2019-12-27 &copy; Cloud Platform Control</Footer>
+      <Footer class="footer">&copy; Cloud</Footer>
     </Layout>
   </div>
 </template>
@@ -101,26 +101,30 @@ export default {
   },
   mounted() {
     this.routeList = this.$route.matched
-    this.$nextTick(() => {
-      this.$refs.show.updateOpened()
-      const ref = this.$refs.menuItem
-      const length = ref.length
-      for (let i = 0; i < length; i++) {
-        if (ref[i].active) {
-          ref[i].$parent.opened = true
-        }
-      }
-    })
+    this.iviewMenuChange()
   },
   watch: {
     $route() {
       this.routeList = []
       this.routeList = this.$route.matched
+      this.iviewMenuChange()
     }
   },
   methods: {
     selectMenu(name) {
       this.activeName = name
+    },
+    iviewMenuChange() {
+      this.$nextTick(() => {
+        this.$refs.show.updateOpened()
+        const ref = this.$refs.menuItem
+        const length = ref.length
+        for (let i = 0; i < length; i++) {
+          if (ref[i].active) {
+            ref[i].$parent.opened = true
+          }
+        }
+      })
     }
   }
 }

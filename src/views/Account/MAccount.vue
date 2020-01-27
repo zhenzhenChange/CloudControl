@@ -292,6 +292,7 @@ export default {
       ref[this.ConfirmModalRef].isShowConfirmModal = false
     },
     async onlineByGroup(params) {
+      this.$refs[this.SelectModalRef].isShowSelectModal = false
       const { data } = await this.$http.post("/account/loginMulti", {
         group_id: String(params),
         list: [{}],
@@ -301,18 +302,19 @@ export default {
         `成功登录账号${data.success.length}个，失败${data.error.length}个！`
       )
       this.$refs[this.SelectModalRef].$refs["SearchSelect"].value = ""
-      this.$refs[this.SelectModalRef].isShowSelectModal = false
     },
     async offlineByWXID() {
+      ref[this.ConfirmModalRef].isShowConfirmModal = false
       let arr = []
       const WXIDArray = []
       const ref = this.$refs
       arr = this.operationData.filter(item => {
-        return item.accountWxid !== "无微信ID或信息异常" && item.accountState
+        return item.accountWxid !== "无微信ID或信息异常"
       })
       arr.forEach(item => {
         WXIDArray.push(item.accountWxid)
       })
+
       const { data } = await this.$http.post("/account/logout", {
         groupId: 0,
         wxids: WXIDArray,
@@ -324,7 +326,6 @@ export default {
       ref[this.PagedTableRef].$refs[ref[this.PagedTableRef].TableRef].selectAll(
         false
       )
-      ref[this.ConfirmModalRef].isShowConfirmModal = false
     },
     async offlineByGroup(params) {
       const { data } = await this.$http.post("/account/logout", {

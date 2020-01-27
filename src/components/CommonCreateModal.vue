@@ -68,8 +68,8 @@ export default {
     },
     catchClick() {
       this.accountData = ""
-      this.$refs["select"].value = ""
       this.isShowCreateModal = false
+      this.$refs["select"].value = ""
     },
     tryClick() {
       this.$parent.uploadData(this.accountData, this.$refs["select"].value)

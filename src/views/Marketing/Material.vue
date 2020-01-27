@@ -152,7 +152,6 @@ export default {
   },
   methods: {
     async saveTemplate() {
-      // this.saveLoading = true
       this.template.user_id = this.user_id
       this.template.picURL = this.$refs.SpaceUpload.uploadList
       const res = await this.$http.post(
@@ -172,8 +171,11 @@ export default {
     async savePersonInfo() {
       this.personInfo.user_id = this.user_id
       this.personInfo.avatarUrl = this.$refs.UploadAvatar.uploadList[0]
-      const res = await this.$http.post("/marketing/setInfo", this.personInfo)
-      this.$Message.info(res.msg)
+      const { msg } = await this.$http.post(
+        "/marketing/setInfo",
+        this.personInfo
+      )
+      this.$Message.info(msg)
     },
     async saveVerifyInfo() {
       this.verifyInfo.user_id = this.user_id

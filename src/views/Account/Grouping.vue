@@ -29,6 +29,10 @@ export default {
       mutex: false,
       updateConfig: {},
       operationData: [],
+      EditModalRef: "GroupingEditModal",
+      PagedTableRef: "GroupingPagedTable",
+      SearchInputRef: "GroupingSearchInput",
+      ConfirmModalRef: "GroupingConfirmModal",
       operationConfig: {
         icon: "md-trash",
         color: "#ED4014",
@@ -38,10 +42,6 @@ export default {
         btnIcon: "md-trash",
         btnText: "删除"
       },
-      EditModalRef: "GroupingEditModal",
-      PagedTableRef: "GroupingPagedTable",
-      SearchInputRef: "GroupingSearchInput",
-      ConfirmModalRef: "GroupingConfirmModal",
       buttonListInfos: [
         { id: "remove-g", name: "删除", icon: "md-trash", type: "error" },
         { id: "create-g", name: "添加", icon: "md-add-circle", type: "primary" }
@@ -113,6 +113,7 @@ export default {
   },
   methods: {
     async initData(keyWords) {
+      this.data = []
       let res = null
       if (keyWords) {
         res = await this.$http.get("/account/getGroupByName", {
@@ -123,7 +124,6 @@ export default {
           params: { user_id: this.user_id }
         })
       }
-      this.data = []
       res.data.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,

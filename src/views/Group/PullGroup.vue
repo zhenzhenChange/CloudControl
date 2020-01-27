@@ -63,6 +63,7 @@ import { mapState } from "vuex"
 export default {
   data() {
     return {
+      row: "",
       data: [],
       qrcode: "",
       urlArea: "",
@@ -89,7 +90,7 @@ export default {
           width: 230,
           title: "操作",
           align: "center",
-          render: h => {
+          render: (h, params) => {
             return h("div", [
               h(
                 "Button",
@@ -99,6 +100,7 @@ export default {
                   on: {
                     click: () => {
                       this.isShowRadioModal = true
+                      this.row = params.row
                     }
                   }
                 },
@@ -133,10 +135,12 @@ export default {
       })
     },
     async tryClick() {
+      this.isShowUrlModal = false
       let grpUrl = []
       this.urlArea.split(/\n/g).forEach(item => grpUrl.push(item))
       grpUrl = grpUrl.filter(item => item !== "")
-      await this.$http.post("/group/setGroupURL", { grpUrl })
+      const { msg } = await this.$http.post("/group/setGroupURL", grpUrl)
+      this.$Message.info(msg)
     },
     catchClick() {
       this.isShowUrlModal = false
@@ -144,12 +148,13 @@ export default {
     },
     async inviteTag() {
       this.isShowRadioModal = false
-      await this.$http.get("/group/enterGroup", {
+      const { msg } = await this.$http.get("/group/enterGroup", {
         params: {
-          tagId: this.$refs["RadioSelect"].value,
+          tagId: String(this.row.tagId),
           opType: this.opType === "一手" ? 0 : 1
         }
       })
+      this.$Message.info(msg)
     }
   }
 }

@@ -77,10 +77,10 @@ export default {
   },
   methods: {
     async initData() {
+      this.data = []
       const { data } = await this.$http.get("/account/getAllGroup", {
         params: { user_id: this.user_id }
       })
-      this.data = []
       data.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,

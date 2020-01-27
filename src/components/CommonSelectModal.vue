@@ -47,27 +47,29 @@ export default {
   },
   methods: {
     tryClick() {
+      const refs = this.$refs
+      const parent = this.$parent
       if (this.params === "online") {
-        this.$parent.onlineByGroup(this.$refs["SearchSelect"].value)
+        parent.onlineByGroup(refs["SearchSelect"].value)
       } else if (this.params === "offline") {
-        this.$parent.offlineByGroup(this.$refs["SearchSelect"].value)
+        parent.offlineByGroup(refs["SearchSelect"].value)
       } else if (this.params === "send") {
-        this.$parent.sendFriendSpace(this.$refs["SearchSelect"].value)
+        parent.sendFriendSpace(refs["SearchSelect"].value)
       } else if (this.params === "removeByGroup") {
-        this.$parent.removeByGroup(this.$refs["SearchSelect"].value)
+        parent.removeByGroup(refs["SearchSelect"].value)
       } else if (this.params === "moveGroup") {
-        this.$parent.moveGroup(this.$refs["SearchSelect"].value)
+        parent.moveGroup(refs["SearchSelect"].value)
       } else if (this.params === "moveTag") {
-        this.$parent.moveTag(this.$refs["SearchSelect"].value)
+        parent.moveTag(refs["SearchSelect"].value)
       } else if (this.params === "request") {
-        this.$parent.requestSetByGroup(this.$refs["SearchSelect"].value)
+        parent.requestSetByGroup(refs["SearchSelect"].value)
       } else if (this.params === "changeMeansByGroup") {
-        this.$parent.changeMeansByGroup(this.$refs["SearchSelect"].value)
+        parent.changeMeansByGroup(refs["SearchSelect"].value)
       }
     },
     catchClick() {
-      this.$refs["SearchSelect"].value = ""
       this.isShowSelectModal = false
+      this.$refs["SearchSelect"].value = ""
     }
   }
 }

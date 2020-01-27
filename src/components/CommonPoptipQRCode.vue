@@ -38,14 +38,21 @@ export default {
   methods: {
     handleQRCode() {
       this.qrcode = ""
+      const promiseArr = []
       const urlList = this.$refs.urlUpload.uploadList
-      urlList.map(item => {
+      urlList.map(item => promiseArr.push(this.asyncLooper(item)))
+      Promise.all(promiseArr).then(() => {})
+    },
+    asyncLooper(item) {
+      return new Promise((resolve, reject) => {
         window.qrcode.decode(item)
         window.qrcode.callback = url => {
           if (url === "error decoding QR Code") {
             this.$Notice.warning({ title: `含有非二维码图片，已自动过滤！` })
+            reject("err")
           } else {
             this.qrcode += `${url}\n`
+            resolve("ok")
           }
         }
       })

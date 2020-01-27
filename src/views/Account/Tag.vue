@@ -111,6 +111,7 @@ export default {
   },
   methods: {
     async initData(keyWords) {
+      this.data = []
       let res = null
       if (keyWords) {
         res = await this.$http.get("/account/getTagByName", {
@@ -122,7 +123,6 @@ export default {
         })
         res = res.data
       }
-      this.data = []
       res.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,

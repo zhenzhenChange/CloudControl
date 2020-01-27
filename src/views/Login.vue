@@ -49,7 +49,7 @@ export default {
     async login() {
       const { msg, data } = await this.$http.post("/login", this.loginForm)
       if (msg === "登录成功") {
-        this.$router.push("/grouping")
+        this.$router.push("/data")
         this.$store.commit("saveID", data.user_id)
       }
       this.$Message.success(msg)

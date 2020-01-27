@@ -17,6 +17,7 @@ export default {
   data() {
     return {
       data: [],
+      PagedTableRef: "FriendsPagedTable",
       config: {
         icon: "md-send",
         color: "#2db7f5",
@@ -28,7 +29,14 @@ export default {
         params: "sendByTag",
         flag: true
       },
-      PagedTableRef: "FriendsPagedTable",
+      buttonListInfos: [
+        {
+          id: "addByAcc",
+          type: "primary",
+          icon: "md-person-add",
+          name: "为微信账号添加"
+        }
+      ],
       FriendsColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
         { align: "center", title: "标签名称", key: "tagName" },
@@ -75,14 +83,6 @@ export default {
               )
             ])
           }
-        }
-      ],
-      buttonListInfos: [
-        {
-          id: "addByAcc",
-          type: "primary",
-          icon: "md-person-add",
-          name: "为微信账号添加"
         }
       ]
     }
