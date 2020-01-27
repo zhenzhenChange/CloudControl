@@ -338,13 +338,13 @@ export default {
       this.$refs[this.SelectModalRef].$refs["SearchSelect"].value = ""
       this.$refs[this.SelectModalRef].isShowSelectModal = false
     },
-    async removeByWXID(row) {
+    /* async removeByWXID(row) {
       console.log(row)
       if (row) {
         const { accountWxid } = row
         console.log(accountWxid)
       }
-    },
+    }, */
     async removeByGroup(groupID) {
       const { data } = await this.$http.post("/account/deleteAccount", {
         group_id: String(groupID),
