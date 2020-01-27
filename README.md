@@ -44,13 +44,17 @@ npm run lint
 - ③ 服务器时区时间异常 ？
 - ④ 返回的信息没有转成对象 √
 - ⑤ 限制数据量（分页） √
-- ⑥ 素材管理板块没有相应的（修改、删除、获取 API） ×
+- ⑥ 素材管理板块没有相应的（获取信息 API） ×
 - ⑦ 添加账号数据无需返回密码（/account/addAccount） √
 - ⑧ 一键按分组下线返回的数据中的 data 字段为空（/account/logout） √
 - ⑨ 设置个人信息素材头像上传超长时间未响应 （/marketing/setInfo） ×
 - ⑩ 设置设置朋友圈素材图片上传超长时间未响应 （/marketing/setFriendCricle） ×
 - 11. 提交微信群URL后台的接受方式是FormData，应改为json格式（/group/setGroupURL） √
-- 12. 是否需要微信群的信息展示API ？
-- 13. 批量删除账号根据账号删除【原因：登录不上的账号没有WXID】 （/account/deleteAccount） ×
-- 14. 账号上线成功后，重新获取账号信息，字段账号是否有效account_isValid与账号状态account_state为null （/account/getAccountInfo） ×
-- 15. 朋友圈发布报500 （/account/sendFriendCircle） ×
+- 12. 是否需要微信群的信息展示API √
+- 13. 批量删除账号是否要根据账号删除【原因：登录不上的账号没有WXID】 （/account/deleteAccount） ×
+- 14. 获取账号信息字段返回值为null（/account/getAccountInfo） ×
+- 15. 朋友圈发布 500 （/account/sendFriendCircle） ×
+- 16. 添加通讯录好友全部失败 （/contact/addFriends） ×
+- 17. 好友管理板块 404（/contact/sendMessageByTag） ×
+- 18. 邀请入群有概率失败 （/group/enterGroup） ×
+- 19. 首页数据面板无数据 （/common/getInit） ×

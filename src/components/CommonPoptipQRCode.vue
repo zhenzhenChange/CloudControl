@@ -41,7 +41,6 @@ export default {
       const promiseArr = []
       const urlList = this.$refs.urlUpload.uploadList
       urlList.map(item => promiseArr.push(this.asyncLooper(item)))
-      Promise.all(promiseArr).then(() => {})
     },
     asyncLooper(item) {
       return new Promise((resolve, reject) => {
