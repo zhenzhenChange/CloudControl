@@ -14,8 +14,8 @@ export default {
       config: {
         icon: "md-send",
         color: "#2D8CF0",
-        title: "发送",
-        operation: "给该分组发布",
+        title: "按分组发布",
+        operation: "发布",
         btnType: "success",
         btnIcon: "md-paper-plane",
         btnText: "确定",

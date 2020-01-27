@@ -19,7 +19,7 @@
     </div>
     <Upload
       multiple
-      action=""
+      action="//jsonplaceholder.typicode.com/posts/"
       type="drag"
       ref="upload"
       :format="fileType"
@@ -96,14 +96,14 @@ export default {
 
 <style lang="scss" scoped>
 .upload-list {
-  width: 150px;
-  height: 150px;
+  width: 60px;
+  height: 60px;
   overflow: hidden;
   margin-right: 4px;
   position: relative;
   text-align: center;
   background: #fff;
-  line-height: 150px;
+  line-height: 60px;
   border-radius: 4px;
   display: inline-block;
   border: 1px solid transparent;
@@ -126,21 +126,21 @@ export default {
     position: absolute;
     background: rgba(0, 0, 0, 0.6);
     i {
-      color: #fff;
+      color: red;
       margin: 0 2px;
       cursor: pointer;
-      font-size: 40px;
+      font-size: 20px;
     }
   }
 }
 
 .upload {
-  width: 150px;
+  width: 60px;
   display: inline-block;
   .icon {
-    width: 150px;
-    height: 150px;
-    line-height: 150px;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
   }
 }
 </style>

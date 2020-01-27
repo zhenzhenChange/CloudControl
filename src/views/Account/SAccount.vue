@@ -52,30 +52,18 @@ export default {
       SelectModalRef: "SAccountSelectModal",
       ConfirmModalRef: "SAccountConfirmModal",
       buttonListInfos: [
-        /* {
-          id: "request",
-          type: "success",
-          icon: "md-settings",
-          name: "好友请求设置"
-        }, */
         {
           id: "GroupChange",
-          type: "success",
-          icon: "md-settings",
-          name: "分组更变"
+          type: "warning",
+          icon: "md-repeat",
+          name: "分组变更"
         },
         {
           id: "TagChange",
-          type: "success",
-          icon: "md-settings",
-          name: "标签更变"
-        } /* ,
-        {
-          id: "ChangeMeans",
-          type: "success",
-          icon: "md-settings",
-          name: "修改资料"
-        } */
+          type: "warning",
+          icon: "md-repeat",
+          name: "标签变更"
+        }
       ],
       SAccountColumns: [
         { width: 60, align: "center", type: "selection" },
@@ -132,7 +120,7 @@ export default {
               h(
                 "Button",
                 {
-                  props: { type: "success", icon: "md-settings" },
+                  props: { type: "warning", icon: "md-repeat" },
                   style: { marginRight: "5px" },
                   on: {
                     click: () => {

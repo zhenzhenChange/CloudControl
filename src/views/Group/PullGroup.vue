@@ -18,17 +18,6 @@
         <Icon type="md-add-circle" color="#2D8CF0" class="mr-5 header-icon" />
         添加微信群
       </p>
-      <SpaceUpload
-        ref="urlUpload"
-        :desc="'上传二维码点击左下角按钮生成群链接或者粘贴群链接'"
-      ></SpaceUpload>
-      <Input
-        class="mt-10"
-        type="textarea"
-        v-model="qrcode"
-        :autosize="{ minRows: 3, maxRows: 15 }"
-        placeholder="请将生成的群链接复制，粘贴到下一个文本区域"
-      ></Input>
       <Input
         class="mt-10"
         type="textarea"
@@ -41,14 +30,6 @@
         <Button type="success" icon="md-checkmark" @click="tryClick">
           确定
         </Button>
-        <Button
-          type="info"
-          icon="md-hand"
-          class="float-left"
-          @click="handleQRCode"
-        >
-          生成群链接
-        </Button>
       </div>
     </Modal>
     <Modal
@@ -59,18 +40,14 @@
       class-name="vertical-center-modal"
     >
       <p slot="header">
-        <Icon type="md-add" color="#2D8CF0" class="mr-5 header-icon" />
+        <Icon type="md-hand" color="#2D8CF0" class="mr-5 header-icon" />
         选择标签邀请入群
       </p>
-      <SearchSelect ref="RadioSelect" :config="radioSelectConfig" />
-      <div class="clear-both"></div>
-      <div class="mt-10">
-        <span class="mr-10">类型选择</span>
-        <RadioGroup v-model="opType">
-          <Radio label="一手"></Radio>
-          <Radio label="二手"></Radio>
-        </RadioGroup>
-      </div>
+      <span class="mr-10">类型选择</span>
+      <RadioGroup v-model="opType">
+        <Radio label="一手"></Radio>
+        <Radio label="二手"></Radio>
+      </RadioGroup>
       <div slot="footer">
         <Button icon="md-remove-circle" @click="catchClick">取消</Button>
         <Button type="success" icon="md-checkmark" @click="inviteTag">
@@ -96,7 +73,7 @@ export default {
       radioSelectConfig: {},
       PagedTableRef: "PullGroupPagedTable",
       buttonListInfos: [
-        { id: "create-p", type: "primary", icon: "md-add", name: "添加群链接" }
+        { id: "create-p", type: "primary", icon: "md-add", name: "提交群链接" }
       ],
       PullGroupColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
@@ -122,11 +99,6 @@ export default {
                   on: {
                     click: () => {
                       this.isShowRadioModal = true
-                      this.radioSelectConfig = {
-                        title: "账号标签",
-                        info: "标签",
-                        options: this.TagData
-                      }
                     }
                   }
                 },
@@ -178,21 +150,13 @@ export default {
           opType: this.opType === "一手" ? 0 : 1
         }
       })
-    },
-    handleQRCode() {
-      this.qrcode = ""
-      const urlList = this.$refs.urlUpload.uploadList
-      urlList.map(item => {
-        window.qrcode.decode(item)
-        window.qrcode.callback = url => {
-          if (url === "error decoding QR Code") {
-            this.$Notice.warning({ title: `含有非二维码图片，已自动过滤！` })
-          } else {
-            this.qrcode += `${url}\n`
-          }
-        }
-      })
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.ivu-radio-group {
+  vertical-align: bottom;
+}
+</style>

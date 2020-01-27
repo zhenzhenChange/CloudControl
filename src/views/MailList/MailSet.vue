@@ -93,7 +93,7 @@ export default {
               h(
                 "Button",
                 {
-                  props: { type: "primary", icon: "md-add" },
+                  props: { type: "primary", icon: "md-person-add" },
                   style: { marginRight: "5px" },
                   on: {
                     click: () => {

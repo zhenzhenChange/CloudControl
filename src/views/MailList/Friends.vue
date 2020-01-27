@@ -20,8 +20,8 @@ export default {
       config: {
         icon: "md-send",
         color: "#2db7f5",
-        title: "群发消息",
-        operation: "群发到该标签（消息模板于素材库设置）",
+        title: "按标签群发",
+        operation: "群发（消息模板于素材库设置）",
         btnType: "success",
         btnIcon: "md-checkmark",
         btnText: "确定",

@@ -50,6 +50,11 @@
   color: red;
 }
 
+.text-wrap {
+  word-wrap: break-word;
+  word-break: normal;
+}
+
 .vertical-center-modal {
   display: flex;
   align-items: center;

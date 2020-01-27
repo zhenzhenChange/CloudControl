@@ -29,6 +29,7 @@
             long
             size="large"
             type="success"
+            icon="md-checkbox"
             @click="saveTemplate"
             :loading="templateLoading"
             >保存</Button
@@ -52,6 +53,7 @@
             long
             size="large"
             type="success"
+            icon="md-checkbox"
             @click="saveQuickInfo"
             :loading="quickLoading"
             >保存</Button
@@ -95,6 +97,7 @@
             long
             size="large"
             type="success"
+            icon="md-checkbox"
             @click="savePersonInfo"
             :loading="personLoading"
             >保存</Button
@@ -118,6 +121,7 @@
             long
             size="large"
             type="success"
+            icon="md-checkbox"
             @click="saveVerifyInfo"
             :loading="verifyLoading"
             >保存</Button

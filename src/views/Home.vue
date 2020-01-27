@@ -31,6 +31,7 @@
     <Layout class="layout">
       <Header class="header">
         Cloud Platform Control ★ Your Can Really Code
+        <CommonPoptipQRCode class="float-left" />
       </Header>
       <Content class="content">
         <Breadcrumb class="breadcrumb">
@@ -143,6 +144,7 @@ export default {
     .header {
       text-align: center;
       background: #fff;
+      padding-left: 33px;
       box-shadow: 0 2px 3px 2px rgba(0, 0, 0, 0.1);
     }
     .content {
