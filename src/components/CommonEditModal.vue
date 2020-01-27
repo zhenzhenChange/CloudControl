@@ -5,7 +5,6 @@
     :closable="false"
     :mask-closable="false"
     v-model="isShowEditModal"
-    @on-visible-change="visibleChange"
     class-name="vertical-center-modal"
   >
     <p slot="header">
@@ -70,9 +69,6 @@ export default {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
-    visibleChange(value) {
-      value ? "" : (this.isShowModal = false)
-    },
     tryClick() {
       this.config.isUpdate ? this.update() : this.create()
       this.isShowEditModal = false

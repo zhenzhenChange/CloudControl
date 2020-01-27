@@ -5,7 +5,6 @@
     :closable="false"
     :mask-closable="false"
     v-model="isShowConfirmModal"
-    @on-visible-change="visibleChange"
     class-name="vertical-center-modal"
   >
     <p slot="header">
@@ -43,9 +42,6 @@ export default {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
-    visibleChange(value) {
-      value ? "" : (this.isShowConfirmModal = false)
-    },
     tryClick() {
       if (!this.config.flag) {
         if (this.params) {
@@ -71,7 +67,12 @@ export default {
         this.$parent.changeMeansByWXID()
       } else if (this.config.params === "addMailFriend") {
         this.$parent.addMailFriend(this.configParams)
+      } else if (this.config.params === "sendFriend") {
+        this.$parent.sendFriendSpace(this.configParams)
+      } else if (this.config.params === "sendByTag") {
+        this.$parent.sendByTag(this.configParams)
       }
+      this.configParams = null
     },
     catchClick() {
       this.isShowConfirmModal = false

@@ -4,7 +4,6 @@
     :closable="false"
     :mask-closable="false"
     v-model="isShowSelectModal"
-    @on-visible-change="visibleChange"
     class-name="vertical-center-modal"
   >
     <p slot="header">
@@ -47,9 +46,6 @@ export default {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
-    visibleChange(value) {
-      value ? "" : (this.isShowSelectModal = false)
-    },
     tryClick() {
       if (this.params === "online") {
         this.$parent.onlineByGroup(this.$refs["SearchSelect"].value)

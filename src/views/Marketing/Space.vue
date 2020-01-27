@@ -1,8 +1,6 @@
 <template>
   <div class="Space">
-    <!-- <ButtonList :buttonListInfos="buttonListInfos" /> -->
-    <CommonSelectModal :ref="SelectModalRef" :config="selectModalConfig" />
-    <!-- <Divider dashed /> -->
+    <CommonConfirmModal :ref="ConfirmModalRef" :config="config" />
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="SpaceColumns" />
   </div>
 </template>
@@ -13,13 +11,20 @@ export default {
   data() {
     return {
       data: [],
-      groups: [],
-      selectModalConfig: {},
-      SelectModalRef: "SpaceSelectModal",
+      config: {
+        icon: "md-send",
+        color: "#2D8CF0",
+        title: "发送",
+        operation: "给该分组发布",
+        btnType: "success",
+        btnIcon: "md-paper-plane",
+        btnText: "确定",
+        flag: true,
+        params: "sendFriend"
+      },
+      GroupData: [],
       PagedTableRef: "SpacePagedTable",
-      buttonListInfos: [
-        { id: "newSpace", name: "朋友圈发布", icon: "md-send", type: "primary" }
-      ],
+      ConfirmModalRef: "SpaceConfirmModal",
       SpaceColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
         {
@@ -50,8 +55,9 @@ export default {
                   style: { marginRight: "5px" },
                   on: {
                     click: () => {
-                      this.$refs["MailSet"].isShowConfirmModal = true
-                      this.$refs["MailSet"].configParams = params.row
+                      const { groupId: group_id } = params.row
+                      this.$refs[this.ConfirmModalRef].isShowConfirmModal = true
+                      this.$refs[this.ConfirmModalRef].configParams = group_id
                     }
                   }
                 },
@@ -82,14 +88,16 @@ export default {
           groupId: item.groupId,
           groupCreateDate: this.$options.filters.date(item.groupCreateDate)
         })
-        this.groups.push({ label: item.groupName, value: item.groupId })
+        this.GroupData.push({ label: item.groupName, value: item.groupId })
       })
     },
     async sendFriendSpace(params) {
-      await this.$http.post("/account/sendFriendCircle", {
+      this.$refs[this.ConfirmModalRef].isShowConfirmModal = false
+      const { msg } = await this.$http.post("/account/sendFriendCircle", {
         group_id: String(params),
         user_id: this.user_id
       })
+      this.$Message.info(msg)
     }
   }
 }

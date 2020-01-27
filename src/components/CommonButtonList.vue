@@ -224,16 +224,6 @@ export default {
         }
         parentRefs[parent.SelectModalRef].params = "moveTag"
         parentRefs[parent.SelectModalRef].isShowSelectModal = true
-      } else if (btnID === "pull") {
-        parent.isShowRadioModal = true
-        parent.radioSelectConfig = {
-          title: "账号标签",
-          info: "标签",
-          options: parent.TagData,
-          tryType: "error",
-          tryIcon: "md-trash",
-          tryBtn: "提交"
-        }
       } else if (btnID === "request") {
         if (parent.operationData.length) {
           parent.operationConfig = {

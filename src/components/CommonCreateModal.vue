@@ -3,7 +3,6 @@
     width="600"
     :mask-closable="false"
     v-model="isShowCreateModal"
-    @on-visible-change="visibleChange"
     class-name="vertical-center-modal"
   >
     <p slot="header">
@@ -59,9 +58,6 @@ export default {
     }
   },
   methods: {
-    visibleChange(value) {
-      value ? "" : (this.isShowCreateModal = false)
-    },
     handleBeforeUpload(file) {
       const reader = new FileReader()
       reader.readAsText(file)

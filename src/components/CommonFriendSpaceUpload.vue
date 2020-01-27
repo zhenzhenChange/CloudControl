@@ -66,10 +66,15 @@ export default {
       })
     },
     handleBeforeUpload(file) {
-      const check = this.uploadList.length < this.uploadLimit
-      if (!check) {
-        this.$Notice.warning({ title: `最多可上传${this.uploadLimit}张图片！` })
-        return
+      let check = ""
+      if (this.uploadLimit) {
+        check = this.uploadList.length < this.uploadLimit
+        if (!check) {
+          this.$Notice.warning({
+            title: `最多可上传${this.uploadLimit}张图片！`
+          })
+          return
+        }
       }
       const fileType = file.type
       if (

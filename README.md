@@ -51,4 +51,5 @@ npm run lint
 - 11. 提交微信群URL后台的接受方式是FormData，应改为json格式（/group/setGroupURL） ×
 - 12. 是否需要微信群的信息展示API ×
 - 13. 批量删除账号根据账号删除【原因：登录不上的账号没有WXID】 （/account/deleteAccount） ×
-- 13. 账号上线成功后，重新获取账号信息，字段账号是否有效account_isValid与账号状态account_state为null （/account/getAccountInfo ×
+- 14. 账号上线成功后，重新获取账号信息，字段账号是否有效account_isValid与账号状态account_state为null （/account/getAccountInfo） ×
+- 15. 朋友圈发布报500 （/account/sendFriendCircle） ×

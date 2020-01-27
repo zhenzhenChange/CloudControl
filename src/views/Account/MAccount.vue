@@ -339,16 +339,10 @@ export default {
       this.$refs[this.SelectModalRef].isShowSelectModal = false
     },
     async removeByWXID(row) {
+      console.log(row)
       if (row) {
-        this.operationConfig = {
-          icon: "md-trash",
-          color: "#ED4014",
-          title: "删除",
-          operation: "删除",
-          btnType: "error",
-          btnIcon: "md-trash",
-          btnText: "删除"
-        }
+        const { accountWxid } = row
+        console.log(accountWxid)
       }
     },
     async removeByGroup(groupID) {

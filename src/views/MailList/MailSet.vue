@@ -3,7 +3,7 @@
     <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider dashed />
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="MailColumns" />
-    <CommonConfirmModal ref="MailSet" :config="MailSetConfig" />
+    <CommonComplexModal ref="MailSetComplexModal" />
     <Modal
       width="600"
       :mask-closable="false"
@@ -14,21 +14,35 @@
         <Icon color="#2d8cf0" type="md-cloud-upload" class="mr-5" />
         {{ mailListConfig.title }}
       </p>
+      <div class="color-red">
+        可选取本地文件上传(将自动解析文件内容)，也可复制粘贴到文本区域上传
+      </div>
+      <div class="mt-10 color-red">
+        <span class="mr-30">纯手机号：18166661111</span>
+        <span>姓名----手机号：小明----18166661111</span><br />
+        <div class="mt-10">一条通讯录单独一行，多条通讯录多行</div>
+      </div>
       <div class="upload mt-10 mb-10">
-        <span class="title mr-10">通讯录</span>
+        <span class="title mr-10">上传通讯录</span>
         <Upload
           action=""
           :show-upload-list="false"
           :before-upload="handleBeforeUpload"
         >
-          <Button icon="md-cloud-upload">批量上传通讯录</Button>
+          <Button icon="md-cloud-upload">选取本地TXT文件</Button>
         </Upload>
+      </div>
+      <div class="mb-10 config">
+        <span class="mr-10">通讯录格式</span>
+        <RadioGroup v-model="isMailType">
+          <Radio border label="纯手机号"></Radio>
+          <Radio border label="姓名----手机号"></Radio>
+        </RadioGroup>
       </div>
       <Input
         type="textarea"
         v-model="mailList"
         :autosize="{ minRows: 5, maxRows: 20 }"
-        placeholder="通讯录格式：XXXX----XXXX（姓名----手机号）或 XXXXXXX（手机号），一条通讯录单独一行，多个通讯录多行"
       >
       </Input>
       <div slot="footer">
@@ -48,22 +62,10 @@ export default {
     return {
       data: [],
       mailList: "",
-      mailListConfig: {
-        title: "上传通讯录"
-      },
       isShowModal: false,
+      isMailType: "纯手机号",
       PagedTableRef: "MailPagedTable",
-      MailSetConfig: {
-        icon: "md-add",
-        color: "#2D8CF0",
-        title: "按标签添加通讯录好友",
-        operation: "为该标签添加好友",
-        btnType: "primary",
-        btnIcon: "md-checkmark",
-        btnText: "确定",
-        params: "addMailFriend",
-        flag: true
-      },
+      mailListConfig: { title: "上传通讯录" },
       buttonListInfos: [
         {
           id: "uploadMailList",
@@ -95,8 +97,10 @@ export default {
                   style: { marginRight: "5px" },
                   on: {
                     click: () => {
-                      this.$refs["MailSet"].isShowConfirmModal = true
-                      this.$refs["MailSet"].configParams = params.row
+                      this.$refs[
+                        "MailSetComplexModal"
+                      ].isShowComplexModal = true
+                      this.$refs["MailSetComplexModal"].params = params.row
                     }
                   }
                 },
@@ -130,8 +134,7 @@ export default {
       })
     },
     async addMailFriend({ tagId: tag_id }) {
-      this.$refs["MailSet"].configParams = null
-      this.$refs["MailSet"].isShowConfirmModal = false
+      this.$refs["MailSetComplexModal"].isShowComplexModal = false
       const { msg } = await this.$http.post("/contact/addFriends", { tag_id })
       this.$Message.info(msg)
     },
@@ -153,7 +156,7 @@ export default {
       const obj = { contact, user_id: this.user_id }
       const { data } = await this.$http.post("/contact/upload", obj)
       this.mailList = ""
-      this.$Message.info(`上传成功${data.success}个，失败${data.error}个！`)
+      this.$Message.info(`${data.success}个账号上传成功，${data.error}个失败！`)
     }
   }
 }
@@ -162,7 +165,6 @@ export default {
 <style lang="scss" scoped>
 .upload {
   .title {
-    width: 56px;
     float: left;
     height: 32px;
     display: block;

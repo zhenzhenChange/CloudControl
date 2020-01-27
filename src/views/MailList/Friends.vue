@@ -7,6 +7,7 @@
       :ref="PagedTableRef"
       :dataColumns="FriendsColumns"
     />
+    <CommonConfirmModal ref="FriendConfirmModal" :config="config" />
   </div>
 </template>
 
@@ -16,6 +17,17 @@ export default {
   data() {
     return {
       data: [],
+      config: {
+        icon: "md-send",
+        color: "#2db7f5",
+        title: "群发消息",
+        operation: "群发到该标签（消息模板于素材库设置）",
+        btnType: "success",
+        btnIcon: "md-checkmark",
+        btnText: "确定",
+        params: "sendByTag",
+        flag: true
+      },
       PagedTableRef: "FriendsPagedTable",
       FriendsColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
@@ -40,8 +52,8 @@ export default {
                   style: { marginRight: "5px" },
                   on: {
                     click: () => {
-                      this.$refs["MailSet"].isShowConfirmModal = true
-                      this.$refs["MailSet"].configParams = params.row
+                      this.$refs["FriendConfirmModal"].isShowConfirmModal = true
+                      this.$refs["FriendConfirmModal"].configParams = params.row
                     }
                   }
                 },
@@ -54,8 +66,8 @@ export default {
                   style: { marginRight: "5px" },
                   on: {
                     click: () => {
-                      this.$refs["MailSet"].isShowConfirmModal = true
-                      this.$refs["MailSet"].configParams = params.row
+                      this.$refs["FriendConfirmModal"].isShowConfirmModal = true
+                      this.$refs["FriendConfirmModal"].configParams = params.row
                     }
                   }
                 },
@@ -70,7 +82,7 @@ export default {
           id: "addByAcc",
           type: "primary",
           icon: "md-person-add",
-          name: "单个账号添加"
+          name: "为微信账号添加"
         }
       ]
     }
@@ -95,6 +107,13 @@ export default {
           tagCreateDate: this.$options.filters.date(item.tagCreateDate)
         })
       })
+    },
+    async sendByTag({ tagId: tag_id }) {
+      this.$refs["FriendConfirmModal"].isShowConfirmModal = false
+      const { msg } = await this.$http.post("/contact/sendMessageByTag", {
+        tag_id: String(tag_id)
+      })
+      this.$Message.info(msg)
     }
   }
 }

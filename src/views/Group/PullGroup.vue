@@ -20,10 +20,7 @@
       </p>
       <SpaceUpload
         ref="urlUpload"
-        :uploadLimit="9"
-        :desc="
-          '上传二维码点击左下角按钮生成群链接（最多可上传9张二维码）或者粘贴群链接'
-        "
+        :desc="'上传二维码点击左下角按钮生成群链接或者粘贴群链接'"
       ></SpaceUpload>
       <Input
         class="mt-10"
@@ -63,7 +60,7 @@
     >
       <p slot="header">
         <Icon type="md-add" color="#2D8CF0" class="mr-5 header-icon" />
-        按标签邀请入群
+        选择标签邀请入群
       </p>
       <SearchSelect ref="RadioSelect" :config="radioSelectConfig" />
       <div class="clear-both"></div>
@@ -99,7 +96,6 @@ export default {
       radioSelectConfig: {},
       PagedTableRef: "PullGroupPagedTable",
       buttonListInfos: [
-        // { id: "pull", type: "primary", icon: "md-add", name: "邀请进群" },
         { id: "create-p", type: "primary", icon: "md-add", name: "添加群链接" }
       ],
       PullGroupColumns: [
@@ -116,7 +112,7 @@ export default {
           width: 230,
           title: "操作",
           align: "center",
-          render: (h, params) => {
+          render: h => {
             return h("div", [
               h(
                 "Button",
@@ -125,8 +121,12 @@ export default {
                   style: { marginRight: "5px" },
                   on: {
                     click: () => {
-                      this.$refs["MailSet"].isShowConfirmModal = true
-                      this.$refs["MailSet"].configParams = params.row
+                      this.isShowRadioModal = true
+                      this.radioSelectConfig = {
+                        title: "账号标签",
+                        info: "标签",
+                        options: this.TagData
+                      }
                     }
                   }
                 },
