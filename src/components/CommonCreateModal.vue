@@ -16,7 +16,7 @@
         :config="config.createConfig"
       />
     </div>
-    <div class="upload mt-10 mb-10">
+    <div class="upload mb-10">
       <span class="title mr-10">账号数据</span>
       <Upload
         action=""

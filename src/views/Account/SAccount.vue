@@ -1,11 +1,13 @@
 <template>
   <!-- 账号设置 -->
   <div class="SAccount">
+    <ButtonList :buttonListInfos="buttonListInfos" />
+    <Divider dashed />
     <div class="mb-10 config float-left mr-20">
       <span class="mr-10">好友请求配置</span>
       <RadioGroup v-model="isChecking">
-        <Radio label="是"></Radio>
-        <Radio label="否"></Radio>
+        <Radio label="需要验证"></Radio>
+        <Radio label="不需要验证"></Radio>
       </RadioGroup>
     </div>
     <div class="clear-both"></div>
@@ -24,7 +26,7 @@
       :ref="PagedTableRef"
       :dataColumns="SAccountColumns"
     />
-    <CommonSelectModal ref="SAccountSelectModal" :config="selectConfig" />
+    <CommonSelectModal :ref="SelectModalRef" :config="selectConfig" />
     <CommonConfirmModal
       :data="operationData"
       :ref="ConfirmModalRef"
@@ -39,18 +41,33 @@ export default {
   data() {
     return {
       data: [],
-      isChecking: "是",
       selectConfig: {},
       operationData: [],
       operationConfig: {},
+      isChecking: "需要验证",
       isUpdateType: "修改密码",
       PagedTableRef: "SAccountPagedTable",
       SelectModalRef: "SAccountSelectModal",
       ConfirmModalRef: "SAccountConfirmModal",
+      buttonListInfos: [
+        {
+          id: "request",
+          name: "好友请求设置",
+          icon: "md-settings",
+          type: "success"
+        },
+        {
+          id: "ChangeMeans",
+          name: "修改资料",
+          icon: "md-repeat",
+          type: "warning"
+        }
+      ],
       SAccountColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
         { width: 130, align: "center", title: "账号", key: "account" },
+        { width: 130, align: "center", title: "密码", key: "accountPwd" },
         {
           width: 200,
           align: "center",
@@ -78,43 +95,6 @@ export default {
           align: "center",
           title: "标签ID",
           key: "tagId"
-        },
-        {
-          width: 350,
-          title: "操作",
-          align: "center",
-          render: (h, params) => {
-            return h("div", [
-              h(
-                "Button",
-                {
-                  props: { type: "success", icon: "md-settings" },
-                  style: { marginRight: "5px" },
-                  on: {
-                    click: () => {
-                      this.$refs["MailSet"].isShowConfirmModal = true
-                      this.$refs["MailSet"].configParams = params.row
-                    }
-                  }
-                },
-                "好友请求设置"
-              ),
-              h(
-                "Button",
-                {
-                  props: { type: "warning", icon: "md-repeat" },
-                  style: { marginRight: "5px" },
-                  on: {
-                    click: () => {
-                      this.$refs["MailSet"].isShowConfirmModal = true
-                      this.$refs["MailSet"].configParams = params.row
-                    }
-                  }
-                },
-                "修改资料"
-              )
-            ])
-          }
         }
       ]
     }
@@ -139,6 +119,7 @@ export default {
             accountWxid: item.accountWxid
               ? item.accountWxid
               : "无微信ID或信息异常",
+            accountPwd: item.accountPwd,
             groupName: item.groupName ? item.groupName : "无",
             tagName: item.tagName ? item.tagName : "无",
             groupId: item.groupId ? item.groupId : "无",
@@ -148,42 +129,45 @@ export default {
       })
     },
     async requestSetByGroup(groupId) {
-      await this.$http.post("/account/setFriendRequest", {
+      this.clear()
+      const { msg } = await this.$http.post("/account/setFriendRequest", {
         group_id: String(groupId),
         wxid_list: [],
-        type: this.isChecking === "是" ? 0 : 1,
+        type: this.isChecking === "需要验证" ? 0 : 1,
         request_type: 0
       })
-      /* this.$Message.success(msg)
-      this.$refs[this.SelectModalRef].isShowSelectModal = false
-      this.initData() */
+      this.initData()
+      this.$Message.success(msg)
     },
     async requestSetByWXID() {
       const wxid_list = []
       this.operationData.forEach(item => wxid_list.push(item.accountWxid))
-      await this.$http.post("/account/setFriendRequest", {
+      const { msg } = await this.$http.post("/account/setFriendRequest", {
         group_id: "",
         wxid_list,
-        type: this.isChecking === "是" ? 0 : 1,
+        type: this.isChecking === "需要验证" ? 0 : 1,
         request_type: 1
       })
-      /* this.$Message.success(msg)
-      this.$refs[this.SelectModalRef].isShowSelectModal = false
-      this.initData() */
+      this.clear()
+      this.initData()
+      this.$Message.success(msg)
     },
     async changeMeansByGroup(groupId) {
+      this.clear()
       const changeType =
         this.isUpdateType === "修改密码"
           ? 2
           : this.isUpdateType === "修改昵称"
           ? 0
           : 1
-      await this.$http.post("/account/changeDatum", {
+      const { msg } = await this.$http.post("/account/changeDatum", {
         group_id: String(groupId),
         wxid_list: [],
         change_type: changeType,
         type: 0
       })
+      this.initData()
+      this.$Message.success(msg)
     },
     async changeMeansByWXID() {
       const changeType =
@@ -194,12 +178,25 @@ export default {
           : 1
       const wxid_list = []
       this.operationData.forEach(item => wxid_list.push(item.accountWxid))
-      await this.$http.post("/account/changeDatum", {
+      const { msg } = await this.$http.post("/account/changeDatum", {
         group_id: "",
         wxid_list,
         change_type: changeType,
         type: 1
       })
+      this.clear()
+      this.initData()
+      this.$Message.success(msg)
+    },
+    clear() {
+      const refs = this.$refs
+      const table = refs[this.PagedTableRef]
+      const SearchSelect = refs[this.SelectModalRef].$refs["SearchSelect"]
+
+      SearchSelect ? (SearchSelect.value = "") : ""
+      refs[this.SelectModalRef].isShowSelectModal = false
+      refs[this.ConfirmModalRef].isShowConfirmModal = false
+      table.$refs[table.TableRef].selectAll(false)
     }
   }
 }

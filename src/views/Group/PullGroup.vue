@@ -8,7 +8,7 @@
       :dataColumns="PullGroupColumns"
     />
     <Modal
-      width="700"
+      width="500"
       :closable="false"
       :mask-closable="false"
       v-model="isShowUrlModal"
@@ -16,10 +16,9 @@
     >
       <p slot="header">
         <Icon type="md-add-circle" color="#2D8CF0" class="mr-5 header-icon" />
-        添加微信群
+        提交微信群至服务器（每次上传都会清空上一次）
       </p>
       <Input
-        class="mt-10"
         type="textarea"
         v-model="urlArea"
         :autosize="{ minRows: 5, maxRows: 15 }"
@@ -41,13 +40,15 @@
     >
       <p slot="header">
         <Icon type="md-hand" color="#2D8CF0" class="mr-5 header-icon" />
-        选择标签邀请入群
+        将该标签下的所有账号邀请入上传的微信群
       </p>
-      <span class="mr-10">类型选择</span>
-      <RadioGroup v-model="opType">
-        <Radio label="一手"></Radio>
-        <Radio label="二手"></Radio>
-      </RadioGroup>
+      <div class="flex-div">
+        <span class="mr-10">类型选择</span>
+        <RadioGroup v-model="opType">
+          <Radio label="一手"></Radio>
+          <Radio label="二手"></Radio>
+        </RadioGroup>
+      </div>
       <div slot="footer">
         <Button icon="md-remove-circle" @click="catchClick">取消</Button>
         <Button type="success" icon="md-checkmark" @click="inviteTag">
@@ -74,7 +75,7 @@ export default {
       radioSelectConfig: {},
       PagedTableRef: "PullGroupPagedTable",
       buttonListInfos: [
-        { id: "create-p", type: "primary", icon: "md-add", name: "提交群链接" }
+        { id: "create-p", type: "primary", icon: "md-add", name: "上传群链接" }
       ],
       PullGroupColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },

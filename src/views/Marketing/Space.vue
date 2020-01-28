@@ -14,8 +14,8 @@ export default {
       config: {
         icon: "md-send",
         color: "#2D8CF0",
-        title: "按分组发布",
-        operation: "发布",
+        title: "该分组下的所有账号都将发布朋友圈",
+        operation: "发布（朋友圈模板于素材管理设置）",
         btnType: "success",
         btnIcon: "md-paper-plane",
         btnText: "确定",

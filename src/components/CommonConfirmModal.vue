@@ -1,7 +1,7 @@
 <template>
   <!-- 对话确认模态窗 -->
   <Modal
-    width="400"
+    width="350"
     :closable="false"
     :mask-closable="false"
     v-model="isShowConfirmModal"

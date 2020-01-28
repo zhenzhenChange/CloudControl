@@ -5,7 +5,7 @@
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="MailColumns" />
     <CommonComplexModal ref="MailSetComplexModal" />
     <Modal
-      width="600"
+      width="500"
       :mask-closable="false"
       v-model="isShowModal"
       class-name="vertical-center-modal"
@@ -20,7 +20,7 @@
       <div class="mt-10 color-red">
         <span class="mr-30">纯手机号：18166661111</span>
         <span>姓名----手机号：小明----18166661111</span><br />
-        <div class="mt-10">一条通讯录单独一行，多条通讯录多行</div>
+        <div class="mt-10">格式：一条通讯录单独一行，多条通讯录多行</div>
       </div>
       <div class="upload mt-10 mb-10">
         <span class="title mr-10">上传通讯录</span>

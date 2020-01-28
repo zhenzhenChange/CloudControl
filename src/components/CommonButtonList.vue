@@ -81,7 +81,7 @@ export default {
         parentRefs[parent.CreateModalRef].isShowCreateModal = true
       } else if (btnID === "newSpace") {
         parent.selectModalConfig = {
-          width: 350,
+          width: "350",
           icon: "md-send",
           color: "#2D8CF0",
           title: "选择分组发布",
@@ -101,7 +101,7 @@ export default {
             icon: "ios-trending-up",
             color: "#19BE6B",
             title: "一键上线",
-            operation: "上线（已自动筛选离线且有效账号）",
+            operation: "上线",
             btnType: "success",
             btnIcon: "md-checkmark",
             btnText: "确定",
@@ -111,10 +111,10 @@ export default {
           parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
         } else {
           parent.selectConfig = {
-            width: "400",
+            width: "350",
             icon: "md-arrow-round-up",
             color: "#2D8CF0",
-            title: "按分组上线",
+            title: "该分组下的账号都将上线",
             selectConfig: {
               title: "账号分组",
               info: "分组",
@@ -132,7 +132,7 @@ export default {
             icon: "ios-trending-down",
             color: "#19BE6B",
             title: "一键下线",
-            operation: "下线（已自动筛选有微信ID且在线账号）",
+            operation: "下线",
             btnType: "success",
             btnIcon: "md-checkmark",
             btnText: "确定",
@@ -142,10 +142,10 @@ export default {
           parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
         } else {
           parent.selectConfig = {
-            width: "400",
+            width: "350",
             icon: "md-arrow-round-up",
             color: "#2D8CF0",
-            title: "按分组下线",
+            title: "该分组下的账号都将下线",
             selectConfig: {
               title: "账号分组",
               info: "分组",
@@ -165,7 +165,7 @@ export default {
             icon: "md-trash",
             color: "#ED4014",
             title: "一键删除",
-            operation: "删除",
+            operation: "删除这些账号",
             btnType: "error",
             btnIcon: "md-trash",
             btnText: "删除",
@@ -175,10 +175,10 @@ export default {
           parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
         } else {
           parent.selectConfig = {
-            width: "400",
+            width: "350",
             icon: "md-trash",
             color: "#ED4014",
-            title: "按分组删除",
+            title: "该分组下的所有账号都将被删除",
             selectConfig: {
               title: "账号分组",
               info: "分组",
@@ -197,10 +197,10 @@ export default {
           return
         }
         parent.selectConfig = {
-          width: "400",
+          width: "350",
           icon: "md-move",
           color: "#2D8CF0",
-          title: "移动分组",
+          title: "将这些账号移动至另一个分组",
           selectConfig: {
             title: "账号分组",
             info: "分组",
@@ -217,10 +217,10 @@ export default {
           return
         }
         parent.selectConfig = {
-          width: "400",
+          width: "350",
           icon: "md-move",
           color: "#2D8CF0",
-          title: "移动标签",
+          title: "将这些账号移动至另一个标签",
           selectConfig: {
             title: "账号标签",
             info: "标签",
@@ -236,7 +236,7 @@ export default {
           parent.operationConfig = {
             icon: "md-git-pull-request",
             color: "#2D8CF0",
-            title: "按微信ID设置请求",
+            title: "为选取的微信账号设置",
             operation: "设置",
             btnType: "success",
             btnIcon: "md-checkmark",
@@ -247,10 +247,10 @@ export default {
           parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
         } else {
           parent.selectConfig = {
-            width: "400",
+            width: "350",
             icon: "md-git-pull-request",
             color: "#2D8CF0",
-            title: "按分组设置请求",
+            title: "为分组下的所有账号设置",
             selectConfig: {
               title: "账号分组",
               info: "分组",
@@ -267,8 +267,8 @@ export default {
           parent.operationConfig = {
             icon: "md-create",
             color: "#2D8CF0",
-            title: "修改资料",
-            operation: "修改这些账号",
+            title: "为选取的账号统一修改资料",
+            operation: "修改（资料模板于素材管理设置）",
             btnType: "success",
             btnIcon: "md-checkmark",
             btnText: "确定",
@@ -278,10 +278,10 @@ export default {
           parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
         } else {
           parent.selectConfig = {
-            width: "400",
+            width: "500",
             icon: "md-create",
             color: "#2D8CF0",
-            title: "按分组修改资料",
+            title: "分组下的所有账号修改资料（资料模板于素材管理设置）",
             selectConfig: {
               title: "账号分组",
               info: "分组",
@@ -295,6 +295,8 @@ export default {
         }
       } else if (btnID === "uploadMailList") {
         parent.isShowModal = true
+      } else if (btnID === "addByAcc") {
+        parent.isShowWXModal = true
       }
     }
   }

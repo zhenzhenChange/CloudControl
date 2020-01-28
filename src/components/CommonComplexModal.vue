@@ -1,6 +1,6 @@
 <template>
   <Modal
-    width="400"
+    width="500"
     :closable="false"
     :mask-closable="false"
     v-model="isShowComplexModal"
@@ -11,7 +11,7 @@
         type="md-contact"
         color="#2D8CF0"
         class="mr-5 header-icon"
-      />添加通讯录好友（一整个标签）
+      />为该标签下的所有账号添加通讯录好友
     </p>
     <div>
       <span class="mr-10">是否延时</span>
@@ -29,7 +29,7 @@
       <span slot="prepend">验证消息</span>
     </Input>
     <div class="mt-10 color-red">
-      （可选） 填入通讯录号码，默认添加已上传的通讯录
+      （可选）自定义填入通讯录号码，不填则默认添加已上传的通讯录
     </div>
     <Input
       type="textarea"
@@ -37,7 +37,6 @@
       class="mt-10 mr-10"
       :autosize="{ minRows: 5, maxRows: 20 }"
     >
-      <span slot="prepend">手动输入</span>
     </Input>
     <div slot="footer">
       <Button icon="md-remove-circle" @click="catchClick">取消</Button>

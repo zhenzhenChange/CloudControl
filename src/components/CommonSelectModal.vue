@@ -14,7 +14,7 @@
       />
       {{ config.title }}
     </p>
-    <div class="mt-10" v-if="config.selectConfig">
+    <div class="flex-div" v-if="config.selectConfig">
       <SearchSelect ref="SearchSelect" :config="config.selectConfig" />
       <div class="clear-both"></div>
     </div>

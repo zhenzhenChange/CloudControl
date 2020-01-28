@@ -29,7 +29,7 @@
         </FormItem>
         <br />
         <FormItem>
-          <Button type="info" @click="login" shape="circle" icon="md-log-in">
+          <Button type="info" @click="login" icon="md-log-in">
             登录
           </Button>
         </FormItem>

@@ -46,9 +46,7 @@
         </Breadcrumb>
         <Card>
           <div class="card-div">
-            <keep-alive>
-              <router-view />
-            </keep-alive>
+            <keep-alive><router-view /></keep-alive>
           </div>
         </Card>
       </Content>
@@ -132,11 +130,11 @@ export default {
 
 <style lang="scss" scoped>
 .layout {
+  padding-top: 3px;
   overflow: hidden;
   position: relative;
   border-radius: 4px;
   background: #f5f7f9;
-  padding-top: 3px;
   .sider {
     left: 0;
     height: 100vh;

@@ -326,20 +326,41 @@ export default {
       const obj = this.dataFormat(data)
       this.$Message.info(`成功下线账号${obj.succ}个，失败${obj.err}个！`)
     },
-    async removeByWXID(/* row */) {
-      /* if (row) {
+    async removeByWXID(row) {
+      const wxids = []
+      if (row) {
         const { accountWxid } = row
-      } */
+        wxids.push(accountWxid)
+      } else {
+        this.operationData.forEach(item => wxids.push(item.accountWxid))
+      }
+      const { data } = await this.$http.post("/account/deleteAccount", {
+        group_id: "",
+        wxids,
+        request_type: 1
+      })
+      const obj = this.dataFormat(data)
+      if (row) {
+        if (obj.succ) {
+          this.$Message.success("删除成功！")
+        }
+        if (obj.err) {
+          this.$Message.error("删除失败！")
+        }
+      } else {
+        this.$Message.info(`成功删除账号${obj.succ}个，失败${obj.err}个！`)
+      }
+      this.clear()
     },
     async removeByGroup(groupID) {
       this.clear()
       const { data } = await this.$http.post("/account/deleteAccount", {
         group_id: String(groupID),
         wxids: [],
-        request_type: "0"
+        request_type: 0
       })
       const obj = this.dataFormat(data)
-      this.$Message.info(`成功上线账号${obj.succ}个，失败${obj.err}个！`)
+      this.$Message.info(`成功删除账号${obj.succ}个，失败${obj.err}个！`)
     },
     async uploadData(accountData, group_id) {
       let list = []
