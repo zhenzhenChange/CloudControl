@@ -16,13 +16,6 @@
         :config="config.createConfig"
       />
     </div>
-    <Button
-      class="ml--20"
-      type="primary"
-      shape="circle"
-      @click="refresh"
-      icon="md-refresh"
-    />
     <div class="upload mt-10 mb-10">
       <span class="title mr-10">账号数据</span>
       <Upload
@@ -73,9 +66,6 @@ export default {
     },
     tryClick() {
       this.$parent.uploadData(this.accountData, this.$refs["select"].value)
-    },
-    refresh() {
-      this.$parent.initData()
     }
   }
 }

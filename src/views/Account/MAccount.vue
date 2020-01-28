@@ -326,12 +326,10 @@ export default {
       const obj = this.dataFormat(data)
       this.$Message.info(`成功下线账号${obj.succ}个，失败${obj.err}个！`)
     },
-    async removeByWXID(row) {
-      console.log(row)
-      if (row) {
+    async removeByWXID(/* row */) {
+      /* if (row) {
         const { accountWxid } = row
-        console.log(accountWxid)
-      }
+      } */
     },
     async removeByGroup(groupID) {
       this.clear()
