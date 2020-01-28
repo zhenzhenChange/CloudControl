@@ -125,7 +125,7 @@ export default {
       border-color: rgb(238, 182, 182);
       .label {
         display: flex;
-        height: 125px;
+        height: 124px;
         align-items: center;
         justify-content: center;
         h1 {

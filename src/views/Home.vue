@@ -74,17 +74,13 @@ export default {
           ]
         },
         {
-          title: "通讯录",
+          title: "群聊通讯",
           type: "md-call",
           menuItem: [
-            { name: "通讯录管理", path: "/mail" },
-            { name: "好友管理", path: "/friends" }
+            { name: "通讯管理", path: "/mail" },
+            { name: "好友管理", path: "/friends" },
+            { name: "群聊管理", path: "/pull-group" }
           ]
-        },
-        {
-          title: "群管理",
-          type: "md-people",
-          menuItem: [{ name: "群拉好友", path: "/pull-group" }]
         },
         {
           title: "营销管理",

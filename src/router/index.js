@@ -46,13 +46,13 @@ const routes = [
       },
       {
         path: "/mail",
-        name: "通讯录管理",
+        name: "通讯管理",
         component: () => import("../views/MailList/MailSet.vue")
       },
       {
         path: "/pull-group",
         name: "群拉好友",
-        component: () => import("../views/Group/PullGroup.vue")
+        component: () => import("../views/MailList/PullGroup.vue")
       },
       {
         path: "/space",
