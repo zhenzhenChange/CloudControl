@@ -12,6 +12,7 @@ import "view-design/dist/styles/iview.css"
 Vue.use(ViewUI)
 
 Vue.prototype.$http = http
+Vue.prototype.$Loading.config({ height: 3 })
 
 Vue.config.productionTip = false
 

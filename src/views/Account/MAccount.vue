@@ -27,7 +27,6 @@ export default {
       data: [],
       params: "",
       mutex: false,
-      GroupData: [],
       selectConfig: {},
       createConfig: {},
       operationData: [],
@@ -50,6 +49,18 @@ export default {
           name: "一键下线",
           type: "warning",
           icon: "md-trending-down"
+        },
+        {
+          id: "GroupChange",
+          type: "info",
+          icon: "md-repeat",
+          name: "分组变更"
+        },
+        {
+          id: "TagChange",
+          type: "info",
+          icon: "md-repeat",
+          name: "标签变更"
         }
       ],
       MAccountColumns: [
@@ -236,12 +247,6 @@ export default {
           userId: item.userId
         })
       })
-      const { data: GroupData } = await this.$http.get("/account/getAllGroup", {
-        params: { user_id: this.user_id }
-      })
-      GroupData.forEach(item => {
-        this.GroupData.push({ label: item.groupName, value: item.groupId })
-      })
     },
     async onlineByWXID(row) {
       let arr = []
@@ -283,106 +288,126 @@ export default {
         ref[this.ConfirmModalRef].isShowConfirmModal = false
         return
       }
-      this.$Message.info(
-        `成功上线账号${data.success.length}个，失败${data.error.length}个！`
-      )
-      ref[this.PagedTableRef].$refs[ref[this.PagedTableRef].TableRef].selectAll(
-        false
-      )
-      ref[this.ConfirmModalRef].isShowConfirmModal = false
+      this.clear()
+      const obj = this.dataFormat(data)
+      this.$Message.info(`成功上线账号${obj.succ}个，失败${obj.err}个！`)
     },
     async onlineByGroup(params) {
-      this.$refs[this.SelectModalRef].isShowSelectModal = false
+      this.clear()
       const { data } = await this.$http.post("/account/loginMulti", {
         group_id: String(params),
         list: [{}],
         request_type: "0"
       })
-      this.$Message.info(
-        `成功登录账号${data.success.length}个，失败${data.error.length}个！`
-      )
-      this.$refs[this.SelectModalRef].$refs["SearchSelect"].value = ""
+      const obj = this.dataFormat(data)
+      this.$Message.info(`成功上线账号${obj.succ}个，失败${obj.err}个！`)
     },
     async offlineByWXID() {
-      ref[this.ConfirmModalRef].isShowConfirmModal = false
-      let arr = []
       const WXIDArray = []
-      const ref = this.$refs
-      arr = this.operationData.filter(item => {
-        return item.accountWxid !== "无微信ID或信息异常"
-      })
-      arr.forEach(item => {
-        WXIDArray.push(item.accountWxid)
-      })
-
+      this.operationData
+        .filter(item => item.accountWxid !== "无微信ID或信息异常")
+        .forEach(item => WXIDArray.push(item.accountWxid))
       const { data } = await this.$http.post("/account/logout", {
         groupId: 0,
         wxids: WXIDArray,
         requestType: "1"
       })
-      this.$Message.info(
-        `成功下线账号${data.success.length}个，失败${data.error.length}个！`
-      )
-      ref[this.PagedTableRef].$refs[ref[this.PagedTableRef].TableRef].selectAll(
-        false
-      )
+      this.clear()
+      const obj = this.dataFormat(data)
+      this.$Message.info(`成功下线账号${obj.succ}个，失败${obj.err}个！`)
     },
     async offlineByGroup(params) {
+      this.clear()
       const { data } = await this.$http.post("/account/logout", {
         groupId: String(params),
         wxids: [],
         requestType: "0"
       })
-      this.$Message.info(
-        `成功下线账号${data.success.length}个，失败${data.error.length}个！`
-      )
-      this.$refs[this.SelectModalRef].$refs["SearchSelect"].value = ""
-      this.$refs[this.SelectModalRef].isShowSelectModal = false
+      const obj = this.dataFormat(data)
+      this.$Message.info(`成功下线账号${obj.succ}个，失败${obj.err}个！`)
     },
-    /* async removeByWXID(row) {
+    async removeByWXID(row) {
       console.log(row)
       if (row) {
         const { accountWxid } = row
         console.log(accountWxid)
       }
-    }, */
+    },
     async removeByGroup(groupID) {
+      this.clear()
       const { data } = await this.$http.post("/account/deleteAccount", {
         group_id: String(groupID),
         wxids: [],
         request_type: "0"
       })
-      this.$Message.info(
-        `已成功删除${data.success.length}个账号，失败${data.error.length}!`
-      )
-      this.$refs[this.SelectModalRef].isShowSelectModal = false
-      this.$refs[this.SelectModalRef].$refs["SearchSelect"].value = ""
+      const obj = this.dataFormat(data)
+      this.$Message.info(`成功上线账号${obj.succ}个，失败${obj.err}个！`)
     },
     async uploadData(accountData, group_id) {
       let list = []
-      let str = accountData.split(/\n/g)
-      list = str
+      list = accountData
+        .split(/\n/g)
         .map(item => item.split(/----/g))
         .map(item => {
           return { account: item[0], password: item[1], a16Data64: item[2] }
         })
       list.forEach((item, index) => {
-        if (!item.account || !item.password || !item.a16Data64) {
+        if (!item.account || !item.password || !item.a16Data64)
           list.splice(index, 1)
-        }
       })
       const { data } = await this.$http.post("/account/addAccount", {
         list,
         groupId: String(group_id),
         userId: this.user_id
       })
-      this.$refs[this.CreateModalRef].accountData = ""
-      this.$refs[this.CreateModalRef].isShowCreateModal = false
-      this.$refs[this.CreateModalRef].$refs["select"].value = ""
-      this.$Message.info(
-        `已成功添加${data.success.length}条数据，失败${data.error.length}条`
-      )
+      this.clear()
       this.initData()
+      const obj = this.dataFormat(data)
+      this.$Message.info(`成功上传账号${obj.succ}个，失败${obj.err}个！`)
+    },
+    async moveGroup(groupId) {
+      const wxid_list = []
+      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
+      const { msg } = await this.$http.post("/account/setAccountGroup", {
+        wxid_list,
+        group_id: String(groupId)
+      })
+      this.clear()
+      this.initData()
+      this.$Message.success(msg)
+    },
+    async moveTag(tagId) {
+      const wxid_list = []
+      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
+      const { msg } = await this.$http.post("/account/setAccountTag", {
+        wxid_list,
+        tag_id: String(tagId)
+      })
+      this.clear()
+      this.initData()
+      this.$Message.success(msg)
+      this.$Notice.warning({ title: `无微信ID或信息异常的账号已自动过滤！` })
+    },
+    clear() {
+      const refs = this.$refs
+      const table = refs[this.PagedTableRef]
+      const select = refs[this.CreateModalRef].$refs["select"]
+      const SearchSelect = refs[this.SelectModalRef].$refs["SearchSelect"]
+
+      select ? (select.value = "") : ""
+      SearchSelect ? (SearchSelect.value = "") : ""
+      refs[this.CreateModalRef].accountData = ""
+
+      table.$refs[table.TableRef].selectAll(false)
+      refs[this.SelectModalRef].isShowSelectModal = false
+      refs[this.CreateModalRef].isShowCreateModal = false
+      refs[this.ConfirmModalRef].isShowConfirmModal = false
+    },
+    dataFormat(data) {
+      const succ = data.success.length
+      const err = data.error.length
+      const dataObj = { succ, err }
+      return dataObj
     }
   }
 }

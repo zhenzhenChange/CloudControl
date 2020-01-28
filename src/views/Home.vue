@@ -136,7 +136,7 @@ export default {
   position: relative;
   border-radius: 4px;
   background: #f5f7f9;
-  border: 1px solid #d7dde4;
+  padding-top: 3px;
   .sider {
     left: 0;
     height: 100vh;

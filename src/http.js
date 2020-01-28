@@ -4,13 +4,20 @@ import axios from "axios"
 const http = axios.create({ baseURL: "/api" })
 
 http.interceptors.request.use(
-  config => config,
+  config => {
+    Vue.prototype.$Loading.start()
+    return config
+  },
   err => Promise.reject(err)
 )
 
 http.interceptors.response.use(
-  res => (res.data ? res.data : res),
+  res => {
+    Vue.prototype.$Loading.finish()
+    return res.data ? res.data : res
+  },
   err => {
+    Vue.prototype.$Loading.error()
     const status = err.response.status
     const msg = err.response.msg
     if (status) {

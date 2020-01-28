@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   name: "ButtonList",
   props: { buttonListInfos: Array },
@@ -30,6 +31,12 @@ export default {
         btnText: "删除"
       }
     }
+  },
+  computed: {
+    ...mapState({
+      GroupData: state => state.GroupData,
+      TagData: state => state.TagData
+    })
   },
   methods: {
     clickEvent(btnID) {
@@ -68,7 +75,7 @@ export default {
           createConfig: {
             title: "所属分组",
             info: "分组",
-            options: parent.GroupData
+            options: JSON.parse(this.GroupData)
           }
         }
         parentRefs[parent.CreateModalRef].isShowCreateModal = true
@@ -111,7 +118,7 @@ export default {
             selectConfig: {
               title: "账号分组",
               info: "分组",
-              options: parent.GroupData
+              options: JSON.parse(this.GroupData)
             },
             tryIcon: "md-checkmark",
             tryBtn: "确定"
@@ -142,7 +149,7 @@ export default {
             selectConfig: {
               title: "账号分组",
               info: "分组",
-              options: parent.GroupData
+              options: JSON.parse(this.GroupData)
             },
             tryIcon: "md-checkmark",
             tryBtn: "确定"
@@ -175,7 +182,7 @@ export default {
             selectConfig: {
               title: "账号分组",
               info: "分组",
-              options: parent.GroupData
+              options: JSON.parse(this.GroupData)
             },
             tryType: "error",
             tryIcon: "md-trash",
@@ -197,7 +204,7 @@ export default {
           selectConfig: {
             title: "账号分组",
             info: "分组",
-            options: parent.GroupData
+            options: JSON.parse(this.GroupData)
           },
           tryIcon: "md-checkmark",
           tryBtn: "确定"
@@ -217,7 +224,7 @@ export default {
           selectConfig: {
             title: "账号标签",
             info: "标签",
-            options: parent.TagData
+            options: JSON.parse(this.TagData)
           },
           tryIcon: "md-checkmark",
           tryBtn: "确定"
@@ -247,7 +254,7 @@ export default {
             selectConfig: {
               title: "账号分组",
               info: "分组",
-              options: parent.GroupData
+              options: JSON.parse(this.GroupData)
             },
             tryIcon: "md-checkmark",
             tryBtn: "确定"
@@ -278,7 +285,7 @@ export default {
             selectConfig: {
               title: "账号分组",
               info: "分组",
-              options: parent.GroupData
+              options: JSON.parse(this.GroupData)
             },
             tryIcon: "md-checkmark",
             tryBtn: "确定"

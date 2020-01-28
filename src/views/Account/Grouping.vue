@@ -50,6 +50,7 @@ export default {
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
         { align: "center", title: "分组名称", key: "groupName" },
+        { align: "center", title: "分组ID", key: "groupId" },
         {
           sortable: true,
           align: "center",
@@ -114,6 +115,7 @@ export default {
   methods: {
     async initData(keyWords) {
       this.data = []
+      let arr = []
       let res = null
       if (keyWords) {
         res = await this.$http.get("/account/getGroupByName", {
@@ -123,6 +125,10 @@ export default {
         res = await this.$http.get("/account/getAllGroup", {
           params: { user_id: this.user_id }
         })
+        res.data.forEach(item =>
+          arr.push({ label: item.groupName, value: item.groupId })
+        )
+        this.$store.commit("saveGroupData", JSON.stringify(arr))
       }
       res.data.forEach((item, index) => {
         this.data.push({

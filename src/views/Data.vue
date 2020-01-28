@@ -94,17 +94,22 @@ export default {
       this.$Message.info(msg)
     },
     async initTagData() {
-      // const { data } = await this.$http.get("/account/getAllTag", {
-      //   params: { user_id: this.user_id }
-      // })
-      // console.log(data)
-      // this.$store.commit("saveTagData", data.user_id)
+      const arr = []
+      const { data } = await this.$http.get("/account/getAllTag", {
+        params: { user_id: this.user_id }
+      })
+      data.forEach(item => arr.push({ label: item.tagName, value: item.tagId }))
+      this.$store.commit("saveTagData", JSON.stringify(arr))
     },
     async initGroupData() {
-      // const { data } = await this.$http.get("/account/getAllGroup", {
-      //   params: { user_id: this.user_id }
-      // })
-      // console.log(data)
+      const arr = []
+      const { data } = await this.$http.get("/account/getAllGroup", {
+        params: { user_id: this.user_id }
+      })
+      data.forEach(item =>
+        arr.push({ label: item.groupName, value: item.groupId })
+      )
+      this.$store.commit("saveGroupData", JSON.stringify(arr))
     }
   }
 }

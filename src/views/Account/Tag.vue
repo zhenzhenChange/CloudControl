@@ -53,6 +53,7 @@ export default {
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
         { align: "center", key: "tagName", title: "标签名称" },
+        { align: "center", key: "tagId", title: "标签ID" },
         { align: "center", key: "tagCreateDate", title: "创建时间" },
         {
           width: 230,
@@ -112,6 +113,7 @@ export default {
   methods: {
     async initData(keyWords) {
       this.data = []
+      let arr = []
       let res = null
       if (keyWords) {
         res = await this.$http.get("/account/getTagByName", {
@@ -122,6 +124,10 @@ export default {
           params: { user_id: this.user_id }
         })
         res = res.data
+        res.forEach(item =>
+          arr.push({ label: item.tagName, value: item.tagId })
+        )
+        this.$store.commit("saveTagData", JSON.stringify(arr))
       }
       res.forEach((item, index) => {
         this.data.push({

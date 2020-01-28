@@ -1,8 +1,6 @@
 <template>
   <!-- 账号设置 -->
   <div class="SAccount">
-    <ButtonList :buttonListInfos="buttonListInfos" />
-    <Divider dashed />
     <div class="mb-10 config float-left mr-20">
       <span class="mr-10">好友请求配置</span>
       <RadioGroup v-model="isChecking">
@@ -41,8 +39,6 @@ export default {
   data() {
     return {
       data: [],
-      TagData: [],
-      GroupData: [],
       isChecking: "是",
       selectConfig: {},
       operationData: [],
@@ -51,20 +47,6 @@ export default {
       PagedTableRef: "SAccountPagedTable",
       SelectModalRef: "SAccountSelectModal",
       ConfirmModalRef: "SAccountConfirmModal",
-      buttonListInfos: [
-        {
-          id: "GroupChange",
-          type: "warning",
-          icon: "md-repeat",
-          name: "分组变更"
-        },
-        {
-          id: "TagChange",
-          type: "warning",
-          icon: "md-repeat",
-          name: "标签变更"
-        }
-      ],
       SAccountColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
@@ -164,40 +146,6 @@ export default {
           })
         }
       })
-      const { data: GroupData } = await this.$http.get("/account/getAllGroup", {
-        params: { user_id: this.user_id }
-      })
-      const { data: TagData } = await this.$http.get("/account/getAllTag", {
-        params: { user_id: this.user_id }
-      })
-      GroupData.forEach(item => {
-        this.GroupData.push({ label: item.groupName, value: item.groupId })
-      })
-      TagData.forEach(item => {
-        this.TagData.push({ label: item.tagName, value: item.tagId })
-      })
-    },
-    async moveGroup(groupId) {
-      const wxid_list = []
-      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
-      const { msg } = await this.$http.post("/account/setAccountGroup", {
-        wxid_list,
-        group_id: String(groupId)
-      })
-      this.$Message.success(msg)
-      this.$refs[this.SelectModalRef].isShowSelectModal = false
-      this.initData()
-    },
-    async moveTag(tagId) {
-      const wxid_list = []
-      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
-      const { msg } = await this.$http.post("/account/setAccountTag", {
-        wxid_list,
-        tag_id: String(tagId)
-      })
-      this.$Message.success(msg)
-      this.$refs[this.SelectModalRef].isShowSelectModal = false
-      this.initData()
     },
     async requestSetByGroup(groupId) {
       await this.$http.post("/account/setFriendRequest", {
