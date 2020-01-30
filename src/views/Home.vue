@@ -30,7 +30,44 @@
     </Sider>
     <Layout class="layout">
       <Header class="header">
-        <CommonPoptipQRCode class="float-left" />
+        <div>
+          <CommonPoptipQRCode class="float-left mr-30" />
+          <Poptip
+            transfer
+            width="400"
+            offset="20"
+            padding="20px"
+            class="login-poptip"
+            placement="right-start"
+          >
+            <Button type="error" icon="md-link">代理验证</Button>
+            <div slot="content">
+              <Card>
+                <Input clearable v-model="secret" placeholder="请输入密钥">
+                  <span slot="prepend">密钥</span>
+                </Input>
+                <Input
+                  clearable
+                  class="mt-10"
+                  v-model="orderno"
+                  placeholder="请输入订单号"
+                >
+                  <span slot="prepend">订单</span>
+                </Input>
+                <div class="mt-10">
+                  <Button
+                    long
+                    type="success"
+                    icon="md-git-commit"
+                    @click="IPChecking"
+                  >
+                    提交
+                  </Button>
+                </div>
+              </Card>
+            </div>
+          </Poptip>
+        </div>
         <div class="float-left">云控营销管理平台</div>
         <Button
           type="info"
@@ -68,8 +105,10 @@ export default {
   name: "home",
   data() {
     return {
-      activeName: "",
+      secret: "",
+      orderno: "",
       routeList: [],
+      activeName: "",
       subMenuList: [
         {
           title: "账户",
@@ -133,6 +172,9 @@ export default {
       localStorage.removeItem("user_id")
       localStorage.removeItem("TagData")
       localStorage.removeItem("GroupData")
+    },
+    async IPChecking() {
+      console.log(1)
     }
   }
 }

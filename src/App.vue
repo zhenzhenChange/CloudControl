@@ -4,7 +4,6 @@
 
 <style lang="scss" scope>
 #app {
-  height: 100vh;
   color: #2c3e50;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
