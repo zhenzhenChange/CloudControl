@@ -94,8 +94,7 @@ export default {
     async sendFriendSpace(params) {
       this.$refs[this.ConfirmModalRef].isShowConfirmModal = false
       const { msg } = await this.$http.post("/account/sendFriendCircle", {
-        group_id: String(params),
-        user_id: this.user_id
+        group_id: String(params)
       })
       this.$Message.info(msg)
     }

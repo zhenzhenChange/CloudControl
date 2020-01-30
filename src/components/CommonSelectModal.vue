@@ -49,22 +49,27 @@ export default {
     tryClick() {
       const refs = this.$refs
       const parent = this.$parent
+      const value = refs["SearchSelect"].value
+      if (!value) {
+        this.$Message.warning("请选择处理项！")
+        return
+      }
       if (this.params === "online") {
-        parent.onlineByGroup(refs["SearchSelect"].value)
+        parent.onlineByGroup(value)
       } else if (this.params === "offline") {
-        parent.offlineByGroup(refs["SearchSelect"].value)
+        parent.offlineByGroup(value)
       } else if (this.params === "send") {
-        parent.sendFriendSpace(refs["SearchSelect"].value)
+        parent.sendFriendSpace(value)
       } else if (this.params === "removeByGroup") {
-        parent.removeByGroup(refs["SearchSelect"].value)
+        parent.removeByGroup(value)
       } else if (this.params === "moveGroup") {
-        parent.moveGroup(refs["SearchSelect"].value)
+        parent.moveGroup(value)
       } else if (this.params === "moveTag") {
-        parent.moveTag(refs["SearchSelect"].value)
+        parent.moveTag(value)
       } else if (this.params === "request") {
-        parent.requestSetByGroup(refs["SearchSelect"].value)
+        parent.requestSetByGroup(value)
       } else if (this.params === "changeMeansByGroup") {
-        parent.changeMeansByGroup(refs["SearchSelect"].value)
+        parent.changeMeansByGroup(value)
       }
     },
     catchClick() {

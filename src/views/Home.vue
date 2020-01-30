@@ -30,8 +30,16 @@
     </Sider>
     <Layout class="layout">
       <Header class="header">
-        <span>云控营销管理平台</span>
         <CommonPoptipQRCode class="float-left" />
+        <div class="float-left">云控营销管理平台</div>
+        <Button
+          type="info"
+          @click="logout"
+          icon="md-log-out"
+          class="float-right"
+        >
+          退出登录
+        </Button>
       </Header>
       <Content class="content">
         <Breadcrumb class="breadcrumb">
@@ -119,6 +127,12 @@ export default {
           }
         }
       })
+    },
+    logout() {
+      this.$router.push("/")
+      localStorage.removeItem("user_id")
+      localStorage.removeItem("TagData")
+      localStorage.removeItem("GroupData")
     }
   }
 }
@@ -140,9 +154,12 @@ export default {
   .layout {
     margin-left: 200px;
     .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       text-align: center;
       background: #fff;
-      padding-left: 33px;
+      padding: 0 33px;
       box-shadow: 0 2px 3px 2px rgba(0, 0, 0, 0.1);
     }
     .content {

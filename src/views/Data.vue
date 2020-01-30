@@ -67,11 +67,12 @@ export default {
         { path: "/grouping", title: "分组管理", type: "md-list" },
         { path: "/tag", title: "标签管理", type: "md-pricetags" },
         { path: "/s-account", title: "账号设置", type: "md-cog" },
-        { path: "/m-account", title: "账号管理", type: "md-people" }
+        { path: "/m-account", title: "账号管理", type: "md-people" },
+        { path: "/SetShreshold", title: "阈值设置", type: "md-arrow-up" }
       ],
       quickRouterLinks2: [
         { path: "/material", title: "素材管理", type: "md-book" },
-        { path: "/mail", title: "通讯录管理", type: "md-contact" },
+        { path: "/mail", title: "通讯管理", type: "md-contact" },
         { path: "/pull-group", title: "群拉好友", type: "md-hand" },
         { path: "/friends", title: "好友管理", type: "md-contacts" },
         { path: "/space", title: "发朋友圈", type: "md-paper-plane" }
@@ -80,8 +81,10 @@ export default {
   },
   created() {
     this.initData()
-    this.initTagData()
-    this.initGroupData()
+    if (this.user_id) {
+      this.initTagData()
+      this.initGroupData()
+    }
   },
   computed: {
     ...mapState({ user_id: state => state.user_id })

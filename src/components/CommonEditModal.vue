@@ -45,8 +45,8 @@
         type="success"
         ref="tryButton"
         @click="tryClick"
-        :disabled="value === '' ? true : false"
         icon="md-checkmark"
+        :disabled="value === '' ? true : false"
       >
         {{ config.tryBtn }}
       </Button>

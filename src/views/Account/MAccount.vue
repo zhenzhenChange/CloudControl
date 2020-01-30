@@ -289,6 +289,7 @@ export default {
         return
       }
       this.clear()
+      this.initData()
       const obj = this.dataFormat(data)
       this.$Message.info(`成功上线账号${obj.succ}个，失败${obj.err}个！`)
     },
@@ -299,6 +300,7 @@ export default {
         list: [{}],
         request_type: "0"
       })
+      this.initData()
       const obj = this.dataFormat(data)
       this.$Message.info(`成功上线账号${obj.succ}个，失败${obj.err}个！`)
     },
@@ -313,6 +315,7 @@ export default {
         requestType: "1"
       })
       this.clear()
+      this.initData()
       const obj = this.dataFormat(data)
       this.$Message.info(`成功下线账号${obj.succ}个，失败${obj.err}个！`)
     },
@@ -323,21 +326,22 @@ export default {
         wxids: [],
         requestType: "0"
       })
+      this.initData()
       const obj = this.dataFormat(data)
       this.$Message.info(`成功下线账号${obj.succ}个，失败${obj.err}个！`)
     },
     async removeByWXID(row) {
-      const wxids = []
+      const accounts = []
       if (row) {
-        const { accountWxid } = row
-        wxids.push(accountWxid)
+        const { account } = row
+        accounts.push(account)
       } else {
-        this.operationData.forEach(item => wxids.push(item.accountWxid))
+        this.operationData.forEach(item => accounts.push(item.account))
       }
       const { data } = await this.$http.post("/account/deleteAccount", {
-        group_id: "",
-        wxids,
-        request_type: 1
+        groupId: "",
+        accounts,
+        requestType: 1
       })
       const obj = this.dataFormat(data)
       if (row) {
@@ -351,16 +355,18 @@ export default {
         this.$Message.info(`成功删除账号${obj.succ}个，失败${obj.err}个！`)
       }
       this.clear()
+      this.initData()
     },
     async removeByGroup(groupID) {
       this.clear()
       const { data } = await this.$http.post("/account/deleteAccount", {
-        group_id: String(groupID),
-        wxids: [],
-        request_type: 0
+        groupId: String(groupID),
+        accounts: [],
+        requestType: 0
       })
       const obj = this.dataFormat(data)
       this.$Message.info(`成功删除账号${obj.succ}个，失败${obj.err}个！`)
+      this.initData()
     },
     async uploadData(accountData, group_id) {
       let list = []

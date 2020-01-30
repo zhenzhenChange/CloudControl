@@ -152,6 +152,14 @@ export default {
   },
   methods: {
     async saveTemplate() {
+      if (!this.template.title) {
+        this.$Message.warning("标题不能为空！")
+        return
+      }
+      if (!this.template.content) {
+        this.$Message.warning("内容不能为空！")
+        return
+      }
       this.template.user_id = this.user_id
       this.template.picURL = this.$refs.SpaceUpload.uploadList
       const res = await this.$http.post(
@@ -161,6 +169,10 @@ export default {
       this.$Message.info(res.msg)
     },
     async saveQuickInfo() {
+      if (!this.quickInfo.content) {
+        this.$Message.warning("内容不能为空！")
+        return
+      }
       this.quickInfo.user_id = this.user_id
       const { msg } = await this.$http.post(
         "/marketing/setSendMsg",
@@ -169,6 +181,14 @@ export default {
       this.$Message.info(msg)
     },
     async savePersonInfo() {
+      if (!this.personInfo.pwd) {
+        this.$Message.warning("密码设置不能为空！")
+        return
+      }
+      if (!this.personInfo.nickname) {
+        this.$Message.warning("昵称不能为空！")
+        return
+      }
       this.personInfo.user_id = this.user_id
       this.personInfo.avatarUrl = this.$refs.UploadAvatar.uploadList[0]
       const { msg } = await this.$http.post(
@@ -178,6 +198,10 @@ export default {
       this.$Message.info(msg)
     },
     async saveVerifyInfo() {
+      if (!this.verifyInfo.content) {
+        this.$Message.warning("内容不能为空！")
+        return
+      }
       this.verifyInfo.user_id = this.user_id
       const { msg } = await this.$http.post(
         "/marketing/setAddMsg",

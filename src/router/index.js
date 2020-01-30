@@ -8,7 +8,12 @@ Vue.use(ViewUI)
 Vue.use(VueRouter)
 
 const routes = [
-  { path: "/", name: "login", component: Login },
+  {
+    path: "/",
+    name: "login",
+    component: Login,
+    meta: { isPublic: true }
+  },
   {
     path: "/home",
     name: "首页",
@@ -63,6 +68,11 @@ const routes = [
         path: "/material",
         name: "素材管理",
         component: () => import("../views/Marketing/Material.vue")
+      },
+      {
+        path: "/SetShreshold",
+        name: "阈值设置",
+        component: () => import("../views/SetShreshold.vue")
       }
     ]
   }
@@ -74,7 +84,15 @@ const router = new VueRouter({
   routes
 })
 
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 router.beforeEach((to, from, next) => {
+  if (!to.meta.isPublic && !localStorage.getItem("user_id")) {
+    return next("/")
+  }
   ViewUI.LoadingBar.start()
   next()
 })

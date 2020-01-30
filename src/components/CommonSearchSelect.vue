@@ -8,8 +8,8 @@
       filterable
       class="select"
       v-model="value"
-      :style="config.width ? `width:${config.width}` : 'width:200px;'"
       :placeholder="`请选择${config.info}`"
+      :style="config.width ? `width:${config.width}` : 'width:200px;'"
     >
       <Option
         :key="option.value"

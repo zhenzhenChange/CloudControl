@@ -136,6 +136,10 @@ export default {
       })
     },
     async tryClick() {
+      if (!this.urlArea) {
+        this.$Message.warning("请填入群链接")
+        return
+      }
       this.isShowUrlModal = false
       let grpUrl = []
       this.urlArea.split(/\n/g).forEach(item => grpUrl.push(item))

@@ -34,8 +34,8 @@ export default {
   },
   computed: {
     ...mapState({
-      GroupData: state => state.GroupData,
-      TagData: state => state.TagData
+      TagData: state => state.TagData,
+      GroupData: state => state.GroupData
     })
   },
   methods: {

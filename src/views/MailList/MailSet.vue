@@ -150,6 +150,10 @@ export default {
       this.isShowModal = false
     },
     async uploadMailList() {
+      if (!this.mailList) {
+        this.$Message.warning("请上传通讯录或手动粘贴")
+        return
+      }
       this.isShowModal = false
       let contact = []
       contact = this.mailList.split(/\n/g).filter(item => item !== "")

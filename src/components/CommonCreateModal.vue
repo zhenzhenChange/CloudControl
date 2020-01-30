@@ -65,7 +65,17 @@ export default {
       this.$refs["select"].value = ""
     },
     tryClick() {
-      this.$parent.uploadData(this.accountData, this.$refs["select"].value)
+      const data = this.accountData
+      const value = this.$refs["select"].value
+      if (!value) {
+        this.$Message.warning("请选择分组")
+        return
+      }
+      if (!data) {
+        this.$Message.warning("请上传账号或手动粘贴")
+        return
+      }
+      this.$parent.uploadData(data, value)
     }
   }
 }

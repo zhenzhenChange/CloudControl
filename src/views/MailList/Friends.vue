@@ -17,7 +17,7 @@
     >
       <p slot="header">
         <Icon type="md-send" color="#2D8CF0" class="mr-5 header-icon" />
-        该标签下的所有账号都添加指定的好友
+        该标签下的所有账号都发送添加指定的好友的请求
       </p>
       <div class="color-blue">标签名称：{{ TagName }}</div>
       <div class="color-blue mt-10">标签ID： {{ TagID }}</div>
