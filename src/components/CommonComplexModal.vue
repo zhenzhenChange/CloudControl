@@ -1,6 +1,6 @@
 <template>
   <Modal
-    width="500"
+    width="400"
     :closable="false"
     :mask-closable="false"
     v-model="isShowComplexModal"
@@ -28,16 +28,6 @@
     >
       <span slot="prepend">验证消息</span>
     </Input>
-    <div class="mt-10 color-red">
-      （可选）自定义填入通讯录号码，不填则默认添加已上传的通讯录
-    </div>
-    <Input
-      type="textarea"
-      v-model="handInput"
-      class="mt-10 mr-10"
-      :autosize="{ minRows: 5, maxRows: 20 }"
-    >
-    </Input>
     <div slot="footer">
       <Button icon="md-remove-circle" @click="catchClick">取消</Button>
       <Button type="primary" icon="md-checkmark" @click="tryClick">
@@ -55,7 +45,6 @@ export default {
     return {
       content: "",
       params: null,
-      handInput: "",
       isDelayed: "是",
       isShowComplexModal: false
     }

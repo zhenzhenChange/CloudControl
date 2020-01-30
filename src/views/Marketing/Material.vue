@@ -160,24 +160,28 @@ export default {
         this.$Message.warning("内容不能为空！")
         return
       }
+      this.templateLoading = true
       this.template.user_id = this.user_id
       this.template.picURL = this.$refs.SpaceUpload.uploadList
-      const res = await this.$http.post(
+      const { msg } = await this.$http.post(
         "/marketing/setFriendCricle",
         this.template
       )
-      this.$Message.info(res.msg)
+      this.templateLoading = false
+      this.$Message.info(msg)
     },
     async saveQuickInfo() {
       if (!this.quickInfo.content) {
         this.$Message.warning("内容不能为空！")
         return
       }
+      this.quickLoading = true
       this.quickInfo.user_id = this.user_id
       const { msg } = await this.$http.post(
         "/marketing/setSendMsg",
         this.quickInfo
       )
+      this.quickLoading = false
       this.$Message.info(msg)
     },
     async savePersonInfo() {
@@ -189,12 +193,14 @@ export default {
         this.$Message.warning("昵称不能为空！")
         return
       }
+      this.personLoading = true
       this.personInfo.user_id = this.user_id
       this.personInfo.avatarUrl = this.$refs.UploadAvatar.uploadList[0]
       const { msg } = await this.$http.post(
         "/marketing/setInfo",
         this.personInfo
       )
+      this.personLoading = false
       this.$Message.info(msg)
     },
     async saveVerifyInfo() {
@@ -202,11 +208,13 @@ export default {
         this.$Message.warning("内容不能为空！")
         return
       }
+      this.verifyLoading = true
       this.verifyInfo.user_id = this.user_id
       const { msg } = await this.$http.post(
         "/marketing/setAddMsg",
         this.verifyInfo
       )
+      this.verifyLoading = false
       this.$Message.info(msg)
     }
   }
