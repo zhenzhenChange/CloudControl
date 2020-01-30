@@ -1,7 +1,7 @@
 import Vue from "vue"
 import axios from "axios"
 
-const http = axios.create({ baseURL: "/api" })
+const http = axios.create({ baseURL: "/cloud-api" })
 
 http.interceptors.request.use(
   config => {
@@ -19,13 +19,8 @@ http.interceptors.response.use(
   err => {
     Vue.prototype.$Loading.error()
     const status = err.response.status
-    const msg = err.response.msg
+    const msg = `服务器错误，请稍后重试！错误代码：${status}`
     if (status) {
-      Vue.prototype.$Message.error(
-        `服务器错误，请稍后重试！错误代码：${status}`
-      )
-    }
-    if (msg) {
       Vue.prototype.$Message.error(msg)
     }
     return Promise.reject(err)
