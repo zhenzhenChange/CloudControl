@@ -68,6 +68,7 @@ npm run lint
 
 ### 最终版
 
+```
 - /api/account/setFriendRequest	404	好友请求设置（是否验证）
 - /api/account/changeDatu		    404	账号资料修改（修改密码、昵称、头像）
 - /api/contact/sendMessageByTag	404	给标签下的所有账号群发消息
@@ -77,7 +78,7 @@ npm run lint
 
 - /common/getInit                 首页数据面板无数据
 - /account/getAccountInfo         获取账号信息字段返回值为null
-
+```
 - 服务器时区时间异常？
 
 - 新增：
