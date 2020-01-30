@@ -69,15 +69,15 @@ npm run lint
 ### 最终版
 
 ```
-- /api/account/setFriendRequest	404	好友请求设置（是否验证）
+- /api/account/setFriendRequest	    404	好友请求设置（是否验证）
 - /api/account/changeDatu		    404	账号资料修改（修改密码、昵称、头像）
-- /api/contact/sendMessageByTag	404	给标签下的所有账号群发消息
-- /api/contact/addFriendsByTag	404	给标签下的所有账号都发送添加指定的好友的请求
+- /api/contact/sendMessageByTag	    404	给标签下的所有账号群发消息
+- /api/contact/addFriendsByTag	    404	给标签下的所有账号都发送添加指定的好友的请求
 
 - /api/contact/addFriends		    500	给单个微信账号添加好友，报500，可能我参数没传对
 
-- /common/getInit                 首页数据面板无数据
-- /account/getAccountInfo         获取账号信息字段返回值为null
+- /common/getInit                   首页数据面板无数据
+- /account/getAccountInfo           获取账号信息字段返回值为null
 ```
 - 服务器时区时间异常？
 
