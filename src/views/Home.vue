@@ -173,9 +173,7 @@ export default {
       localStorage.removeItem("TagData")
       localStorage.removeItem("GroupData")
     },
-    async IPChecking() {
-      console.log(1)
-    }
+    async IPChecking() {}
   }
 }
 </script>
