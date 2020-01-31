@@ -26,6 +26,8 @@ export default {
     return {
       data: [],
       params: "",
+      pageIndex: 0,
+      pageSize: 10,
       mutex: false,
       selectConfig: {},
       createConfig: {},
@@ -215,6 +217,7 @@ export default {
     }
   },
   created() {
+    this.allData()
     this.initData()
   },
   computed: {
@@ -224,7 +227,11 @@ export default {
     async initData() {
       this.data = []
       const { data } = await this.$http.get("/account/getAccountInfo", {
-        params: { user_id: this.user_id }
+        params: {
+          user_id: this.user_id,
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize
+        }
       })
       data.forEach((item, index) => {
         this.data.push({
@@ -242,11 +249,17 @@ export default {
             : "无微信ID或信息异常",
           groupName: item.groupName ? item.groupName : "无",
           tagName: item.tagName ? item.tagName : "无",
-          groupId: item.groupId ? item.groupId : "无",
-          tagId: item.tagId ? item.tagId : "无",
+          groupId: item.groupId ? String(item.groupId) : "无",
+          tagId: item.tagId ? String(item.tagId) : "无",
           userId: item.userId
         })
       })
+    },
+    async allData() {
+      const { data } = await this.$http.get("/account/getAccountInfo", {
+        params: { user_id: this.user_id }
+      })
+      this.$refs[this.PagedTableRef].total = data.length
     },
     async onlineByWXID(row) {
       let arr = []
@@ -289,6 +302,7 @@ export default {
         return
       }
       this.clear()
+      this.allData()
       this.initData()
       const obj = this.dataFormat(data)
       this.$Message.info(`成功上线账号${obj.succ}个，失败${obj.err}个！`)
@@ -300,6 +314,7 @@ export default {
         list: [{}],
         request_type: "0"
       })
+      this.allData()
       this.initData()
       const obj = this.dataFormat(data)
       this.$Message.info(`成功上线账号${obj.succ}个，失败${obj.err}个！`)
@@ -315,6 +330,7 @@ export default {
         requestType: "1"
       })
       this.clear()
+      this.allData()
       this.initData()
       const obj = this.dataFormat(data)
       this.$Message.info(`成功下线账号${obj.succ}个，失败${obj.err}个！`)
@@ -326,6 +342,7 @@ export default {
         wxids: [],
         requestType: "0"
       })
+      this.allData()
       this.initData()
       const obj = this.dataFormat(data)
       this.$Message.info(`成功下线账号${obj.succ}个，失败${obj.err}个！`)
@@ -355,6 +372,7 @@ export default {
         this.$Message.info(`成功删除账号${obj.succ}个，失败${obj.err}个！`)
       }
       this.clear()
+      this.allData()
       this.initData()
     },
     async removeByGroup(groupID) {
@@ -366,6 +384,7 @@ export default {
       })
       const obj = this.dataFormat(data)
       this.$Message.info(`成功删除账号${obj.succ}个，失败${obj.err}个！`)
+      this.allData()
       this.initData()
     },
     async uploadData(accountData, group_id) {
@@ -386,6 +405,7 @@ export default {
         userId: this.user_id
       })
       this.clear()
+      this.allData()
       this.initData()
       const obj = this.dataFormat(data)
       this.$Message.info(`成功上传账号${obj.succ}个，失败${obj.err}个！`)
@@ -398,6 +418,7 @@ export default {
         group_id: String(groupId)
       })
       this.clear()
+      this.allData()
       this.initData()
       this.$Message.success(msg)
     },
@@ -409,6 +430,7 @@ export default {
         tag_id: String(tagId)
       })
       this.clear()
+      this.allData()
       this.initData()
       this.$Message.success(msg)
       this.$Notice.warning({ title: `无微信ID或信息异常的账号已自动过滤！` })

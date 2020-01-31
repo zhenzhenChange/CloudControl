@@ -11,6 +11,8 @@ export default {
   data() {
     return {
       data: [],
+      pageIndex: 0,
+      pageSize: 10,
       config: {
         icon: "md-send",
         color: "#2D8CF0",
@@ -70,22 +72,33 @@ export default {
     }
   },
   created() {
+    this.allData()
     this.initData()
   },
   computed: {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
+    async allData() {
+      const { data } = await this.$http.get("/account/getAllGroup", {
+        params: { user_id: this.user_id }
+      })
+      this.$refs[this.PagedTableRef].total = data.length
+    },
     async initData() {
       this.data = []
       const { data } = await this.$http.get("/account/getAllGroup", {
-        params: { user_id: this.user_id }
+        params: {
+          user_id: this.user_id,
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize
+        }
       })
       data.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,
           groupName: item.groupName,
-          groupId: item.groupId,
+          groupId: String(item.groupId),
           groupCreateDate: this.$options.filters.date(item.groupCreateDate)
         })
         this.GroupData.push({ label: item.groupName, value: item.groupId })

@@ -24,14 +24,8 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    user_id: state => {
-      state.user_id
-    },
-    TagData: state => {
-      state.TagData
-    },
-    GroupData: state => {
-      state.GroupData
-    }
+    user_id: state => state.user_id,
+    TagData: state => state.TagData,
+    GroupData: state => state.GroupData
   }
 })

@@ -3,13 +3,13 @@
   <div class="SAccount">
     <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider dashed />
-    <div class="mb-10 config float-left mr-20">
+    <!-- <div class="mb-10 config float-left mr-20">
       <span class="mr-10">好友请求配置</span>
       <RadioGroup v-model="isChecking">
         <Radio label="需要验证"></Radio>
         <Radio label="不需要验证"></Radio>
       </RadioGroup>
-    </div>
+    </div> -->
     <div class="clear-both"></div>
     <div class="mb-10 config">
       <span class="mr-10">修改资料配置</span>
@@ -41,6 +41,8 @@ export default {
   data() {
     return {
       data: [],
+      pageIndex: 0,
+      pageSize: 10,
       selectConfig: {},
       operationData: [],
       operationConfig: {},
@@ -50,12 +52,12 @@ export default {
       SelectModalRef: "SAccountSelectModal",
       ConfirmModalRef: "SAccountConfirmModal",
       buttonListInfos: [
-        {
+        /* {
           id: "request",
           name: "好友请求设置",
           icon: "md-settings",
           type: "success"
-        },
+        }, */
         {
           id: "ChangeMeans",
           name: "修改资料",
@@ -100,6 +102,7 @@ export default {
     }
   },
   created() {
+    this.allData()
     this.initData()
   },
   computed: {
@@ -109,7 +112,11 @@ export default {
     async initData() {
       this.data = []
       const { data } = await this.$http.get("/account/getAccountInfo", {
-        params: { user_id: this.user_id }
+        params: {
+          user_id: this.user_id,
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize
+        }
       })
       data.forEach((item, index) => {
         if (item.accountWxid) {
@@ -122,13 +129,19 @@ export default {
             accountPwd: item.accountPwd,
             groupName: item.groupName ? item.groupName : "无",
             tagName: item.tagName ? item.tagName : "无",
-            groupId: item.groupId ? item.groupId : "无",
-            tagId: item.tagId ? item.tagId : "无"
+            groupId: item.groupId ? String(item.groupId) : "无",
+            tagId: item.tagId ? String(item.tagId) : "无"
           })
         }
       })
     },
-    async requestSetByGroup(groupId) {
+    async allData() {
+      const { data } = await this.$http.get("/account/getAccountInfo", {
+        params: { user_id: this.user_id }
+      })
+      this.$refs[this.PagedTableRef].total = data.length
+    },
+    /* async requestSetByGroup(groupId) {
       this.clear()
       const { msg } = await this.$http.post("/account/setFriendRequest", {
         group_id: String(groupId),
@@ -151,10 +164,10 @@ export default {
       this.clear()
       this.initData()
       this.$Message.success(msg)
-    },
+    }, */
     async changeMeansByGroup(groupId) {
       this.clear()
-      const changeType =
+      const change_type =
         this.isUpdateType === "修改密码"
           ? 2
           : this.isUpdateType === "修改昵称"
@@ -163,14 +176,15 @@ export default {
       const { msg } = await this.$http.post("/account/changeDatum", {
         group_id: String(groupId),
         wxid_list: [],
-        change_type: changeType,
-        type: 0
+        change_type,
+        type: 0,
+        user_id: this.user_id
       })
       this.initData()
       this.$Message.success(msg)
     },
     async changeMeansByWXID() {
-      const changeType =
+      const change_type =
         this.isUpdateType === "修改密码"
           ? 2
           : this.isUpdateType === "修改昵称"
@@ -181,8 +195,9 @@ export default {
       const { msg } = await this.$http.post("/account/changeDatum", {
         group_id: "",
         wxid_list,
-        change_type: changeType,
-        type: 1
+        change_type,
+        type: 1,
+        user_id: this.user_id
       })
       this.clear()
       this.initData()

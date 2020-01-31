@@ -4,19 +4,23 @@
     <Table
       stripe
       border
-      :data="data"
       :ref="TableRef"
+      :data="data"
       :columns="dataColumns"
       @on-selection-change="selectionChange"
     />
     <div class="page">
       <div>
         <Page
+          transfer
           show-total
           show-sizer
           show-elevator
-          :total="data.length"
+          :total="total"
+          :current="current"
+          :page-size="pageSize"
           @on-change="changePage"
+          :page-size-opts="pageSizeOpts"
           @on-page-size-change="changeSize"
         />
       </div>
@@ -30,19 +34,24 @@ export default {
   props: { data: Array, dataColumns: Array },
   data() {
     return {
-      TableRef: "CommonPagedTable"
+      total: 0,
+      current: 1,
+      pageSize: 10,
+      TableRef: "CommonPagedTable",
+      pageSizeOpts: [10, 30, 50, 100, 150, 200, 400]
     }
   },
   methods: {
     changePage(index) {
+      this.current = index
       const parent = this.$parent
-      let _start = (index - 1) * parent.pageSize
-      let _end = index * parent.pageSize
-      parent.pageData = parent.data.slice(_start, _end)
-      parent.pageCurrent = index
+      parent.pageIndex = index - 1
+      parent.initData(null)
     },
     changeSize(pageSize) {
-      this.$parent.changeSize(pageSize)
+      this.pageSize = pageSize
+      this.$parent.pageSize = pageSize
+      this.$parent.initData(null)
     },
     selectionChange(selection) {
       const parent = this.$parent

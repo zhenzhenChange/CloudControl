@@ -29,28 +29,24 @@
       >
         <span slot="prepend">验证消息</span>
       </Input>
-      <div class="mt-10">
-        <span class="mr-10">来源选择</span>
-        <RadioGroup v-model="origin">
-          <Radio label="来源通讯录"></Radio>
-          <Radio label="来源QQ"></Radio>
-          <Radio label="来源邮箱"></Radio>
-          <Radio label="来源微信"></Radio>
-          <Radio label="手机号"></Radio>
-        </RadioGroup>
-      </div>
-      <div class="mt-10">
-        <span class="color-red">
-          需要添加的账号列表（一次只能添加同一个来源的账号）,一行一个账号
-        </span>
-        <Input
-          type="textarea"
-          v-model="userList"
-          class="mt-10 mr-10"
-          :autosize="{ minRows: 5, maxRows: 20 }"
+      <div class="upload mb-10 mt-10 ml-7">
+        <span class="title mr-10">账号列表</span>
+        <Upload
+          action=""
+          :show-upload-list="false"
+          :before-upload="handleBeforeUpload"
         >
-        </Input>
+          <Button icon="md-cloud-upload">上传本地TXT文件</Button>
+        </Upload>
       </div>
+      <Input
+        class="mr-10"
+        type="textarea"
+        v-model="userList"
+        :autosize="{ minRows: 5, maxRows: 20 }"
+        placeholder="需要添加的账号列表,一行一个账号"
+      >
+      </Input>
       <div slot="footer">
         <Button icon="md-remove-circle" @click="catchClick">取消</Button>
         <Button type="success" icon="md-checkmark" @click="sendRequest">
@@ -69,12 +65,7 @@
         <Icon type="md-send" color="#2D8CF0" class="mr-5 header-icon" />
         为单个微信账号添加指定的好友
       </p>
-      <Input
-        clearable
-        v-model="wx"
-        class="mt-10 mr-10"
-        placeholder="请输入微信账号"
-      >
+      <Input clearable v-model="wx" class="mr-10" placeholder="请输入微信账号">
         <span slot="prepend">微信账号</span>
       </Input>
       <Input
@@ -85,28 +76,24 @@
       >
         <span slot="prepend">验证消息</span>
       </Input>
-      <div class="mt-10">
-        <span class="mr-10">来源选择</span>
-        <RadioGroup v-model="wxOrigin">
-          <Radio label="来源通讯录"></Radio>
-          <Radio label="来源QQ"></Radio>
-          <Radio label="来源邮箱"></Radio>
-          <Radio label="来源微信"></Radio>
-          <Radio label="手机号"></Radio>
-        </RadioGroup>
-      </div>
-      <div class="mt-10">
-        <span class="color-red">
-          需要添加的账号列表（一次只能添加同一个来源的账号）,一行一个账号
-        </span>
-        <Input
-          type="textarea"
-          v-model="wxUserList"
-          class="mt-10 mr-10"
-          :autosize="{ minRows: 5, maxRows: 20 }"
+      <div class="upload mb-10 mt-10 ml-7">
+        <span class="title mr-10">账号列表</span>
+        <Upload
+          action=""
+          :show-upload-list="false"
+          :before-upload="handleBeforeUpload2"
         >
-        </Input>
+          <Button icon="md-cloud-upload">上传本地TXT文件</Button>
+        </Upload>
       </div>
+      <Input
+        class="mr-10"
+        type="textarea"
+        v-model="wxUserList"
+        :autosize="{ minRows: 5, maxRows: 20 }"
+        placeholder="需要添加的账号列表,一行一个账号"
+      >
+      </Input>
       <div slot="footer">
         <Button icon="md-remove-circle" @click="catchClick">取消</Button>
         <Button type="success" icon="md-checkmark" @click="sendRequestByWX">
@@ -124,14 +111,14 @@ export default {
     return {
       wx: "",
       data: [],
+      pageIndex: 0,
+      pageSize: 10,
       TagID: "",
       TagName: "",
       content: "",
-      wxContent: "",
       userList: "",
+      wxContent: "",
       wxUserList: "",
-      origin: "来源通讯录",
-      wxOrigin: "来源通讯录",
       isShowModal: false,
       isShowWXModal: false,
       PagedTableRef: "FriendsPagedTable",
@@ -197,7 +184,7 @@ export default {
                     }
                   }
                 },
-                "群发好友"
+                "群发消息"
               )
             ])
           }
@@ -206,22 +193,33 @@ export default {
     }
   },
   created() {
+    this.allData()
     this.initData()
   },
   computed: {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
+    async allData() {
+      const { data } = await this.$http.get("/account/getAllTag", {
+        params: { user_id: this.user_id }
+      })
+      this.$refs[this.PagedTableRef].total = data.length
+    },
     async initData() {
       this.data = []
       const { data } = await this.$http.get("/account/getAllTag", {
-        params: { user_id: this.user_id }
+        params: {
+          user_id: this.user_id,
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize
+        }
       })
       data.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,
           tagName: item.tagName,
-          tagId: item.tagId,
+          tagId: String(item.tagId),
           tagCreateDate: this.$options.filters.date(item.tagCreateDate)
         })
       })
@@ -229,48 +227,42 @@ export default {
     async sendByTag({ tagId: tag_id }) {
       this.$refs["FriendConfirmModal"].isShowConfirmModal = false
       const { msg } = await this.$http.post("/contact/sendMessageByTag", {
-        tag_id: String(tag_id)
+        tag_id
       })
       this.$Message.info(msg)
     },
     async sendRequest() {
+      if (!this.userList) {
+        this.$Message.warning("请上传或填入账号列表！")
+        return
+      }
       this.isShowModal = false
-      let origin =
-        this.origin === "来源QQ"
-          ? 1
-          : this.origin === "来源微信"
-          ? 3
-          : this.origin === "来源邮箱"
-          ? 2
-          : this.origin === "手机号"
-          ? 15
-          : 10
+      let contact = []
+      contact = this.userList.split(/\n/g).filter(item => item !== "")
       const { msg } = await this.$http.post("/contact/addFriendsByTag", {
         tag_id: this.TagID,
-        request_list: this.userList,
-        content: this.content,
-        origin
+        request_list: contact,
+        content: this.content
       })
       this.$Message.info(msg)
       this.TagID = this.userList = this.content = ""
     },
     async sendRequestByWX() {
+      if (!this.wx) {
+        this.$Message.warning("请填入微信账号！")
+        return
+      }
+      if (!this.wxUserList) {
+        this.$Message.warning("请上传或填入账号列表！")
+        return
+      }
       this.isShowWXModal = false
-      let origin =
-        this.wxOrigin === "来源QQ"
-          ? 1
-          : this.wxOrigin === "来源微信"
-          ? 3
-          : this.wxOrigin === "来源邮箱"
-          ? 2
-          : this.wxOrigin === "手机号"
-          ? 15
-          : 10
+      let contact = []
+      contact = this.wxUserList.split(/\n/g).filter(item => item !== "")
       const { msg } = await this.$http.post("/contact/addFriends", {
         wxid: this.wx,
-        request_list: this.wxUserList,
-        content: this.wxContent,
-        origin
+        request_list: contact,
+        content: this.wxContent
       })
       this.$Message.info(msg)
       this.wx = this.wxContent = this.wxUserList = ""
@@ -278,6 +270,22 @@ export default {
     catchClick() {
       this.isShowModal = false
       this.isShowWXModal = false
+    },
+    handleBeforeUpload(file) {
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onload = () => {
+        this.userList = reader.result
+      }
+      return false
+    },
+    handleBeforeUpload2(file) {
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onload = () => {
+        this.wxUserList = reader.result
+      }
+      return false
     }
   }
 }
@@ -286,5 +294,15 @@ export default {
 <style lang="scss" scoped>
 .ivu-radio-group {
   vertical-align: bottom;
+}
+
+.upload {
+  .title {
+    width: 56px;
+    float: left;
+    height: 32px;
+    display: block;
+    line-height: 32px;
+  }
 }
 </style>

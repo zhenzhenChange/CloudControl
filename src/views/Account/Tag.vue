@@ -22,6 +22,8 @@ export default {
   data() {
     return {
       data: [],
+      pageIndex: 0,
+      pageSize: 10,
       mutex: false,
       operationData: [],
       EditModalRef: "TagEditModal",
@@ -105,12 +107,19 @@ export default {
     }
   },
   created() {
+    this.allData()
     this.initData(null)
   },
   computed: {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
+    async allData() {
+      const { data } = await this.$http.get("/account/getAllTag", {
+        params: { user_id: this.user_id }
+      })
+      this.$refs[this.PagedTableRef].total = data.length
+    },
     async initData(keyWords) {
       this.data = []
       let arr = []
@@ -121,11 +130,15 @@ export default {
         })
       } else {
         res = await this.$http.get("/account/getAllTag", {
-          params: { user_id: this.user_id }
+          params: {
+            user_id: this.user_id,
+            pageIndex: this.pageIndex,
+            pageSize: this.pageSize
+          }
         })
         res = res.data
         res.forEach(item =>
-          arr.push({ label: item.tagName, value: item.tagId })
+          arr.push({ label: item.tagName, value: String(item.tagId) })
         )
         this.$store.commit("saveTagData", JSON.stringify(arr))
       }
@@ -133,7 +146,7 @@ export default {
         this.data.push({
           serialNumber: index + 1,
           tagName: item.tagName,
-          tagId: item.tagId,
+          tagId: String(item.tagId),
           tagCreateDate: this.$options.filters.date(item.tagCreateDate)
         })
       })
@@ -144,6 +157,7 @@ export default {
       const { msg } = await this.$http.post("/account/addTag", createData)
       this.$refs[this.EditModalRef].value = ""
       if (msg) {
+        this.allData()
         this.initData()
         this.$Message.success("添加成功！")
       }
@@ -176,6 +190,7 @@ export default {
         user_id: this.user_id
       })
       if (msg) {
+        this.allData()
         this.initData()
         ref["UnCheckButton"].unCheck()
         this.$Message.success(`删除成功！`)

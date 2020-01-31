@@ -61,6 +61,8 @@ export default {
   data() {
     return {
       data: [],
+      pageIndex: 0,
+      pageSize: 10,
       mailList: "",
       isShowModal: false,
       isMailType: "纯手机号",
@@ -113,29 +115,42 @@ export default {
     }
   },
   created() {
+    this.allData()
     this.initData()
   },
   computed: {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
+    async allData() {
+      const { data } = await this.$http.get("/account/getAllTag", {
+        params: { user_id: this.user_id }
+      })
+      this.$refs[this.PagedTableRef].total = data.length
+    },
     async initData() {
       this.data = []
       const { data } = await this.$http.get("/account/getAllTag", {
-        params: { user_id: this.user_id }
+        params: {
+          user_id: this.user_id,
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize
+        }
       })
       data.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,
           tagName: item.tagName,
-          tagId: item.tagId,
+          tagId: String(item.tagId),
           tagCreateDate: this.$options.filters.date(item.tagCreateDate)
         })
       })
     },
     async addMailFriend({ tagId: tag_id }) {
       this.$refs["MailSetComplexModal"].isShowComplexModal = false
-      const { msg } = await this.$http.post("/contact/addFriends", { tag_id })
+      const { msg } = await this.$http.post("/contact/addFriendsByContact", {
+        tag_id
+      })
       this.$Message.info(msg)
     },
     handleBeforeUpload(file) {
@@ -158,9 +173,15 @@ export default {
       let contact = []
       contact = this.mailList.split(/\n/g).filter(item => item !== "")
       const obj = { contact, user_id: this.user_id }
-      const { data } = await this.$http.post("/contact/upload", obj)
+      const { data, msg } = await this.$http.post("/contact/upload", obj)
       this.mailList = ""
-      this.$Message.info(`${data.success}个账号上传成功，${data.error}个失败！`)
+      if (data) {
+        this.$Message.info(
+          `${data.success}个账号上传成功，${data.error}个失败！`
+        )
+      } else {
+        this.$Message.info(msg)
+      }
     }
   }
 }

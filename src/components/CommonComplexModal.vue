@@ -11,23 +11,9 @@
         type="md-contact"
         color="#2D8CF0"
         class="mr-5 header-icon"
-      />为该标签下的所有账号添加通讯录好友
+      />添加通讯录好友
     </p>
-    <div>
-      <span class="mr-10">是否延时</span>
-      <RadioGroup v-model="isDelayed">
-        <Radio label="是"></Radio>
-        <Radio label="否"></Radio>
-      </RadioGroup>
-    </div>
-    <Input
-      clearable
-      v-model="content"
-      class="mt-10 mr-10"
-      placeholder="可选，默认选取素材库中已有模板"
-    >
-      <span slot="prepend">验证消息</span>
-    </Input>
+    <div class="text-center">确定要为该标签下的所有账号添加通讯录好友吗？</div>
     <div slot="footer">
       <Button icon="md-remove-circle" @click="catchClick">取消</Button>
       <Button type="primary" icon="md-checkmark" @click="tryClick">

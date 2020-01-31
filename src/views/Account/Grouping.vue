@@ -27,6 +27,8 @@ export default {
     return {
       data: [],
       mutex: false,
+      pageIndex: 0,
+      pageSize: 10,
       updateConfig: {},
       operationData: [],
       EditModalRef: "GroupingEditModal",
@@ -107,12 +109,19 @@ export default {
     }
   },
   created() {
+    this.allData()
     this.initData(null)
   },
   computed: {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
+    async allData() {
+      const { data } = await this.$http.get("/account/getAllGroup", {
+        params: { user_id: this.user_id }
+      })
+      this.$refs[this.PagedTableRef].total = data.length
+    },
     async initData(keyWords) {
       this.data = []
       let arr = []
@@ -123,7 +132,11 @@ export default {
         })
       } else {
         res = await this.$http.get("/account/getAllGroup", {
-          params: { user_id: this.user_id }
+          params: {
+            user_id: this.user_id,
+            pageIndex: this.pageIndex,
+            pageSize: this.pageSize
+          }
         })
         res.data.forEach(item =>
           arr.push({ label: item.groupName, value: item.groupId })
@@ -134,7 +147,7 @@ export default {
         this.data.push({
           serialNumber: index + 1,
           groupName: item.groupName,
-          groupId: item.groupId,
+          groupId: String(item.groupId),
           groupCreateDate: this.$options.filters.date(item.groupCreateDate)
         })
       })
@@ -145,6 +158,7 @@ export default {
       const { msg } = await this.$http.post("/account/addGroup", createData)
       this.$refs[this.EditModalRef].value = ""
       if (msg) {
+        this.allData()
         this.initData()
         this.$Message.success("添加成功！")
       }
@@ -179,6 +193,7 @@ export default {
         user_id: this.user_id
       })
       if (msg) {
+        this.allData()
         this.initData()
         ref["UnCheckButton"].unCheck()
         this.$Message.success(`删除成功！`)

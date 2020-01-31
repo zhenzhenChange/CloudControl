@@ -69,6 +69,9 @@ export default {
       qrcode: "",
       urlArea: "",
       TagData: [],
+      count: 0,
+      pageIndex: 0,
+      pageSize: 10,
       opType: "一手",
       isShowUrlModal: false,
       isShowRadioModal: false,
@@ -114,23 +117,34 @@ export default {
     }
   },
   created() {
+    this.allData()
     this.initData()
   },
   computed: {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
+    async allData() {
+      const { data } = await this.$http.get("/account/getAllTag", {
+        params: { user_id: this.user_id }
+      })
+      this.$refs[this.PagedTableRef].total = data.length
+    },
     async initData() {
       this.data = []
       const { data } = await this.$http.get("/account/getAllTag", {
-        params: { user_id: this.user_id }
+        params: {
+          user_id: this.user_id,
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize
+        }
       })
       data.forEach((item, index) => {
         this.TagData.push({ label: item.tagName, value: item.tagId })
         this.data.push({
           serialNumber: index + 1,
           tagName: item.tagName,
-          tagId: item.tagId,
+          tagId: String(item.tagId),
           tagCreateDate: this.$options.filters.date(item.tagCreateDate)
         })
       })
@@ -158,6 +172,8 @@ export default {
       this.$Message.info(msg)
     },
     async loopRequest(maxPeople) {
+      this.count++
+      console.log(this.count)
       const opType = this.opType === "一手" ? 0 : 1
       const { data, msg } = await this.$http.get("/group/enterGroup", {
         params: { tagId: String(this.row.tagId), opType, maxPeople }

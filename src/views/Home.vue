@@ -58,6 +58,7 @@
                   <Button
                     long
                     type="success"
+                    :loading="IPloading"
                     icon="md-git-commit"
                     @click="IPChecking"
                   >
@@ -108,6 +109,7 @@ export default {
       secret: "",
       orderno: "",
       routeList: [],
+      IPloading: false,
       activeName: "",
       subMenuList: [
         {
@@ -173,7 +175,14 @@ export default {
       localStorage.removeItem("TagData")
       localStorage.removeItem("GroupData")
     },
-    async IPChecking() {}
+    async IPChecking() {
+      this.IPloading = true
+      const { msg } = await this.$http.get("/proxyInfo", {
+        params: { orderno: this.orderno, secret: this.secret }
+      })
+      this.IPloading = false
+      this.$Notice.info({ title: msg })
+    }
   }
 }
 </script>

@@ -101,7 +101,9 @@ export default {
       const { data } = await this.$http.get("/account/getAllTag", {
         params: { user_id: this.user_id }
       })
-      data.forEach(item => arr.push({ label: item.tagName, value: item.tagId }))
+      data.forEach(item =>
+        arr.push({ label: item.tagName, value: String(item.tagId) })
+      )
       this.$store.commit("saveTagData", JSON.stringify(arr))
     },
     async initGroupData() {
@@ -110,7 +112,7 @@ export default {
         params: { user_id: this.user_id }
       })
       data.forEach(item =>
-        arr.push({ label: item.groupName, value: item.groupId })
+        arr.push({ label: item.groupName, value: String(item.groupId) })
       )
       this.$store.commit("saveGroupData", JSON.stringify(arr))
     }
