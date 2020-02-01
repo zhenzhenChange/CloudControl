@@ -56,12 +56,12 @@ export default {
   data() {
     return {
       dataCard: [
-        { title: "好友总量", data: 22, color: "color-red" },
-        { title: "好友实时添加量", data: 5, color: "color-blue" },
-        { title: "账号实时异常量", data: 11, color: "color-red" },
-        { title: "拉群实时订单量", data: 7, color: "color-blue" },
-        { title: "好友实时通过量", data: 68, color: "color-blue" },
-        { title: "微信实时在线量", data: 10, color: "color-green" }
+        { title: "好友总量", data: 0, color: "color-red" },
+        { title: "好友添加量", data: 5, color: "color-blue" },
+        { title: "死号量", data: 0, color: "color-red" },
+        { title: "拉群订单量", data: 7, color: "color-blue" },
+        { title: "好友实时通过量", data: 0, color: "color-blue" },
+        { title: "上号量", data: 0, color: "color-green" }
       ],
       quickRouterLinks1: [
         { path: "/grouping", title: "分组管理", type: "md-list" },
@@ -87,14 +87,25 @@ export default {
     }
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id })
+    ...mapState({
+      user_id: state => state.user_id,
+      DataCount: state => state.DataCount
+    })
   },
   methods: {
     async initData() {
-      const { msg } = await this.$http.get("/common/getInit", {
+      const { data, msg } = await this.$http.get("/common/getInit", {
         params: { user_id: this.user_id }
       })
+      this.$store.commit("saveShreshold", data.suLoginShreshold)
       this.$Message.info(msg)
+      const DataCount = JSON.parse(this.DataCount)
+      this.dataCard[0].data = DataCount.FriendCount
+      // this.dataCard[1].data = DataCount.FriendCount
+      this.dataCard[2].data = DataCount.DeadAccount
+      // this.dataCard[3].data = DataCount.DeadAccount
+      this.dataCard[4].data = data.ssAllPassCount
+      this.dataCard[5].data = DataCount.OnlineAccount
     },
     async initTagData() {
       const arr = []
@@ -127,7 +138,7 @@ export default {
     .data-card {
       flex: 1;
       text-align: center;
-      border-color: rgb(238, 182, 182);
+      border-color: rgb(194, 190, 190);
       .label {
         display: flex;
         height: 124px;
@@ -151,7 +162,7 @@ export default {
         text-align: center;
         margin-right: 10px;
         .ivu-card {
-          border-color: rgb(238, 182, 182);
+          border-color: rgb(194, 190, 190);
         }
         .title-icon {
           font-size: 50px;

@@ -238,7 +238,7 @@ export default {
       }
       this.isShowModal = false
       let contact = []
-      contact = this.userList.split(/\n/g).filter(item => item !== "")
+      contact = this.userList.split(/[\r\n]/g).filter(item => item !== "")
       const { msg } = await this.$http.post("/contact/addFriendsByTag", {
         tag_id: this.TagID,
         request_list: contact,
@@ -258,7 +258,8 @@ export default {
       }
       this.isShowWXModal = false
       let contact = []
-      contact = this.wxUserList.split(/\n/g).filter(item => item !== "")
+      contact = this.wxUserList.split(/[\r\n]/g).filter(item => item !== "")
+      console.log(contact)
       const { msg } = await this.$http.post("/contact/addFriends", {
         wxid: this.wx,
         request_list: contact,

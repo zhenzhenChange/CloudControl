@@ -172,18 +172,10 @@ export default {
       this.$Message.info(msg)
     },
     async loopRequest(maxPeople) {
-      this.count++
-      console.log(this.count)
       const opType = this.opType === "一手" ? 0 : 1
-      const { data, msg } = await this.$http.get("/group/enterGroup", {
+      const { msg } = await this.$http.get("/group/enterGroup", {
         params: { tagId: String(this.row.tagId), opType, maxPeople }
       })
-      for (let i = 0; i < data.length; i++) {
-        let need = maxPeople - data[i].groupAmount
-        if (need > 4) {
-          await this.loopRequest(need)
-        }
-      }
       return msg
     }
   }

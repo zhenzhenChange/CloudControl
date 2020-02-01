@@ -19,7 +19,7 @@
     </div>
     <Upload
       multiple
-      action="//jsonplaceholder.typicode.com/posts/"
+      action=""
       type="drag"
       ref="upload"
       :format="fileType"

@@ -175,13 +175,17 @@ export default {
           : 1
       const { msg } = await this.$http.post("/account/changeDatum", {
         group_id: String(groupId),
-        wxid_list: [],
+        wxids: [],
         change_type,
         type: 0,
         user_id: this.user_id
       })
+      if (msg) {
+        this.$Message.success("修改成功！")
+      } else {
+        this.$Message.error("未知异常，请联系管理员！")
+      }
       this.initData()
-      this.$Message.success(msg)
     },
     async changeMeansByWXID() {
       const change_type =
@@ -190,18 +194,22 @@ export default {
           : this.isUpdateType === "修改昵称"
           ? 0
           : 1
-      const wxid_list = []
-      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
+      const wxids = []
+      this.operationData.forEach(item => wxids.push(item.accountWxid))
       const { msg } = await this.$http.post("/account/changeDatum", {
         group_id: "",
-        wxid_list,
+        wxids,
         change_type,
         type: 1,
         user_id: this.user_id
       })
+      if (msg) {
+        this.$Message.success("修改成功！")
+      } else {
+        this.$Message.error("未知异常，请联系管理员！")
+      }
       this.clear()
       this.initData()
-      this.$Message.success(msg)
     },
     clear() {
       const refs = this.$refs

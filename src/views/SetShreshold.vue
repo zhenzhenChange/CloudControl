@@ -1,16 +1,9 @@
 <template>
   <Card class="set-card">
     <p slot="title" class="title">封号率阈值设置</p>
-    <InputNumber
-      :min="0"
-      :max="100"
-      size="large"
-      v-model="limit"
-      class="card-input"
-      :formatter="value => `${value}%`"
-      :parser="value => value.replace('%', '')"
-    >
-    </InputNumber>
+    <Input class="card-input" v-model="limit">
+      <span slot="prepend">封号率（单位%）</span>
+    </Input>
     <div class="mt-10">
       <Button
         long
@@ -31,20 +24,35 @@ import { mapState } from "vuex"
 export default {
   data() {
     return {
-      limit: null,
+      limit: "",
       limitLoading: false
     }
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id })
+    ...mapState({
+      user_id: state => state.user_id,
+      Shreshold: state => state.Shreshold
+    })
+  },
+  created() {
+    this.limit = this.Shreshold
   },
   methods: {
     async saveLimit() {
+      if (this.limit < 0 || this.limit > 100) {
+        this.$Message.error("很明显你输入的值不在100%内~")
+        return
+      }
+      if (isNaN(Number(this.limit))) {
+        this.$Message.error("请输入纯数字~")
+        return
+      }
       this.limitLoading = true
       const { msg } = await this.$http.post("/common/setShreshold", {
         shreshold: this.limit,
         user_id: this.user_id
       })
+      this.$store.commit("saveShreshold", this.limit)
       this.$Message.info(msg)
       this.limitLoading = false
     }
@@ -58,11 +66,6 @@ export default {
   margin: 0 auto;
   .title {
     text-align: center;
-  }
-  .card-input {
-    flex: 1;
-    width: 150px;
-    margin-left: 60px;
   }
 }
 </style>

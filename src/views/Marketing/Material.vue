@@ -147,10 +147,32 @@ export default {
       personInfo: { pwd: "", nickname: "", signature: "", avatarUrl: "" }
     }
   },
+  created() {
+    this._initData()
+  },
   computed: {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
+    async _initData() {
+      const { data, msg } = await this.$http.get("/marketing/getInfo", {
+        params: { user_id: this.user_id }
+      })
+      this.$refs.SpaceUpload.uploadList.push(data.friendCriclePicURL)
+      this.$refs.UploadAvatar.uploadList.push(data.setInfoAvatarUrl)
+
+      this.template.title = data.friendCricleTitle
+      this.template.content = data.friendCricleContent
+
+      this.quickInfo.content = data.setSendMsgContent
+      this.verifyInfo.content = data.setAddMsgContent
+
+      this.personInfo.pwd = data.setInfoPwd
+      this.personInfo.nickname = data.setInfoNickName
+      this.personInfo.signature = data.setInfoSignature
+      this.$Message.info(msg)
+      console.log(this.$refs.SpaceUpload.uploadList)
+    },
     async saveTemplate() {
       if (!this.template.title) {
         this.$Message.warning("标题不能为空！")
@@ -168,6 +190,7 @@ export default {
         this.template
       )
       this.templateLoading = false
+      this._initData()
       this.$Message.info(msg)
     },
     async saveQuickInfo() {
@@ -182,6 +205,7 @@ export default {
         this.quickInfo
       )
       this.quickLoading = false
+      this._initData()
       this.$Message.info(msg)
     },
     async savePersonInfo() {
@@ -201,6 +225,7 @@ export default {
         this.personInfo
       )
       this.personLoading = false
+      this._initData()
       this.$Message.info(msg)
     },
     async saveVerifyInfo() {
@@ -215,6 +240,7 @@ export default {
         this.verifyInfo
       )
       this.verifyLoading = false
+      this._initData()
       this.$Message.info(msg)
     }
   }

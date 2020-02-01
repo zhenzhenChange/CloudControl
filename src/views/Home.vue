@@ -36,6 +36,7 @@
             transfer
             width="400"
             offset="20"
+            v-show="isShow"
             padding="20px"
             class="login-poptip"
             placement="right-start"
@@ -69,15 +70,26 @@
             </div>
           </Poptip>
         </div>
-        <div class="float-left">云控营销管理平台</div>
-        <Button
-          type="info"
-          @click="logout"
-          icon="md-log-out"
-          class="float-right"
-        >
-          退出登录
-        </Button>
+        <div class="float-left">
+          <h1><Icon type="md-cloud-circle" class="mr-10" />云控营销管理平台</h1>
+        </div>
+        <div>
+          <div class="float-left mr-30">
+            <span class="mr-20">是否开启代理</span>
+            <i-switch
+              size="large"
+              true-value="0"
+              false-value="1"
+              @on-change="changeIsOpen"
+            >
+              <span slot="open">开启</span>
+              <span slot="close">关闭</span>
+            </i-switch>
+          </div>
+          <Button type="info" @click="logout" icon="md-log-out">
+            退出登录
+          </Button>
+        </div>
       </Header>
       <Content class="content">
         <Breadcrumb class="breadcrumb">
@@ -106,6 +118,7 @@ export default {
   name: "home",
   data() {
     return {
+      isShow: false,
       secret: "",
       orderno: "",
       routeList: [],
@@ -174,6 +187,8 @@ export default {
       localStorage.removeItem("user_id")
       localStorage.removeItem("TagData")
       localStorage.removeItem("GroupData")
+      localStorage.removeItem("Shreshold")
+      localStorage.removeItem("DataCount")
     },
     async IPChecking() {
       this.IPloading = true
@@ -181,7 +196,23 @@ export default {
         params: { orderno: this.orderno, secret: this.secret }
       })
       this.IPloading = false
-      this.$Notice.info({ title: msg })
+      if (msg) {
+        this.$Notice.info({ title: msg })
+      } else {
+        this.$Notice.success({ title: "代理认证成功！" })
+      }
+    },
+    async changeIsOpen(value) {
+      if (value === "0") {
+        this.isShow = true
+      }
+      if (value === "1") {
+        this.isShow = false
+      }
+      const { msg } = await this.$http.get("openProxy", {
+        params: { isOpen: value }
+      })
+      this.$Message.info(msg)
     }
   }
 }

@@ -7,7 +7,9 @@ export default new Vuex.Store({
   state: {
     user_id: "" || localStorage.getItem("user_id"),
     TagData: "" || localStorage.getItem("TagData"),
-    GroupData: "" || localStorage.getItem("GroupData")
+    GroupData: "" || localStorage.getItem("GroupData"),
+    Shreshold: "" || localStorage.getItem("Shreshold"),
+    DataCount: "" || localStorage.getItem("DataCount")
   },
   mutations: {
     saveID: (state, user_id) => {
@@ -21,11 +23,21 @@ export default new Vuex.Store({
     saveGroupData: (state, group_data) => {
       state.GroupData = group_data
       localStorage.setItem("GroupData", group_data)
+    },
+    saveShreshold: (state, shreshold) => {
+      state.Shreshold = shreshold
+      localStorage.setItem("Shreshold", shreshold)
+    },
+    saveDataCount: (state, dataCount) => {
+      state.DataCount = dataCount
+      localStorage.setItem("DataCount", dataCount)
     }
   },
   getters: {
     user_id: state => state.user_id,
     TagData: state => state.TagData,
-    GroupData: state => state.GroupData
+    GroupData: state => state.GroupData,
+    Shreshold: state => state.Shreshold,
+    DataCount: state => state.DataCount
   }
 })

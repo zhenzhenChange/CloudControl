@@ -259,6 +259,21 @@ export default {
       const { data } = await this.$http.get("/account/getAccountInfo", {
         params: { user_id: this.user_id }
       })
+      console.log(data)
+      let FriendCount = 0
+      let DeadAccount = 0
+      let OnlineAccount = 0
+      data.forEach(item => {
+        FriendCount += item.accountFriendCount
+        if (!item.accountIsValid) {
+          DeadAccount += 1
+        }
+        if (item.accountState) {
+          OnlineAccount += 1
+        }
+      })
+      const DataCount = { FriendCount, DeadAccount, OnlineAccount }
+      this.$store.commit("saveDataCount", JSON.stringify(DataCount))
       this.$refs[this.PagedTableRef].total = data.length
     },
     async onlineByWXID(row) {
