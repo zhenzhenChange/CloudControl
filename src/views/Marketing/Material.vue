@@ -171,7 +171,6 @@ export default {
       this.personInfo.nickname = data.setInfoNickName
       this.personInfo.signature = data.setInfoSignature
       this.$Message.info(msg)
-      console.log(this.$refs.SpaceUpload.uploadList)
     },
     async saveTemplate() {
       if (!this.template.title) {

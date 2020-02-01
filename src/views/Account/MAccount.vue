@@ -259,7 +259,6 @@ export default {
       const { data } = await this.$http.get("/account/getAccountInfo", {
         params: { user_id: this.user_id }
       })
-      console.log(data)
       let FriendCount = 0
       let DeadAccount = 0
       let OnlineAccount = 0
