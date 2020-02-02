@@ -10,7 +10,7 @@
       @on-selection-change="selectionChange"
     />
     <div class="page">
-      <div>
+      <div class="mb-10">
         <Page
           transfer
           show-total

@@ -67,7 +67,6 @@ export default {
       ],
       SAccountColumns: [
         { width: 60, align: "center", type: "selection" },
-        { width: 70, align: "center", title: "序号", key: "serialNumber" },
         { width: 130, align: "center", title: "账号", key: "account" },
         { width: 130, align: "center", title: "密码", key: "accountPwd" },
         {
@@ -118,10 +117,9 @@ export default {
           pageSize: this.pageSize
         }
       })
-      data.forEach((item, index) => {
+      data.forEach(item => {
         if (item.accountWxid) {
           this.data.push({
-            serialNumber: index + 1,
             account: item.account,
             accountWxid: item.accountWxid
               ? item.accountWxid
@@ -139,7 +137,8 @@ export default {
       const { data } = await this.$http.get("/account/getAccountInfo", {
         params: { user_id: this.user_id }
       })
-      this.$refs[this.PagedTableRef].total = data.length
+      const newData = data.filter(item => item.accountWxid)
+      this.$refs[this.PagedTableRef].total = newData.length
     },
     /* async requestSetByGroup(groupId) {
       this.clear()

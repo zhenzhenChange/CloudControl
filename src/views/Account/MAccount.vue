@@ -282,16 +282,6 @@ export default {
       let WXIDArray = []
       const ref = this.$refs
       if (row) {
-        if (row.accountState) {
-          ref[this.ConfirmModalRef].isShowConfirmModal = false
-          this.$Message.info("该账号已在线，无须再次上线！")
-          return
-        }
-        if (!row.accountIsValid) {
-          ref[this.ConfirmModalRef].isShowConfirmModal = false
-          this.$Message.info("此账号为无效账号！")
-          return
-        }
         arr.push(row)
       } else {
         arr = this.operationData
@@ -423,10 +413,10 @@ export default {
       this.$Message.info(`成功上传账号${obj.succ}个，失败${obj.err}个！`)
     },
     async moveGroup(groupId) {
-      const account_list = []
-      this.operationData.forEach(item => account_list.push(item.accountWxid))
+      const wxid_list = []
+      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
       const { msg } = await this.$http.post("/account/setAccountGroup", {
-        account_list,
+        wxid_list,
         group_id: String(groupId)
       })
       this.clear()
@@ -435,10 +425,10 @@ export default {
       this.$Message.success(msg)
     },
     async moveTag(tagId) {
-      const account_list = []
-      this.operationData.forEach(item => account_list.push(item.accountWxid))
+      const wxid_list = []
+      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
       const { msg } = await this.$http.post("/account/setAccountTag", {
-        account_list,
+        wxid_list,
         tag_id: String(tagId)
       })
       this.clear()
