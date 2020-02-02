@@ -191,16 +191,29 @@ export default {
       localStorage.removeItem("DataCount")
     },
     async IPChecking() {
+      if (!this.orderno) {
+        this.$Notice.error({ title: "请输入订单号" })
+        return
+      }
+      if (!this.secret) {
+        this.$Notice.error({ title: "请输入密钥" })
+        return
+      }
       this.IPloading = true
-      const { msg } = await this.$http.get("/proxyInfo", {
+      const res = await this.$http.get("/proxyInfo", {
         params: { orderno: this.orderno, secret: this.secret }
       })
       this.IPloading = false
-      if (msg) {
-        this.$Notice.info({ title: msg })
-      } else {
-        this.$Notice.success({ title: "代理认证成功！" })
+      console.log(typeof res.Success)
+      if (res.Success === false) {
+        this.$Notice.error({ title: "验证失败！" })
+        return
       }
+      if (res.Success === true) {
+        this.$Notice.sucess({ title: "验证成功！" })
+        return
+      }
+      this.$Notice.info({ title: res })
     },
     async changeIsOpen(value) {
       value === "0" ? (this.isShow = true) : (this.isShow = false)

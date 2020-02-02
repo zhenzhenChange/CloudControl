@@ -100,12 +100,14 @@ export default {
       this.$store.commit("saveShreshold", data.suLoginShreshold)
       this.$Message.info(msg)
       const DataCount = JSON.parse(this.DataCount)
-      this.dataCard[0].data = DataCount.FriendCount
+      if (DataCount) {
+        this.dataCard[0].data = DataCount.FriendCount
+        this.dataCard[2].data = DataCount.DeadAccount
+        this.dataCard[5].data = DataCount.OnlineAccount
+      }
       // this.dataCard[1].data = DataCount.FriendCount
-      this.dataCard[2].data = DataCount.DeadAccount
       // this.dataCard[3].data = DataCount.DeadAccount
       this.dataCard[4].data = data.ssAllPassCount
-      this.dataCard[5].data = DataCount.OnlineAccount
     },
     async initTagData() {
       const arr = []
