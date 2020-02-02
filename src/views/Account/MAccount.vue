@@ -263,7 +263,9 @@ export default {
       let DeadAccount = 0
       let OnlineAccount = 0
       data.forEach(item => {
-        FriendCount += item.accountFriendCount
+        if (item.accountFriendCount) {
+          FriendCount += item.accountFriendCount
+        }
         if (!item.accountIsValid) {
           DeadAccount += 1
         }

@@ -203,12 +203,7 @@ export default {
       }
     },
     async changeIsOpen(value) {
-      if (value === "0") {
-        this.isShow = true
-      }
-      if (value === "1") {
-        this.isShow = false
-      }
+      value === "0" ? (this.isShow = true) : (this.isShow = false)
       const { msg } = await this.$http.get("openProxy", {
         params: { isOpen: value }
       })

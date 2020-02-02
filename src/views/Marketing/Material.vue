@@ -158,9 +158,14 @@ export default {
       const { data, msg } = await this.$http.get("/marketing/getInfo", {
         params: { user_id: this.user_id }
       })
-      this.$refs.SpaceUpload.uploadList.push(data.friendCriclePicURL)
-      this.$refs.UploadAvatar.uploadList.push(data.setInfoAvatarUrl)
-
+      const picURL = []
+      const avaUrl = []
+      data.friendCriclePicURL
+        .split(",")
+        .map(item => picURL.push(`http://39.108.132.32:8080${item}`))
+      avaUrl.push(`http://39.108.132.32:8080${data.setInfoAvatarUrl}`)
+      this.$refs.SpaceUpload.uploadList = picURL
+      this.$refs.UploadAvatar.uploadList = avaUrl
       this.template.title = data.friendCricleTitle
       this.template.content = data.friendCricleContent
 

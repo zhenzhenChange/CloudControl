@@ -167,7 +167,7 @@ export default {
     },
     async inviteTag() {
       this.isShowRadioModal = false
-      const maxPeople = 39
+      const maxPeople = 35
       const msg = await this.loopRequest(maxPeople)
       this.$Message.info(msg)
     },
