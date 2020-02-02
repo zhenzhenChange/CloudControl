@@ -294,9 +294,7 @@ export default {
         }
         arr.push(row)
       } else {
-        arr = this.operationData.filter(
-          item => item.accountIsValid && !item.accountState
-        )
+        arr = this.operationData
       }
       arr.forEach(item => {
         WXIDArray.push({
@@ -337,9 +335,7 @@ export default {
     },
     async offlineByWXID() {
       const WXIDArray = []
-      this.operationData
-        .filter(item => item.accountWxid !== "无微信ID或信息异常")
-        .forEach(item => WXIDArray.push(item.accountWxid))
+      this.operationData.forEach(item => WXIDArray.push(item.accountWxid))
       const { data } = await this.$http.post("/account/logout", {
         groupId: 0,
         wxids: WXIDArray,
@@ -427,10 +423,10 @@ export default {
       this.$Message.info(`成功上传账号${obj.succ}个，失败${obj.err}个！`)
     },
     async moveGroup(groupId) {
-      const wxid_list = []
-      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
+      const account_list = []
+      this.operationData.forEach(item => account_list.push(item.accountWxid))
       const { msg } = await this.$http.post("/account/setAccountGroup", {
-        wxid_list,
+        account_list,
         group_id: String(groupId)
       })
       this.clear()
@@ -439,10 +435,10 @@ export default {
       this.$Message.success(msg)
     },
     async moveTag(tagId) {
-      const wxid_list = []
-      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
+      const account_list = []
+      this.operationData.forEach(item => account_list.push(item.accountWxid))
       const { msg } = await this.$http.post("/account/setAccountTag", {
-        wxid_list,
+        account_list,
         tag_id: String(tagId)
       })
       this.clear()

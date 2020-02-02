@@ -57,9 +57,9 @@ export default {
     return {
       dataCard: [
         { title: "好友总量", data: 0, color: "color-red" },
-        { title: "好友添加量", data: 5, color: "color-blue" },
+        { title: "好友添加量", data: 0, color: "color-blue" },
         { title: "死号量", data: 0, color: "color-red" },
-        { title: "拉群订单量", data: 7, color: "color-blue" },
+        { title: "拉群订单量", data: 0, color: "color-blue" },
         { title: "好友实时通过量", data: 0, color: "color-blue" },
         { title: "上号量", data: 0, color: "color-green" }
       ],
@@ -97,6 +97,7 @@ export default {
       const { data, msg } = await this.$http.get("/common/getInit", {
         params: { user_id: this.user_id }
       })
+      const pullGroup = await this.$http.get("/groupView")
       this.$store.commit("saveShreshold", data.suLoginShreshold)
       this.$Message.info(msg)
       const DataCount = JSON.parse(this.DataCount)
@@ -105,8 +106,8 @@ export default {
         this.dataCard[2].data = DataCount.DeadAccount
         this.dataCard[5].data = DataCount.OnlineAccount
       }
-      // this.dataCard[1].data = DataCount.FriendCount
-      // this.dataCard[3].data = DataCount.DeadAccount
+      this.dataCard[1].data = data.addCount
+      this.dataCard[3].data = pullGroup.length
       this.dataCard[4].data = data.ssAllPassCount
     },
     async initTagData() {

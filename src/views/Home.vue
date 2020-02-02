@@ -204,7 +204,6 @@ export default {
         params: { orderno: this.orderno, secret: this.secret }
       })
       this.IPloading = false
-      console.log(typeof res.Success)
       if (res.Success === false) {
         this.$Notice.error({ title: "验证失败！" })
         return
