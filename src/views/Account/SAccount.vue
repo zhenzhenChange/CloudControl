@@ -172,16 +172,19 @@ export default {
           : this.isUpdateType === "修改昵称"
           ? 0
           : 1
-      const { msg } = await this.$http.post("/account/changeDatum", {
+      const { msg, data } = await this.$http.post("/account/changeDatum", {
         group_id: String(groupId),
         wxids: [],
         change_type,
         type: 0,
         user_id: this.user_id
       })
-      if (msg === true) {
-        this.$Message.success("修改成功！")
-      } else {
+      if (data) {
+        this.$Message.info(
+          `成功修改${data.success.length}个，失败${data.error.length}个`
+        )
+      }
+      if (msg === "全部失败") {
         this.$Message.info(msg)
       }
       this.initData()
@@ -195,16 +198,19 @@ export default {
           : 1
       const wxids = []
       this.operationData.forEach(item => wxids.push(item.accountWxid))
-      const { msg } = await this.$http.post("/account/changeDatum", {
+      const { msg, data } = await this.$http.post("/account/changeDatum", {
         group_id: "",
         wxids,
         change_type,
         type: 1,
         user_id: this.user_id
       })
-      if (msg === true) {
-        this.$Message.success("修改成功！")
-      } else {
+      if (data) {
+        this.$Message.info(
+          `成功修改${data.success.length}个，失败${data.error.length}个`
+        )
+      }
+      if (msg === "全部失败") {
         this.$Message.info(msg)
       }
       this.clear()
