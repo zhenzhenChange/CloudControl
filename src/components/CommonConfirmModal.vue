@@ -71,6 +71,8 @@ export default {
         this.$parent.sendFriendSpace(this.configParams)
       } else if (this.config.params === "sendByTag") {
         this.$parent.sendByTag(this.configParams)
+      } else if (this.config.params === "clearMailList") {
+        this.$parent.clearMailList()
       }
       this.configParams = null
     },

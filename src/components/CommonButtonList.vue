@@ -297,6 +297,19 @@ export default {
         parent.isShowModal = true
       } else if (btnID === "addByAcc") {
         parent.isShowWXModal = true
+      } else if (btnID === "clearMailList") {
+        parent.operationConfig = {
+          icon: "md-trash",
+          color: "#ED4014",
+          title: "清空已上传的通讯录",
+          operation: "清空",
+          btnType: "error",
+          btnIcon: "md-checkmark",
+          btnText: "确定",
+          params: "clearMailList",
+          flag: true
+        }
+        parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
       }
     }
   }

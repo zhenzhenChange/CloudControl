@@ -67,7 +67,6 @@
         <Input
           clearable
           size="large"
-          type="password"
           placeholder="请设置密码"
           v-model="personInfo.pwd"
         >

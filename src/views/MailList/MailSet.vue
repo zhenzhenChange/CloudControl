@@ -4,6 +4,11 @@
     <Divider dashed />
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="MailColumns" />
     <CommonComplexModal ref="MailSetComplexModal" />
+    <CommonConfirmModal
+      :data="operationData"
+      :ref="ConfirmModalRef"
+      :config="operationConfig"
+    />
     <Modal
       width="500"
       :mask-closable="false"
@@ -64,9 +69,12 @@ export default {
       pageIndex: 0,
       pageSize: 10,
       mailList: "",
+      operationData: [],
+      operationConfig: {},
       isShowModal: false,
       isMailType: "纯手机号",
       PagedTableRef: "MailPagedTable",
+      ConfirmModalRef: "MailConfirmModal",
       mailListConfig: { title: "上传通讯录" },
       buttonListInfos: [
         {
@@ -74,6 +82,12 @@ export default {
           type: "primary",
           icon: "md-cloud-upload",
           name: "上传通讯录"
+        },
+        {
+          id: "clearMailList",
+          type: "warning",
+          icon: "md-trash",
+          name: "清空已上传的通讯录"
         }
       ],
       MailColumns: [
@@ -171,7 +185,7 @@ export default {
       }
       this.isShowModal = false
       let contact = []
-      contact = this.mailList.split(/\n/g).filter(item => item !== "")
+      contact = this.mailList.split(/[\r\n]/g).filter(item => item !== "")
       const obj = { contact, user_id: this.user_id }
       const { data, msg } = await this.$http.post("/contact/upload", obj)
       this.mailList = ""
@@ -182,6 +196,13 @@ export default {
       } else {
         this.$Message.info(msg)
       }
+    },
+    async clearMailList() {
+      this.$refs[this.ConfirmModalRef].isShowConfirmModal = false
+      const { msg } = await this.$http.post("/contact/clearContact", {
+        user_id: this.user_id
+      })
+      this.$Message.info(msg)
     }
   }
 }

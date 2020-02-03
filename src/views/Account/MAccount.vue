@@ -392,7 +392,7 @@ export default {
     async uploadData(accountData, group_id) {
       let list = []
       list = accountData
-        .split(/\n/g)
+        .split(/[\r\n]/g)
         .map(item => item.split(/----/g))
         .map(item => {
           return { account: item[0], password: item[1], a16Data64: item[2] }
@@ -413,10 +413,10 @@ export default {
       this.$Message.info(`成功上传账号${obj.succ}个，失败${obj.err}个！`)
     },
     async moveGroup(groupId) {
-      const wxid_list = []
-      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
+      const account_list = []
+      this.operationData.forEach(item => account_list.push(item.account))
       const { msg } = await this.$http.post("/account/setAccountGroup", {
-        wxid_list,
+        account_list,
         group_id: String(groupId)
       })
       this.clear()
@@ -425,17 +425,16 @@ export default {
       this.$Message.success(msg)
     },
     async moveTag(tagId) {
-      const wxid_list = []
-      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
+      const account_list = []
+      this.operationData.forEach(item => account_list.push(item.account))
       const { msg } = await this.$http.post("/account/setAccountTag", {
-        wxid_list,
+        account_list,
         tag_id: String(tagId)
       })
       this.clear()
       this.allData()
       this.initData()
       this.$Message.success(msg)
-      this.$Notice.warning({ title: `无微信ID或信息异常的账号已自动过滤！` })
     },
     clear() {
       const refs = this.$refs

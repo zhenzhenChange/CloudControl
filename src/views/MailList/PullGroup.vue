@@ -156,7 +156,7 @@ export default {
       }
       this.isShowUrlModal = false
       let grpUrl = []
-      this.urlArea.split(/\n/g).forEach(item => grpUrl.push(item))
+      this.urlArea.split(/[\r\n]/g).forEach(item => grpUrl.push(item))
       grpUrl = grpUrl.filter(item => item !== "")
       const { msg } = await this.$http.post("/group/setGroupURL", grpUrl)
       this.$Message.info(msg)

@@ -179,10 +179,10 @@ export default {
         type: 0,
         user_id: this.user_id
       })
-      if (msg) {
+      if (msg === true) {
         this.$Message.success("修改成功！")
       } else {
-        this.$Message.error("未知异常，请联系管理员！")
+        this.$Message.info(msg)
       }
       this.initData()
     },
@@ -202,10 +202,10 @@ export default {
         type: 1,
         user_id: this.user_id
       })
-      if (msg) {
+      if (msg === true) {
         this.$Message.success("修改成功！")
       } else {
-        this.$Message.error("未知异常，请联系管理员！")
+        this.$Message.info(msg)
       }
       this.clear()
       this.initData()
