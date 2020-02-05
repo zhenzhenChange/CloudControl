@@ -1,38 +1,46 @@
 <template>
-  <Poptip transfer placement="right-start" width="800">
-    <Button type="error" icon="md-barcode">二维码解码</Button>
-    <div class="qrcode" slot="content">
-      <SpaceUpload
-        :style="60"
-        ref="urlUpload"
-        :desc="
-          '上传二维码点击左下角按钮生成群链接（清空请刷新页面，避免解码缓存，导致浏览器卡死）'
-        "
-      ></SpaceUpload>
+  <Drawer width="50" :closable="false" v-model="isShowQRCodeDrawer">
+    <div slot="header">
+      <Icon type="md-barcode" color="#2D8CF0" class="mr-10" />二维码解码
+    </div>
+    <div class="qrcode">
+      <Row>
+        <Col span="4">
+          <Button
+            type="info"
+            icon="md-hand"
+            class="float-left"
+            @click="handleQRCode"
+          >
+            生成群链接
+          </Button>
+        </Col>
+        <Col span="19" offset="1">
+          <Input
+            disabled
+            placeholder="上传二维码点击生成群链接（清空请刷新页面，避免解码缓存，导致浏览器卡死）"
+          />
+        </Col>
+      </Row>
+
       <Input
         class="mt-10"
         type="textarea"
         v-model="qrcode"
-        :autosize="{ minRows: 3, maxRows: 15 }"
+        :autosize="{ minRows: 10, maxRows: 20 }"
       ></Input>
-      <Button
-        type="info"
-        icon="md-hand"
-        class="float-left mt-10 mb-10"
-        @click="handleQRCode"
-      >
-        生成群链接
-      </Button>
+      <SpaceUpload :style="60" ref="urlUpload"></SpaceUpload>
     </div>
-  </Poptip>
+  </Drawer>
 </template>
 
 <script>
 export default {
-  name: "CommonPoptipQRCode",
+  name: "CommonQRCodeDrawer",
   data() {
     return {
-      qrcode: ""
+      qrcode: "",
+      isShowQRCodeDrawer: false
     }
   },
   methods: {

@@ -22,6 +22,7 @@
 <script>
 import { mapState } from "vuex"
 export default {
+  name: "MAccountVue",
   data() {
     return {
       data: [],

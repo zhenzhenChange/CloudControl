@@ -1,6 +1,6 @@
 <template>
   <!-- 分组管理 -->
-  <div class="Grouping">
+  <div class="Group">
     <SearchInput :ref="SearchInputRef" :infos="['分组名称']" />
     <Divider dashed />
     <ButtonList :buttonListInfos="buttonListInfos" />
@@ -12,11 +12,8 @@
     />
     <Divider class="float-left" dashed />
     <UnCheckButton ref="UnCheckButton" :el="PagedTableRef" />
-    <PagedTable
-      :data="data"
-      :ref="PagedTableRef"
-      :dataColumns="GroupingColumns"
-    />
+    <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="GroupColumns" />
+    <TableDrawer ref="GroupTableDrawer" />
   </div>
 </template>
 
@@ -31,10 +28,10 @@ export default {
       pageSize: 10,
       updateConfig: {},
       operationData: [],
-      EditModalRef: "GroupingEditModal",
-      PagedTableRef: "GroupingPagedTable",
-      SearchInputRef: "GroupingSearchInput",
-      ConfirmModalRef: "GroupingConfirmModal",
+      EditModalRef: "GroupEditModal",
+      PagedTableRef: "GroupPagedTable",
+      SearchInputRef: "GroupSearchInput",
+      ConfirmModalRef: "GroupConfirmModal",
       operationConfig: {
         icon: "md-trash",
         color: "#ED4014",
@@ -48,7 +45,7 @@ export default {
         { id: "remove-g", name: "删除", icon: "md-trash", type: "error" },
         { id: "create-g", name: "添加", icon: "md-add-circle", type: "primary" }
       ],
-      GroupingColumns: [
+      GroupColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
         { align: "center", title: "分组名称", key: "groupName" },
@@ -60,11 +57,32 @@ export default {
           key: "groupCreateDate"
         },
         {
-          width: 230,
+          width: 330,
           title: "操作",
           align: "center",
           render: (h, params) => {
             return h("div", [
+              h(
+                "Button",
+                {
+                  props: {
+                    size: "small",
+                    type: "success",
+                    icon: "md-eye",
+                    disabled: this.mutex
+                  },
+                  style: { marginRight: "5px" },
+                  on: {
+                    click: () => {
+                      this.$refs["GroupTableDrawer"].isShowTableDrawer = true
+                      this.$refs["GroupTableDrawer"].getAccountDataByGroupID(
+                        params.row.groupId
+                      )
+                    }
+                  }
+                },
+                "查看详情"
+              ),
               h(
                 "Button",
                 {

@@ -21,18 +21,13 @@ const routes = [
     children: [
       {
         path: "/data",
-        name: "数据可视化",
+        name: "数据报表",
         component: () => import("../views/Data.vue")
       },
       {
-        path: "/grouping",
-        name: "分组管理",
-        component: () => import("../views/Account/Grouping.vue")
-      },
-      {
-        path: "/m-account",
-        name: "账号管理",
-        component: () => import("../views/Account/MAccount.vue")
+        path: "/group",
+        name: "账号分组管理",
+        component: () => import("../views/Account/Group.vue")
       },
       {
         path: "/s-account",
@@ -51,7 +46,7 @@ const routes = [
       },
       {
         path: "/pull-group",
-        name: "群拉好友",
+        name: "群聊管理",
         component: () => import("../views/MailList/PullGroup.vue")
       },
       {

@@ -19,12 +19,12 @@
     </div>
     <Upload
       multiple
-      action=""
       type="drag"
       ref="upload"
       :format="fileType"
       class="mt-10 upload"
       :show-upload-list="false"
+      action="https://www.baidu.com/"
       :before-upload="handleBeforeUpload"
       :on-format-error="handleFormatError"
     >

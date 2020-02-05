@@ -115,7 +115,7 @@ export default {
               : "无微信ID或信息异常",
             accountPwd: item.accountPwd,
             groupName: item.groupName ? item.groupName : "无",
-            groupId: item.groupId ? String(item.groupId) : "无",
+            groupId: item.groupId ? String(item.groupId) : "无"
           })
         }
       })

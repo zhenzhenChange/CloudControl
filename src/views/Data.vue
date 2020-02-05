@@ -1,15 +1,20 @@
 <template>
   <div class="home-main">
-    <div class="data">
-      <Card
-        :key="index"
-        class="data-card mr-20"
-        v-for="(item, index) in dataCard"
-      >
+    <div class="root-div">
+      <Card class="root-card" v-for="(item, index) in dataCard" :key="index">
         <p slot="title">{{ item.title }}</p>
-        <div class="text-center label">
-          <h1 :class="item.color">{{ item.data }}</h1>
-        </div>
+        <Card
+          :key="sonIndex"
+          class="son-card"
+          v-for="(sonItem, sonIndex) in item.data"
+        >
+          <Tooltip slot="title" :content="sonItem.title">
+            {{ sonItem.title }}
+          </Tooltip>
+          <div class="text-center">
+            <h1 :class="sonItem.color">{{ sonItem.data }}</h1>
+          </div>
+        </Card>
       </Card>
     </div>
     <Divider dashed />
@@ -56,24 +61,44 @@ export default {
   data() {
     return {
       dataCard: [
-        { title: "好友总量", data: 0, color: "color-red" },
-        { title: "好友添加量", data: 0, color: "color-blue" },
-        { title: "死号量", data: 0, color: "color-red" },
-        { title: "拉群订单量", data: 0, color: "color-blue" },
-        { title: "好友实时通过量", data: 0, color: "color-blue" },
-        { title: "上号量", data: 0, color: "color-green" }
+        {
+          title: "微信账号统计",
+          data: [
+            { title: "账号总量", data: 0, color: "color-red" },
+            { title: "在线账号总量", data: 0, color: "color-red" },
+            { title: "离线账号总量", data: 0, color: "color-red" },
+            { title: "异常账号总量", data: 0, color: "color-red" }
+          ]
+        },
+        {
+          title: "好友统计",
+          data: [
+            { title: "好友总量", data: 0, color: "color-red" },
+            { title: "好友请求添加总量", data: 0, color: "color-blue" },
+            { title: "好友请求失败总量", data: 0, color: "color-blue" },
+            { title: "好友实时通过总量", data: 0, color: "color-blue" }
+          ]
+        },
+        {
+          title: "订单统计",
+          data: [
+            { title: "拉群订单总量", data: 0, color: "color-blue" },
+            { title: "拉群订单执行中总量", data: 0, color: "color-blue" },
+            { title: "加粉订单总量", data: 0, color: "color-blue" },
+            { title: "加粉订单执行中总量", data: 0, color: "color-blue" }
+          ]
+        }
       ],
       quickRouterLinks1: [
-        { path: "/grouping", title: "分组管理", type: "md-list" },
         { path: "/s-account", title: "账号设置", type: "md-cog" },
-        { path: "/m-account", title: "账号管理", type: "md-people" },
+        { path: "/group", title: "账号分组管理", type: "md-list" },
+        { path: "/friends", title: "好友管理", type: "md-contacts" },
         { path: "/SetShreshold", title: "阈值设置", type: "md-arrow-up" }
       ],
       quickRouterLinks2: [
-        { path: "/material", title: "素材管理", type: "md-book" },
         { path: "/mail", title: "通讯管理", type: "md-contact" },
-        { path: "/pull-group", title: "群拉好友", type: "md-hand" },
-        { path: "/friends", title: "好友管理", type: "md-contacts" },
+        { path: "/material", title: "素材管理", type: "md-book" },
+        { path: "/pull-group", title: "群聊管理", type: "md-hand" },
         { path: "/space", title: "发朋友圈", type: "md-paper-plane" }
       ]
     }
@@ -95,10 +120,10 @@ export default {
       const { data, msg } = await this.$http.get("/common/getInit", {
         params: { user_id: this.user_id }
       })
-      const pullGroup = await this.$http.get("/groupView")
+      // const pullGroup = await this.$http.get("/groupView")
       this.$store.commit("saveShreshold", data.suLoginShreshold)
       this.$Message.info(msg)
-      const DataCount = JSON.parse(this.DataCount)
+      /*  const DataCount = JSON.parse(this.DataCount)
       if (DataCount) {
         this.dataCard[0].data = DataCount.FriendCount
         this.dataCard[2].data = DataCount.DeadAccount
@@ -106,7 +131,7 @@ export default {
       }
       this.dataCard[1].data = data.addCount
       this.dataCard[3].data = pullGroup.length
-      this.dataCard[4].data = data.ssAllPassCount
+      this.dataCard[4].data = data.ssAllPassCount */
     },
     async initGroupData() {
       const arr = []
@@ -124,21 +149,22 @@ export default {
 
 <style lang="scss" scoped>
 .home-main {
-  .data {
+  .root-div {
     display: flex;
-    .data-card {
+    align-items: center;
+    justify-content: center;
+    .root-card {
       flex: 1;
+      padding: 0;
+      margin-left: 10px;
+      margin-right: 10px;
       text-align: center;
-      border-color: rgb(194, 190, 190);
-      .label {
-        display: flex;
-        height: 124px;
-        align-items: center;
-        justify-content: center;
-        h1 {
-          display: block;
-          font-size: 50px;
-        }
+      .son-card {
+        width: 170px;
+        float: left;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-bottom: 20px;
       }
     }
   }

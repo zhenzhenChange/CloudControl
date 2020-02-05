@@ -31,13 +31,21 @@
     <Layout class="layout">
       <Header class="header">
         <div>
-          <CommonPoptipQRCode class="float-left mr-30" />
+          <Button
+            type="error"
+            class="mr-10"
+            icon="md-barcode"
+            @click="showQRCodeDrawer"
+          >
+            二维码解码
+          </Button>
+          <CommonQRCodeDrawer ref="QRCodeDrawer" />
           <Poptip
             transfer
             width="400"
             offset="20"
-            v-show="isShow"
             padding="20px"
+            v-show="isShow"
             class="login-poptip"
             placement="right-start"
           >
@@ -126,11 +134,10 @@ export default {
       activeName: "",
       subMenuList: [
         {
-          title: "账户",
+          title: "账户管理",
           type: "md-person",
           menuItem: [
-            { name: "分组管理", path: "/grouping" },
-            { name: "账号管理", path: "/m-account" },
+            { name: "账号分组管理", path: "/group" },
             { name: "账号设置", path: "/s-account" }
           ]
         },
@@ -187,6 +194,9 @@ export default {
       localStorage.removeItem("GroupData")
       localStorage.removeItem("Shreshold")
       localStorage.removeItem("DataCount")
+    },
+    showQRCodeDrawer() {
+      this.$refs["QRCodeDrawer"].isShowQRCodeDrawer = true
     },
     async IPChecking() {
       if (!this.orderno) {
