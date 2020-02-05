@@ -85,17 +85,6 @@ export default {
           align: "center",
           title: "分组ID",
           key: "groupId"
-        },
-        {
-          tooltip: true,
-          align: "center",
-          title: "所属标签",
-          key: "tagName"
-        },
-        {
-          align: "center",
-          title: "标签ID",
-          key: "tagId"
         }
       ]
     }
@@ -126,9 +115,7 @@ export default {
               : "无微信ID或信息异常",
             accountPwd: item.accountPwd,
             groupName: item.groupName ? item.groupName : "无",
-            tagName: item.tagName ? item.tagName : "无",
             groupId: item.groupId ? String(item.groupId) : "无",
-            tagId: item.tagId ? String(item.tagId) : "无"
           })
         }
       })

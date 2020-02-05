@@ -64,9 +64,7 @@ export default {
         parent.removeByGroup(value)
       } else if (this.params === "moveGroup") {
         parent.moveGroup(value)
-      } else if (this.params === "moveTag") {
-        parent.moveTag(value)
-      } else if (this.params === "request") {
+      }  else if (this.params === "request") {
         parent.requestSetByGroup(value)
       } else if (this.params === "changeMeansByGroup") {
         parent.changeMeansByGroup(value)

@@ -57,12 +57,6 @@ export default {
           type: "info",
           icon: "md-repeat",
           name: "分组变更"
-        },
-        {
-          id: "TagChange",
-          type: "info",
-          icon: "md-repeat",
-          name: "标签变更"
         }
       ],
       MAccountColumns: [
@@ -128,14 +122,6 @@ export default {
           key: "groupName"
         },
         { width: 100, align: "center", title: "分组ID", key: "groupId" },
-        {
-          width: 150,
-          align: "center",
-          tooltip: true,
-          title: "所属标签",
-          key: "tagName"
-        },
-        { width: 100, align: "center", title: "标签ID", key: "tagId" },
         {
           width: 150,
           align: "center",
@@ -248,9 +234,7 @@ export default {
             ? item.accountWxid
             : "无微信ID或信息异常",
           groupName: item.groupName ? item.groupName : "无",
-          tagName: item.tagName ? item.tagName : "无",
           groupId: item.groupId ? String(item.groupId) : "无",
-          tagId: item.tagId ? String(item.tagId) : "无",
           userId: item.userId
         })
       })
@@ -418,18 +402,6 @@ export default {
       const { msg } = await this.$http.post("/account/setAccountGroup", {
         account_list,
         group_id: String(groupId)
-      })
-      this.clear()
-      this.allData()
-      this.initData()
-      this.$Message.success(msg)
-    },
-    async moveTag(tagId) {
-      const account_list = []
-      this.operationData.forEach(item => account_list.push(item.account))
-      const { msg } = await this.$http.post("/account/setAccountTag", {
-        account_list,
-        tag_id: String(tagId)
       })
       this.clear()
       this.allData()

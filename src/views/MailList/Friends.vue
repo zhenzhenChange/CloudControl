@@ -17,10 +17,10 @@
     >
       <p slot="header">
         <Icon type="md-send" color="#2D8CF0" class="mr-5 header-icon" />
-        该标签下的所有账号都发送添加指定的好友的请求
+        该分组下的所有账号都发送添加指定的好友的请求
       </p>
-      <div class="color-blue">标签名称：{{ TagName }}</div>
-      <div class="color-blue mt-10">标签ID： {{ TagID }}</div>
+      <div class="color-blue">分组名称：{{ GroupName }}</div>
+      <div class="color-blue mt-10">分组ID： {{ GroupID }}</div>
       <Input
         clearable
         v-model="content"
@@ -113,8 +113,8 @@ export default {
       data: [],
       pageIndex: 0,
       pageSize: 10,
-      TagID: "",
-      TagName: "",
+      GroupID: "",
+      GroupName: "",
       content: "",
       userList: "",
       wxContent: "",
@@ -125,12 +125,12 @@ export default {
       config: {
         icon: "md-send",
         color: "#2db7f5",
-        title: "群发消息给该标签下的所有账号",
+        title: "群发消息给该分组下的所有账号",
         operation: "群发（消息模板于素材管理设置）",
         btnType: "success",
         btnIcon: "md-checkmark",
         btnText: "确定",
-        params: "sendByTag",
+        params: "sendByGroup",
         flag: true
       },
       buttonListInfos: [
@@ -143,13 +143,13 @@ export default {
       ],
       FriendsColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { align: "center", title: "标签名称", key: "tagName" },
-        { align: "center", title: "标签ID", key: "tagId" },
+        { align: "center", title: "分组名称", key: "groupName" },
+        { align: "center", title: "分组ID", key: "groupId" },
         {
           sortable: true,
           align: "center",
           title: "创建时间",
-          key: "tagCreateDate"
+          key: "groupCreateDate"
         },
         {
           width: 400,
@@ -165,8 +165,8 @@ export default {
                   on: {
                     click: () => {
                       this.isShowModal = true
-                      this.TagID = params.row.tagId
-                      this.TagName = params.row.tagName
+                      this.GroupID = params.row.groupId
+                      this.GroupName = params.row.groupName
                     }
                   }
                 },
@@ -201,14 +201,14 @@ export default {
   },
   methods: {
     async allData() {
-      const { data } = await this.$http.get("/account/getAllTag", {
+      const { data } = await this.$http.get("/account/getAllGroup", {
         params: { user_id: this.user_id }
       })
       this.$refs[this.PagedTableRef].total = data.length
     },
     async initData() {
       this.data = []
-      const { data } = await this.$http.get("/account/getAllTag", {
+      const { data } = await this.$http.get("/account/getAllGroup", {
         params: {
           user_id: this.user_id,
           pageIndex: this.pageIndex,
@@ -218,16 +218,16 @@ export default {
       data.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,
-          tagName: item.tagName,
-          tagId: String(item.tagId),
-          tagCreateDate: this.$options.filters.date(item.tagCreateDate)
+          groupName: item.groupName,
+          groupId: String(item.groupId),
+          groupCreateDate: this.$options.filters.date(item.groupCreateDate)
         })
       })
     },
-    async sendByTag({ tagId: tag_id }) {
+    async sendByGroup({ groupId: group_id }) {
       this.$refs["FriendConfirmModal"].isShowConfirmModal = false
-      const { msg } = await this.$http.post("/contact/sendMessageByTag", {
-        tag_id
+      const { msg } = await this.$http.post("/contact/sendMessageByGroup", {
+        group_id
       })
       this.$Message.info(msg)
     },
@@ -239,13 +239,13 @@ export default {
       this.isShowModal = false
       let contact = []
       contact = this.userList.split(/[\r\n]/g).filter(item => item !== "")
-      const { msg } = await this.$http.post("/contact/addFriendsByTag", {
-        tag_id: this.TagID,
+      const { msg } = await this.$http.post("/contact/addFriendsByGroup", {
+        group_id: this.GroupID,
         request_list: contact,
         content: this.content
       })
       this.$Message.info(msg)
-      this.TagID = this.userList = this.content = ""
+      this.GroupID = this.userList = this.content = ""
     },
     async sendRequestByWX() {
       if (!this.wx) {

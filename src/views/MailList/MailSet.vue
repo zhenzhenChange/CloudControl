@@ -92,13 +92,13 @@ export default {
       ],
       MailColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { align: "center", title: "标签名称", key: "tagName" },
-        { align: "center", title: "标签ID", key: "tagId" },
+        { align: "center", title: "分组名称", key: "groupName" },
+        { align: "center", title: "分组ID", key: "groupId" },
         {
           sortable: true,
           align: "center",
           title: "创建时间",
-          key: "tagCreateDate"
+          key: "groupCreateDate"
         },
         {
           width: 230,
@@ -137,14 +137,14 @@ export default {
   },
   methods: {
     async allData() {
-      const { data } = await this.$http.get("/account/getAllTag", {
+      const { data } = await this.$http.get("/account/getAllGroup", {
         params: { user_id: this.user_id }
       })
       this.$refs[this.PagedTableRef].total = data.length
     },
     async initData() {
       this.data = []
-      const { data } = await this.$http.get("/account/getAllTag", {
+      const { data } = await this.$http.get("/account/getAllGroup", {
         params: {
           user_id: this.user_id,
           pageIndex: this.pageIndex,
@@ -154,16 +154,16 @@ export default {
       data.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,
-          tagName: item.tagName,
-          tagId: String(item.tagId),
-          tagCreateDate: this.$options.filters.date(item.tagCreateDate)
+          groupName: item.groupName,
+          groupId: String(item.groupId),
+          groupCreateDate: this.$options.filters.date(item.groupCreateDate)
         })
       })
     },
-    async addMailFriend({ tagId: tag_id }) {
+    async addMailFriend({ groupId: group_id }) {
       this.$refs["MailSetComplexModal"].isShowComplexModal = false
       const { msg } = await this.$http.post("/contact/addFriendsByContact", {
-        tag_id
+        group_id
       })
       this.$Message.info(msg)
     },

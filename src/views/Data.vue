@@ -65,7 +65,6 @@ export default {
       ],
       quickRouterLinks1: [
         { path: "/grouping", title: "分组管理", type: "md-list" },
-        { path: "/tag", title: "标签管理", type: "md-pricetags" },
         { path: "/s-account", title: "账号设置", type: "md-cog" },
         { path: "/m-account", title: "账号管理", type: "md-people" },
         { path: "/SetShreshold", title: "阈值设置", type: "md-arrow-up" }
@@ -82,7 +81,6 @@ export default {
   created() {
     this.initData()
     if (this.user_id) {
-      this.initTagData()
       this.initGroupData()
     }
   },
@@ -109,16 +107,6 @@ export default {
       this.dataCard[1].data = data.addCount
       this.dataCard[3].data = pullGroup.length
       this.dataCard[4].data = data.ssAllPassCount
-    },
-    async initTagData() {
-      const arr = []
-      const { data } = await this.$http.get("/account/getAllTag", {
-        params: { user_id: this.user_id }
-      })
-      data.forEach(item =>
-        arr.push({ label: item.tagName, value: String(item.tagId) })
-      )
-      this.$store.commit("saveTagData", JSON.stringify(arr))
     },
     async initGroupData() {
       const arr = []

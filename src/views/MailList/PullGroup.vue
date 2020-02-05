@@ -40,7 +40,7 @@
     >
       <p slot="header">
         <Icon type="md-hand" color="#2D8CF0" class="mr-5 header-icon" />
-        将该标签下的所有账号邀请入上传的微信群
+        将该分组下的所有账号邀请入上传的微信群
       </p>
       <div class="flex-div">
         <span class="mr-10">类型选择</span>
@@ -51,7 +51,7 @@
       </div>
       <div slot="footer">
         <Button icon="md-remove-circle" @click="catchClick">取消</Button>
-        <Button type="success" icon="md-checkmark" @click="inviteTag">
+        <Button type="success" icon="md-checkmark" @click="inviteGroup">
           确定
         </Button>
       </div>
@@ -68,7 +68,7 @@ export default {
       data: [],
       qrcode: "",
       urlArea: "",
-      TagData: [],
+      GroupData: [],
       count: 0,
       pageIndex: 0,
       pageSize: 10,
@@ -82,13 +82,13 @@ export default {
       ],
       PullGroupColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { align: "center", title: "标签名称", key: "tagName" },
-        { align: "center", title: "标签ID", key: "tagId" },
+        { align: "center", title: "分组名称", key: "groupName" },
+        { align: "center", title: "分组ID", key: "groupId" },
         {
           sortable: true,
           align: "center",
           title: "创建时间",
-          key: "tagCreateDate"
+          key: "groupCreateDate"
         },
         {
           width: 230,
@@ -125,14 +125,14 @@ export default {
   },
   methods: {
     async allData() {
-      const { data } = await this.$http.get("/account/getAllTag", {
+      const { data } = await this.$http.get("/account/getAllGroup", {
         params: { user_id: this.user_id }
       })
       this.$refs[this.PagedTableRef].total = data.length
     },
     async initData() {
       this.data = []
-      const { data } = await this.$http.get("/account/getAllTag", {
+      const { data } = await this.$http.get("/account/getAllGroup", {
         params: {
           user_id: this.user_id,
           pageIndex: this.pageIndex,
@@ -140,12 +140,12 @@ export default {
         }
       })
       data.forEach((item, index) => {
-        this.TagData.push({ label: item.tagName, value: item.tagId })
+        this.GroupData.push({ label: item.groupName, value: item.groupId })
         this.data.push({
           serialNumber: index + 1,
-          tagName: item.tagName,
-          tagId: String(item.tagId),
-          tagCreateDate: this.$options.filters.date(item.tagCreateDate)
+          groupName: item.groupName,
+          groupId: String(item.groupId),
+          groupCreateDate: this.$options.filters.date(item.groupCreateDate)
         })
       })
     },
@@ -165,7 +165,7 @@ export default {
       this.isShowUrlModal = false
       this.isShowRadioModal = false
     },
-    async inviteTag() {
+    async inviteGroup() {
       this.isShowRadioModal = false
       const maxPeople = 35
       const msg = await this.loopRequest(maxPeople)
@@ -174,7 +174,7 @@ export default {
     async loopRequest(maxPeople) {
       const opType = this.opType === "一手" ? 0 : 1
       const { msg } = await this.$http.get("/group/enterGroup", {
-        params: { tagId: String(this.row.tagId), opType, maxPeople }
+        params: { groupId: String(this.row.groupId), opType, maxPeople }
       })
       return msg
     }

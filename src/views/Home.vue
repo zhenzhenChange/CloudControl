@@ -130,7 +130,6 @@ export default {
           type: "md-person",
           menuItem: [
             { name: "分组管理", path: "/grouping" },
-            { name: "标签管理", path: "/tag" },
             { name: "账号管理", path: "/m-account" },
             { name: "账号设置", path: "/s-account" }
           ]
@@ -185,7 +184,6 @@ export default {
     logout() {
       this.$router.push("/")
       localStorage.removeItem("user_id")
-      localStorage.removeItem("TagData")
       localStorage.removeItem("GroupData")
       localStorage.removeItem("Shreshold")
       localStorage.removeItem("DataCount")

@@ -33,10 +33,7 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      TagData: state => state.TagData,
-      GroupData: state => state.GroupData
-    })
+    ...mapState({ GroupData: state => state.GroupData })
   },
   methods: {
     clickEvent(btnID) {
@@ -57,16 +54,6 @@ export default {
           isUpdate: false,
           tryBtn: "确定",
           inputInfos: [{ desc: "分组名称", label: "分组名称" }]
-        }
-        parentRefs[parent.EditModalRef].isShowEditModal = true
-      } else if (btnID === "create-t") {
-        parent.updateConfig = {
-          icon: "md-add-circle",
-          color: "#2D8CF0",
-          title: "添加标签",
-          isUpdate: false,
-          tryBtn: "确定",
-          inputInfos: [{ desc: "标签名称", label: "标签名称" }]
         }
         parentRefs[parent.EditModalRef].isShowEditModal = true
       } else if (btnID === "create-m") {
@@ -210,26 +197,6 @@ export default {
           tryBtn: "确定"
         }
         parentRefs[parent.SelectModalRef].params = "moveGroup"
-        parentRefs[parent.SelectModalRef].isShowSelectModal = true
-      } else if (btnID === "TagChange") {
-        if (!parent.operationData.length) {
-          this.$Message.warning("请先勾选要处理的数据～")
-          return
-        }
-        parent.selectConfig = {
-          width: "350",
-          icon: "md-move",
-          color: "#2D8CF0",
-          title: "将这些账号移动至另一个标签",
-          selectConfig: {
-            title: "账号标签",
-            info: "标签",
-            options: JSON.parse(this.TagData)
-          },
-          tryIcon: "md-checkmark",
-          tryBtn: "确定"
-        }
-        parentRefs[parent.SelectModalRef].params = "moveTag"
         parentRefs[parent.SelectModalRef].isShowSelectModal = true
       } else if (btnID === "request") {
         if (parent.operationData.length) {

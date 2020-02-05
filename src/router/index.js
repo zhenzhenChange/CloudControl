@@ -40,11 +40,6 @@ const routes = [
         component: () => import("../views/Account/SAccount.vue")
       },
       {
-        path: "/tag",
-        name: "标签管理",
-        component: () => import("../views/Account/Tag.vue")
-      },
-      {
         path: "/friends",
         name: "好友管理",
         component: () => import("../views/MailList/Friends.vue")
