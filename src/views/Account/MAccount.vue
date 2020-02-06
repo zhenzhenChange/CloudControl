@@ -1,5 +1,5 @@
 <template>
-  <!-- 账号管理 -->
+  <!-- 空闲账号管理 -->
   <div class="MAccount">
     <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider dashed />
@@ -44,7 +44,6 @@ export default {
       ],
       MAccountColumns: [
         { width: 60, align: "center", type: "selection" },
-        { width: 70, align: "center", title: "序号", key: "serialNumber" },
         { width: 130, title: "账号", align: "center", key: "account" },
         {
           width: 150,
@@ -158,28 +157,28 @@ export default {
     async initData() {
       this.data = []
       const { data } = await this.$http.get("/account/getAccountInfo", {
-        params: {
-          user_id: this.user_id,
-          pageIndex: this.pageIndex,
-          pageSize: this.pageSize
+        params: { user_id: this.user_id }
+      })
+      data.forEach(item => {
+        if (!item.groupId) {
+          this.data.push({
+            account: item.account,
+            account62A16: item.account62A16,
+            accountFriendCount: item.accountFriendCount
+              ? item.accountFriendCount
+              : "无",
+            accountIsValid: item.accountIsValid,
+            accountPwd: item.accountPwd,
+            accountState: item.accountState,
+            accountWxid: item.accountWxid
+              ? item.accountWxid
+              : "未登录或账号异常",
+            groupName: item.groupName ? item.groupName : "未分配",
+            groupId: item.groupId ? String(item.groupId) : "未分配"
+          })
         }
       })
-      data.forEach((item, index) => {
-        this.data.push({
-          serialNumber: index + 1,
-          account: item.account,
-          account62A16: item.account62A16,
-          accountFriendCount: item.accountFriendCount
-            ? item.accountFriendCount
-            : "无",
-          accountIsValid: item.accountIsValid,
-          accountPwd: item.accountPwd,
-          accountState: item.accountState,
-          accountWxid: item.accountWxid ? item.accountWxid : "未登录或账号异常",
-          groupName: item.groupName ? item.groupName : "未分配",
-          groupId: item.groupId ? String(item.groupId) : "未分配"
-        })
-      })
+      this.$refs[this.PagedTableRef].total = this.data.length
     },
     async allData() {
       const { data } = await this.$http.get("/account/getAccountInfo", {
@@ -201,7 +200,6 @@ export default {
       })
       const DataCount = { FriendCount, DeadAccount, OnlineAccount }
       this.$store.commit("saveDataCount", JSON.stringify(DataCount))
-      this.$refs[this.PagedTableRef].total = data.length
     },
     async onlineByWXID(row) {
       let arr = []
@@ -338,6 +336,7 @@ export default {
       this.$Message.info(`成功上传账号${obj.succ}个，失败${obj.err}个！`)
     },
     async moveGroup(group_id) {
+      group_id = String(group_id)
       const account_list = []
       this.operationData.forEach(item => account_list.push(item.account))
       const { msg } = await this.$http.post("/account/setAccountGroup", {

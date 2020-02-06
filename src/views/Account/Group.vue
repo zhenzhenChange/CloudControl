@@ -141,7 +141,7 @@ export default {
       this.$refs[this.PagedTableRef].total = data.length
       const arr = []
       data.forEach(item =>
-        arr.push({ label: item.groupName, value: item.groupId })
+        arr.push({ label: item.groupName, value: String(item.groupId) })
       )
       this.$store.commit("saveGroupData", JSON.stringify(arr))
     },

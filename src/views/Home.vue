@@ -138,7 +138,7 @@ export default {
           type: "md-person",
           menuItem: [
             { name: "账号 && 分组", path: "/group" },
-            { name: "账号管理", path: "/m-account" },
+            { name: "空闲账号管理", path: "/m-account" },
             { name: "账号设置", path: "/s-account" }
           ]
         },

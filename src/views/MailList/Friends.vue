@@ -8,62 +8,196 @@
       :dataColumns="FriendsColumns"
     />
     <CommonConfirmModal ref="FriendConfirmModal" :config="config" />
-    <Modal
-      width="550"
-      :closable="false"
-      v-model="isShowModal"
-      :mask-closable="false"
-      class-name="vertical-center-modal"
-    >
-      <p slot="header">
-        <Icon type="md-send" color="#2D8CF0" class="mr-5 header-icon" />
-        该分组下的所有账号都发送添加指定的好友的请求
-      </p>
+    <Drawer width="900" :closable="false" v-model="isShowDrawer">
+      <div slot="header" class="header-drawer">
+        <div>
+          <Icon
+            class="mr-10"
+            color="#2D8CF0"
+            type="md-create"
+          />创建搜索加粉任务
+        </div>
+        <div>
+          <Button
+            class="mr-10"
+            type="warning"
+            icon="md-refresh"
+            @click="resetClick"
+          >
+            重置
+          </Button>
+          <Button type="success" icon="md-checkmark" @click="createFriendsTask">
+            立即提交
+          </Button>
+        </div>
+      </div>
       <Row>
         <Col span="11">
-          <Input v-model="GroupName" disabled>
+          <Input
+            clearable
+            v-model="friendsTaskName"
+            placeholder="请设置任务名称"
+          >
+            <span slot="prepend">任务名称</span>
+          </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="11">
+          <Input v-model="currentGroupName" disabled>
             <span slot="prepend">当前分组</span>
           </Input>
         </Col>
         <Col span="12" offset="1">
-          <Input v-model="GroupID" disabled>
+          <Input v-model="currentGroupID" disabled>
             <span slot="prepend">分组ID</span>
           </Input>
         </Col>
       </Row>
-      <Input
-        clearable
-        v-model="content"
-        class="mt-10 mr-10"
-        placeholder="可选，默认选取素材库中已有模板"
-      >
-        <span slot="prepend">验证消息</span>
-      </Input>
-      <div class="upload mb-10 mt-10 ml-7">
-        <span class="title mr-10">账号列表</span>
-        <Upload
-          action=""
-          :show-upload-list="false"
-          :before-upload="handleBeforeUpload"
-        >
-          <Button icon="md-cloud-upload">上传本地TXT文件</Button>
-        </Upload>
-      </div>
-      <Input
-        class="mr-10"
-        type="textarea"
-        v-model="userList"
-        :autosize="{ minRows: 5, maxRows: 20 }"
-        placeholder="需要添加的账号列表,一行一个账号"
-      >
-      </Input>
-      <div slot="footer">
-        <Button icon="md-remove-circle" @click="catchClick">取消</Button>
-        <Button type="success" icon="md-checkmark" @click="sendRequest">
-          确定
-        </Button>
-      </div>
-    </Modal>
+      <Row class="mt-10">
+        <Col span="6">
+          <div class="upload">
+            <span class="title ml-10 mr-10">加粉数据</span>
+            <Upload
+              :show-upload-list="false"
+              action="https://www.baidu.com/"
+              :before-upload="handleBeforeUpload"
+            >
+              <Button icon="md-cloud-upload">上传TXT文件</Button>
+            </Upload>
+          </div>
+        </Col>
+        <Col span="4" offset="1">
+          <Input disabled :placeholder="`数据条数：${mailListLength}`" />
+        </Col>
+        <Col span="12" offset="1">
+          <Input disabled placeholder="每次上传都会清空上一次" />
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="24">
+          <Input
+            type="textarea"
+            v-model="mailList"
+            :autosize="{ minRows: 5, maxRows: 15 }"
+            placeholder="请将号码粘贴或上传至此处，一条号码占一行"
+          />
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="24">
+          <span class="ml-10 mr-10">设置来源</span>
+          <RadioGroup v-model="setOrigin">
+            <Radio label="来源手机号"></Radio>
+            <Radio label="来源微信号"></Radio>
+            <Radio label="来源腾讯QQ"></Radio>
+            <Radio label="来源通讯录"></Radio>
+            <Radio label="自定义来源"></Radio>
+          </RadioGroup>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="24">
+          <Input clearable v-model="validInfo" placeholder="可自定义验证信息">
+            <span slot="prepend">验证信息</span>
+          </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="11">
+          <Input
+            clearable
+            class="float-left"
+            v-model="startTime"
+            placeholder="请设置开始执行时间"
+          >
+            <span slot="prepend">执行时间</span>
+          </Input>
+        </Col>
+        <Col span="12" offset="1">
+          <Input
+            disabled
+            :placeholder="`任务将于 ${startTime ? startTime : 0} 秒后开始执行`"
+          >
+          </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="11">
+          <Input
+            clearable
+            class="float-left"
+            v-model="blankTime"
+            placeholder="请设置间隔时长"
+          >
+            <span slot="prepend">间隔时长</span>
+          </Input>
+        </Col>
+        <Col span="12" offset="1">
+          <Input
+            disabled
+            :placeholder="
+              `多个账号进行加粉时，为单个账号设置间隔时长 ${
+                blankTime ? blankTime : 0
+              } 秒`
+            "
+          >
+          </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="11">
+          <Input clearable v-model="requestNum" placeholder="请设置请求数量">
+            <span slot="prepend">单号请求</span>
+          </Input>
+        </Col>
+        <Col span="12" offset="1">
+          <Input disabled placeholder="每个账号最多可提交的好友申请数" />
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="11">
+          <Input
+            clearable
+            class="float-left"
+            v-model="freqInte"
+            placeholder="请设置频繁间隔"
+          >
+            <span slot="prepend">频繁间隔</span>
+          </Input>
+        </Col>
+        <Col span="12" offset="1">
+          <Input
+            disabled
+            :placeholder="
+              `每频繁一次隔 ${freqInte ? freqInte : 0} 秒后，重新开始加粉`
+            "
+          >
+          </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10 mb-10">
+        <Col span="11">
+          <Input
+            clearable
+            class="float-left"
+            v-model="freqLimit"
+            placeholder="请设置频繁上限"
+          >
+            <span slot="prepend">频繁上限</span>
+          </Input>
+        </Col>
+        <Col span="12" offset="1">
+          <Input
+            disabled
+            :placeholder="
+              `总频繁数达到 ${freqLimit ? freqLimit : 0} 次后，停止加粉`
+            "
+          >
+          </Input>
+        </Col>
+      </Row>
+    </Drawer>
     <Modal
       width="550"
       :closable="false"
@@ -121,10 +255,23 @@ export default {
     return {
       wx: "",
       data: [],
-      pageIndex: 0,
+      freqInte: "",
+      mailList: "",
       pageSize: 10,
-      GroupID: "",
-      GroupName: "",
+      pageIndex: 0,
+      blankTime: "",
+      freqLimit: "",
+      startTime: "",
+      validInfo: "",
+      requestNum: "",
+      operationData: [],
+      currentGroupID: "",
+      friendsTaskName: "",
+      isShowDrawer: false,
+      setOrigin: "来源手机号",
+      operationConfig: {},
+      currentGroupName: "",
+      mailOrigin: "手机搜索",
       content: "",
       userList: "",
       wxContent: "",
@@ -169,9 +316,10 @@ export default {
                   props: { type: "warning", icon: "md-send" },
                   on: {
                     click: () => {
-                      this.isShowModal = true
-                      this.GroupID = params.row.groupId
-                      this.GroupName = params.row.groupName
+                      const { groupName, groupId } = params.row
+                      this.isShowDrawer = true
+                      this.currentGroupID = groupId
+                      this.currentGroupName = groupName
                     }
                   }
                 },
@@ -201,7 +349,10 @@ export default {
     this.initData()
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id })
+    ...mapState({ user_id: state => state.user_id }),
+    mailListLength() {
+      return this.mailList.split(/[\r\n]/g).filter(item => item !== "").length
+    }
   },
   methods: {
     async allData() {
@@ -235,22 +386,6 @@ export default {
       })
       this.$Message.info(msg)
     },
-    async sendRequest() {
-      if (!this.userList) {
-        this.$Message.warning("请上传或填入账号列表！")
-        return
-      }
-      this.isShowModal = false
-      let contact = []
-      contact = this.userList.split(/[\r\n]/g).filter(item => item !== "")
-      const { msg } = await this.$http.post("/contact/addFriendsByGroup", {
-        group_id: this.GroupID,
-        request_list: contact,
-        content: this.content
-      })
-      this.$Message.info(msg)
-      this.GroupID = this.userList = this.content = ""
-    },
     async sendRequestByWX() {
       if (!this.wx) {
         this.$Message.warning("请填入微信账号！")
@@ -275,14 +410,6 @@ export default {
       this.isShowModal = false
       this.isShowWXModal = false
     },
-    handleBeforeUpload(file) {
-      const reader = new FileReader()
-      reader.readAsText(file)
-      reader.onload = () => {
-        this.userList = reader.result
-      }
-      return false
-    },
     handleBeforeUpload2(file) {
       const reader = new FileReader()
       reader.readAsText(file)
@@ -290,6 +417,50 @@ export default {
         this.wxUserList = reader.result
       }
       return false
+    },
+    handleBeforeUpload(file) {
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onload = () => (this.mailList = reader.result)
+      return false
+    },
+    resetClick() {
+      this.friendsTaskName = ""
+      this.mailList = ""
+      this.validInfo = ""
+      this.startTime = ""
+      this.blankTime = ""
+      this.requestNum = ""
+      this.freqInte = ""
+      this.freqLimit = ""
+    },
+    async createFriendsTask() {
+      let requestList = this.mailList
+        .split(/[\r\n]/g)
+        .filter(item => item !== "")
+      const args = {
+        groupId: this.currentGroupID,
+        startTime: this.startTime,
+        requestList,
+        origin: 0,
+        endTime: 20,
+        interval: this.blankTime,
+        maxRequest: this.requestNum,
+        frequentlyInterval: this.freqInte,
+        frequentlyMaxNumber: this.freqLimit,
+        taskName: this.friendsTaskName,
+        content: this.validInfo
+      }
+      const res = await this.$http.post("/contact/addFriendsByGroup", args)
+      this.$Message.info(res.msg)
+      this.resetClick()
+    },
+    async clearMailList() {
+      this.$refs[this.ConfirmModalRef].isShowConfirmModal = false
+      const { msg } = await this.$http.post("/contact/clearContact", {
+        user_id: this.user_id
+      })
+      this.$Message.info(msg)
     }
   }
 }
@@ -308,5 +479,11 @@ export default {
     display: block;
     line-height: 32px;
   }
+}
+
+.header-drawer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

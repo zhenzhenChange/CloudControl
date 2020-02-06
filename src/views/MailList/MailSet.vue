@@ -12,7 +12,11 @@
     <Drawer width="900" :closable="false" v-model="isShowDrawer">
       <div slot="header" class="header-drawer">
         <div>
-          <Icon type="md-create" color="#2D8CF0" class="mr-10" />创建加粉任务
+          <Icon
+            class="mr-10"
+            color="#2D8CF0"
+            type="md-create"
+          />创建通讯录加粉任务
         </div>
         <div>
           <Button
@@ -88,33 +92,28 @@
       </Row>
       <Row class="mt-10">
         <Col span="24">
-          <span class="ml-10 mr-10">设置来源</span>
-          <RadioGroup v-model="mailOrigin">
-            <Radio label="手机搜索"></Radio>
-            <Radio label="通讯录（单个上传单个添加）"></Radio>
-            <Radio label="通讯录（多个上传单个添加）"></Radio>
-            <Radio label="搜索通讯录混合添加"></Radio>
-            <Radio label="自定义来源"></Radio>
-          </RadioGroup>
-        </Col>
-      </Row>
-      <Row class="mt-10">
-        <Col span="24">
           <Input clearable v-model="validInfo" placeholder="可自定义验证信息">
             <span slot="prepend">验证信息</span>
           </Input>
         </Col>
       </Row>
       <Row class="mt-10">
-        <Col span="24">
-          <span class="ml-10 mr-5">执行时间</span>
-          <DatePicker
-            separator=" 至 "
-            class="date-range"
-            v-model="dateRange"
-            type="datetimerange"
-            placeholder="加粉任务在指定时间内执行"
-          ></DatePicker>
+        <Col span="11">
+          <Input
+            clearable
+            class="float-left"
+            v-model="startTime"
+            placeholder="请设置开始执行时间"
+          >
+            <span slot="prepend">执行时间</span>
+          </Input>
+        </Col>
+        <Col span="12" offset="1">
+          <Input
+            disabled
+            :placeholder="`任务将于 ${startTime ? startTime : 0} 秒后开始执行`"
+          >
+          </Input>
         </Col>
       </Row>
       <Row class="mt-10">
@@ -131,7 +130,11 @@
         <Col span="12" offset="1">
           <Input
             disabled
-            placeholder="多个账号进行加粉时，为单个账号设置间隔时长"
+            :placeholder="
+              `多个账号进行加粉时，为单个账号设置间隔时长 ${
+                blankTime ? blankTime : 0
+              } 秒`
+            "
           >
           </Input>
         </Col>
@@ -198,7 +201,6 @@ export default {
   data() {
     return {
       data: [],
-      endTime: "",
       freqInte: "",
       mailList: "",
       pageSize: 10,
@@ -206,7 +208,6 @@ export default {
       blankTime: "",
       freqLimit: "",
       startTime: "",
-      dateRange: "",
       validInfo: "",
       requestNum: "",
       fansTaskName: "",
@@ -294,13 +295,6 @@ export default {
         })
       })
     },
-    async addMailFriend({ groupId: group_id }) {
-      this.$refs["MailSetComplexModal"].isShowComplexModal = false
-      const { msg } = await this.$http.post("/contact/addFriendsByContact", {
-        group_id
-      })
-      this.$Message.info(msg)
-    },
     handleBeforeUpload(file) {
       const reader = new FileReader()
       reader.readAsText(file)
@@ -311,32 +305,31 @@ export default {
       this.fansTaskName = ""
       this.mailList = ""
       this.validInfo = ""
-      this.dateRange = null
+      this.startTime = ""
       this.blankTime = ""
       this.requestNum = ""
       this.freqInte = ""
       this.freqLimit = ""
     },
-    async createFansTask() {},
-    /* async uploadMailList() {
-      if (!this.mailList) {
-        this.$Message.warning("请上传通讯录或手动粘贴")
-        return
+    async createFansTask() {
+      const args = {
+        groupId: this.currentGroupID,
+        startTime: this.startTime,
+        endTime: 20,
+        interval: this.blankTime,
+        maxRequest: this.requestNum,
+        frequentlyInterval: this.freqInte,
+        frequentlyMaxNumber: this.freqLimit,
+        taskName: this.fansTaskName,
+        content: this.validInfo
       }
-      this.isShowModal = false
-      let contact = []
-      contact = this.mailList.split(/[\r\n]/g).filter(item => item !== "")
-      const obj = { contact, user_id: this.user_id }
-      const { data, msg } = await this.$http.post("/contact/upload", obj)
-      this.mailList = ""
-      if (data) {
-        this.$Message.info(
-          `${data.success}个账号上传成功，${data.error}个失败！`
-        )
-      } else {
-        this.$Message.info(msg)
-      }
-    }, */
+      const contact = this.mailList.split(/[\r\n]/g).filter(item => item !== "")
+      const upload = { contact, user_id: this.user_id }
+      await this.$http.post("/contact/upload", upload)
+      const res = await this.$http.post("/contact/addFriendsByContact", args)
+      this.$Message.info(res.msg)
+      this.resetClick()
+    },
     async clearMailList() {
       this.$refs[this.ConfirmModalRef].isShowConfirmModal = false
       const { msg } = await this.$http.post("/contact/clearContact", {
@@ -366,9 +359,5 @@ export default {
     display: block;
     line-height: 32px;
   }
-}
-
-.date-range {
-  width: 91%;
 }
 </style>

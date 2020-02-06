@@ -31,7 +31,7 @@ const routes = [
       },
       {
         path: "/m-account",
-        name: "账号管理",
+        name: "空闲账号管理",
         component: () => import("../views/Account/MAccount.vue")
       },
       {

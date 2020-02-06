@@ -105,7 +105,6 @@ export default {
           key: "accountWxid"
         },
         {
-          width: 230,
           title: "操作",
           align: "center",
           render: (h, params) => {
@@ -202,16 +201,30 @@ export default {
           accountWxid: item.accountWxid ? item.accountWxid : "未登录或账号异常"
         })
       })
-    }
-    /* async getAccountDataByGroupID(group_id) {
+    },
+    async getAccountDataByGroupID(group_id) {
+      this.data = []
       const postArgs = {
         group_id,
-        pageSize: this.pageSize,
-        pageIndex: this.pageIndex
+        pageSize: String(this.pageSize),
+        pageIndex: String(this.pageIndex)
       }
-      const res = await this.$http.post("/account/getAccount", postArgs)
-      console.log(res)
-    } */
+      const { data } = await this.$http.post("/account/getAccount", postArgs)
+      data.forEach((item, index) => {
+        this.data.push({
+          serialNumber: index + 1,
+          account: item.account,
+          account62A16: item.account62A16,
+          accountFriendCount: item.accountFriendCount
+            ? item.accountFriendCount
+            : "无",
+          accountIsValid: item.accountIsValid,
+          accountPwd: item.accountPwd,
+          accountState: item.accountState,
+          accountWxid: item.accountWxid ? item.accountWxid : "未登录或账号异常"
+        })
+      })
+    }
   }
 }
 </script>

@@ -69,6 +69,8 @@ export default {
         this.$parent.addMailFriend(this.configParams)
       } else if (this.config.params === "sendFriend") {
         this.$parent.sendFriendSpace(this.configParams)
+      } else if (this.config.params === "sendByGroup") {
+        this.$parent.sendByGroup(this.configParams)
       } else if (this.config.params === "clearMailList") {
         this.$parent.clearMailList()
       }
