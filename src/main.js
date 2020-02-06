@@ -12,7 +12,7 @@ import "view-design/dist/styles/iview.css"
 Vue.use(ViewUI)
 
 const GlobalClick = () => {
-  console.log(1)
+  // console.log(1)
 }
 
 // document.onclick = GlobalClick
