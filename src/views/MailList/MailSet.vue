@@ -9,54 +9,186 @@
       :ref="ConfirmModalRef"
       :config="operationConfig"
     />
-    <Modal
-      width="500"
-      :mask-closable="false"
-      v-model="isShowModal"
-      class-name="vertical-center-modal"
-    >
-      <p slot="header">
-        <Icon color="#2d8cf0" type="md-cloud-upload" class="mr-5" />
-        {{ mailListConfig.title }}
-      </p>
-      <div class="color-red">
-        可选取本地文件上传(将自动解析文件内容)，也可复制粘贴到文本区域上传
+    <Drawer width="900" :closable="false" v-model="isShowDrawer">
+      <div slot="header" class="header-drawer">
+        <div>
+          <Icon type="md-create" color="#2D8CF0" class="mr-10" />创建加粉任务
+        </div>
+        <div>
+          <Button
+            class="mr-10"
+            type="warning"
+            icon="md-refresh"
+            @click="resetClick"
+          >
+            重置
+          </Button>
+          <Button type="success" icon="md-checkmark" @click="createFansTask">
+            立即提交
+          </Button>
+        </div>
       </div>
-      <div class="mt-10 color-red">
-        <span class="mr-30">纯手机号：18166661111</span>
-        <span>姓名----手机号：小明----18166661111</span><br />
-        <div class="mt-10">格式：一条通讯录单独一行，多条通讯录多行</div>
-      </div>
-      <div class="upload mt-10 mb-10">
-        <span class="title mr-10">上传通讯录</span>
-        <Upload
-          action=""
-          :show-upload-list="false"
-          :before-upload="handleBeforeUpload"
-        >
-          <Button icon="md-cloud-upload">选取本地TXT文件</Button>
-        </Upload>
-      </div>
-      <div class="mb-10 config">
-        <span class="mr-10">通讯录格式</span>
-        <RadioGroup v-model="isMailType">
-          <Radio border label="纯手机号"></Radio>
-          <Radio border label="姓名----手机号"></Radio>
-        </RadioGroup>
-      </div>
-      <Input
-        type="textarea"
-        v-model="mailList"
-        :autosize="{ minRows: 5, maxRows: 20 }"
-      >
-      </Input>
-      <div slot="footer">
-        <Button icon="md-remove-circle" @click="catchClick">取消</Button>
-        <Button type="success" icon="md-checkmark" @click="uploadMailList">
-          确定
-        </Button>
-      </div>
-    </Modal>
+      <Row>
+        <Col span="11">
+          <Input clearable v-model="fansTaskName" placeholder="请设置任务名称">
+            <span slot="prepend">任务名称</span>
+          </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="11">
+          <Input v-model="currentGroupName" disabled>
+            <span slot="prepend">当前分组</span>
+          </Input>
+        </Col>
+        <Col span="12" offset="1">
+          <Input v-model="currentGroupID" disabled>
+            <span slot="prepend">分组ID</span>
+          </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="24">
+          <span class="ml-10 mr-10">号码格式</span>
+          <RadioGroup v-model="mailType">
+            <Radio label="纯手机号"></Radio>
+            <Radio label="姓名----手机号"></Radio>
+          </RadioGroup>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="6">
+          <div class="upload">
+            <span class="title ml-10 mr-10">加粉数据</span>
+            <Upload
+              :show-upload-list="false"
+              action="https://www.baidu.com/"
+              :before-upload="handleBeforeUpload"
+            >
+              <Button icon="md-cloud-upload">上传TXT文件</Button>
+            </Upload>
+          </div>
+        </Col>
+        <Col span="4" offset="1">
+          <Input disabled :placeholder="`数据条数：${mailListLength}`" />
+        </Col>
+        <Col span="12" offset="1">
+          <Input disabled placeholder="每次上传都会清空上一次" />
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="24">
+          <Input
+            type="textarea"
+            v-model="mailList"
+            :autosize="{ minRows: 5, maxRows: 15 }"
+            placeholder="请将通讯录粘贴或上传至此处，一条通讯录占一行"
+          />
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="24">
+          <span class="ml-10 mr-10">设置来源</span>
+          <RadioGroup v-model="mailOrigin">
+            <Radio label="手机搜索"></Radio>
+            <Radio label="通讯录（单个上传单个添加）"></Radio>
+            <Radio label="通讯录（多个上传单个添加）"></Radio>
+            <Radio label="搜索通讯录混合添加"></Radio>
+            <Radio label="自定义来源"></Radio>
+          </RadioGroup>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="24">
+          <Input clearable v-model="validInfo" placeholder="可自定义验证信息">
+            <span slot="prepend">验证信息</span>
+          </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="24">
+          <span class="ml-10 mr-5">执行时间</span>
+          <DatePicker
+            separator=" 至 "
+            class="date-range"
+            v-model="dateRange"
+            type="datetimerange"
+            placeholder="加粉任务在指定时间内执行"
+          ></DatePicker>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="11">
+          <Input
+            clearable
+            class="float-left"
+            v-model="blankTime"
+            placeholder="请设置间隔时长"
+          >
+            <span slot="prepend">间隔时长</span>
+          </Input>
+        </Col>
+        <Col span="12" offset="1">
+          <Input
+            disabled
+            placeholder="多个账号进行加粉时，为单个账号设置间隔时长"
+          >
+          </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="11">
+          <Input clearable v-model="requestNum" placeholder="请设置请求数量">
+            <span slot="prepend">单号请求</span>
+          </Input>
+        </Col>
+        <Col span="12" offset="1">
+          <Input disabled placeholder="每个账号最多可提交的好友申请数" />
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="11">
+          <Input
+            clearable
+            class="float-left"
+            v-model="freqInte"
+            placeholder="请设置频繁间隔"
+          >
+            <span slot="prepend">频繁间隔</span>
+          </Input>
+        </Col>
+        <Col span="12" offset="1">
+          <Input
+            disabled
+            :placeholder="
+              `每频繁一次隔 ${freqInte ? freqInte : 0} 秒后，重新开始加粉`
+            "
+          >
+          </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10 mb-10">
+        <Col span="11">
+          <Input
+            clearable
+            class="float-left"
+            v-model="freqLimit"
+            placeholder="请设置频繁上限"
+          >
+            <span slot="prepend">频繁上限</span>
+          </Input>
+        </Col>
+        <Col span="12" offset="1">
+          <Input
+            disabled
+            :placeholder="
+              `总频繁数达到 ${freqLimit ? freqLimit : 0} 次后，停止加粉`
+            "
+          >
+          </Input>
+        </Col>
+      </Row>
+    </Drawer>
   </div>
 </template>
 
@@ -66,42 +198,42 @@ export default {
   data() {
     return {
       data: [],
-      pageIndex: 0,
-      pageSize: 10,
+      endTime: "",
+      freqInte: "",
       mailList: "",
+      pageSize: 10,
+      pageIndex: 0,
+      blankTime: "",
+      freqLimit: "",
+      startTime: "",
+      dateRange: "",
+      validInfo: "",
+      requestNum: "",
+      fansTaskName: "",
       operationData: [],
+      currentGroupID: "",
+      isShowDrawer: false,
+      mailType: "纯手机号",
       operationConfig: {},
-      isShowModal: false,
-      isMailType: "纯手机号",
+      currentGroupName: "",
+      mailOrigin: "手机搜索",
       PagedTableRef: "MailPagedTable",
       ConfirmModalRef: "MailConfirmModal",
-      mailListConfig: { title: "上传通讯录" },
       buttonListInfos: [
         {
-          id: "uploadMailList",
-          type: "primary",
-          icon: "md-cloud-upload",
-          name: "上传通讯录"
-        },
-        {
-          id: "clearMailList",
-          type: "warning",
+          type: "error",
           icon: "md-trash",
+          id: "clearMailList",
           name: "清空已上传的通讯录"
         }
       ],
       MailColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { align: "center", title: "分组名称", key: "groupName" },
         { align: "center", title: "分组ID", key: "groupId" },
+        { align: "center", title: "分组名称", key: "groupName" },
+        { align: "center", title: "创建时间", key: "groupCreateDate" },
         {
-          sortable: true,
-          align: "center",
-          title: "创建时间",
-          key: "groupCreateDate"
-        },
-        {
-          width: 230,
+          width: 200,
           title: "操作",
           align: "center",
           render: (h, params) => {
@@ -109,18 +241,17 @@ export default {
               h(
                 "Button",
                 {
-                  props: { type: "primary", icon: "md-person-add" },
-                  style: { marginRight: "5px" },
+                  props: { type: "info", icon: "md-person-add" },
                   on: {
                     click: () => {
-                      this.$refs[
-                        "MailSetComplexModal"
-                      ].isShowComplexModal = true
-                      this.$refs["MailSetComplexModal"].params = params.row
+                      const { groupName, groupId } = params.row
+                      this.isShowDrawer = true
+                      this.currentGroupID = groupId
+                      this.currentGroupName = groupName
                     }
                   }
                 },
-                "添加通讯录好友"
+                "创建加粉任务"
               )
             ])
           }
@@ -133,7 +264,10 @@ export default {
     this.initData()
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id })
+    ...mapState({ user_id: state => state.user_id }),
+    mailListLength() {
+      return this.mailList.split(/[\r\n]/g).filter(item => item !== "").length
+    }
   },
   methods: {
     async allData() {
@@ -170,15 +304,21 @@ export default {
     handleBeforeUpload(file) {
       const reader = new FileReader()
       reader.readAsText(file)
-      reader.onload = () => {
-        this.mailList = reader.result
-      }
+      reader.onload = () => (this.mailList = reader.result)
       return false
     },
-    catchClick() {
-      this.isShowModal = false
+    resetClick() {
+      this.fansTaskName = ""
+      this.mailList = ""
+      this.validInfo = ""
+      this.dateRange = null
+      this.blankTime = ""
+      this.requestNum = ""
+      this.freqInte = ""
+      this.freqLimit = ""
     },
-    async uploadMailList() {
+    async createFansTask() {},
+    /* async uploadMailList() {
       if (!this.mailList) {
         this.$Message.warning("请上传通讯录或手动粘贴")
         return
@@ -196,7 +336,7 @@ export default {
       } else {
         this.$Message.info(msg)
       }
-    },
+    }, */
     async clearMailList() {
       this.$refs[this.ConfirmModalRef].isShowConfirmModal = false
       const { msg } = await this.$http.post("/contact/clearContact", {
@@ -209,6 +349,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.ivu-radio-group {
+  vertical-align: bottom;
+}
+
+.header-drawer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .upload {
   .title {
     float: left;
@@ -216,5 +366,9 @@ export default {
     display: block;
     line-height: 32px;
   }
+}
+
+.date-range {
+  width: 91%;
 }
 </style>

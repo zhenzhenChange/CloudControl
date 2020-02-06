@@ -84,8 +84,4 @@ export default {
   height: 20px;
   vertical-align: -0.05em;
 }
-
-.clear-both {
-  clear: both;
-}
 </style>

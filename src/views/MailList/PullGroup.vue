@@ -23,7 +23,7 @@
       </Row>
       <Row class="mt-10">
         <Col span="10">
-          <Input clearable v-model="finalNum" :placeholder="`请设置群最终人数`">
+          <Input clearable v-model="finalNum" placeholder="请设置群最终人数">
             <span slot="prepend">最终人数</span>
           </Input>
         </Col>
@@ -58,12 +58,17 @@
           />
         </Col>
       </Row>
+      <Row class="mt-10">
+        <Col span="12">
+          <Input disabled :placeholder="`群链接总数：${urlListLength}`" />
+        </Col>
+      </Row>
       <div class="drawer-footer">
         <Button
           class="mr-10"
           type="warning"
-          @click="resetClick"
           icon="md-refresh"
+          @click="resetClick"
         >
           重置
         </Button>
@@ -83,18 +88,12 @@ export default {
       data: [],
       urlList: "",
       finalNum: "",
+      pageSize: 10,
+      pageIndex: 0,
       checkType: "一手",
       currentGroupID: "",
-      currentGroupName: "",
-      qrcode: "",
-      urlArea: "",
-      count: 0,
-      pageIndex: 0,
-      pageSize: 10,
       isShowDrawer: false,
-      isShowUrlModal: false,
-      isShowRadioModal: false,
-      radioSelectConfig: {},
+      currentGroupName: "",
       PagedTableRef: "PullGroupPagedTable",
       PullGroupColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
@@ -102,7 +101,7 @@ export default {
         { align: "center", title: "分组名称", key: "groupName" },
         { align: "center", title: "创建时间", key: "groupCreateDate" },
         {
-          width: 230,
+          width: 200,
           title: "操作",
           align: "center",
           render: (h, params) => {
@@ -110,8 +109,7 @@ export default {
               h(
                 "Button",
                 {
-                  props: { type: "info", icon: "md-hand" },
-                  style: { marginRight: "5px" },
+                  props: { type: "info", icon: "md-share-alt" },
                   on: {
                     click: () => {
                       const { groupName, groupId } = params.row
@@ -121,7 +119,7 @@ export default {
                     }
                   }
                 },
-                "邀请任务"
+                "创建拉群任务"
               )
             ])
           }
@@ -134,7 +132,10 @@ export default {
     this.initData()
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id })
+    ...mapState({ user_id: state => state.user_id }),
+    urlListLength() {
+      return this.urlList.split(/[\r\n]/g).filter(item => item !== "").length
+    }
   },
   methods: {
     async allData() {
@@ -183,9 +184,7 @@ export default {
         this.$Message.warning("请填入群链接！")
         return
       }
-      let grpUrl = []
-      this.urlList.split(/[\r\n]/g).forEach(item => grpUrl.push(item))
-      grpUrl = grpUrl.filter(item => item !== "")
+      let grpUrl = this.urlList.split(/[\r\n]/g).filter(item => item !== "")
       const params = {
         maxPeople: this.finalNum - 5,
         groupId: this.currentGroupID,
@@ -196,22 +195,6 @@ export default {
       this.$Message.info(msg)
       this.resetClick()
     }
-    /* async tryClick() {
-      if (!this.urlArea) {
-        this.$Message.warning("请填入群链接")
-        return
-      }
-      this.isShowUrlModal = false
-      let grpUrl = []
-      this.urlArea.split(/[\r\n]/g).forEach(item => grpUrl.push(item))
-      grpUrl = grpUrl.filter(item => item !== "")
-      const { msg } = await this.$http.post("/group/setGroupURL", grpUrl)
-      this.$Message.info(msg)
-    },
-    catchClick() {
-      this.isShowUrlModal = false
-      this.isShowRadioModal = false
-    } */
   }
 }
 </script>
@@ -222,14 +205,14 @@ export default {
 }
 
 .drawer-footer {
-  width: 100%;
-  position: absolute;
-  bottom: 0;
   left: 0;
-  border-top: 1px solid #e8e8e8;
-  padding: 10px 16px;
+  bottom: 0;
+  width: 100%;
   text-align: right;
+  padding: 10px 16px;
+  position: absolute;
   background: #fff;
+  border-top: 1px solid #e8e8e8;
 }
 
 .upload {

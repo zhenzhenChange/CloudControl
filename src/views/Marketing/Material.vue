@@ -167,10 +167,8 @@ export default {
       this.$refs.UploadAvatar.uploadList = avaUrl
       this.template.title = data.friendCricleTitle
       this.template.content = data.friendCricleContent
-
       this.quickInfo.content = data.setSendMsgContent
       this.verifyInfo.content = data.setAddMsgContent
-
       this.personInfo.pwd = data.setInfoPwd
       this.personInfo.nickname = data.setInfoNickName
       this.personInfo.signature = data.setInfoSignature

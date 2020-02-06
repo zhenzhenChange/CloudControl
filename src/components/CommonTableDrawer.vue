@@ -52,7 +52,14 @@ export default {
       CommonColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { width: 130, title: "账号", align: "center", key: "account" },
+        { width: 130, align: "center", title: "账号", key: "account" },
+        {
+          width: 130,
+          align: "center",
+          tooltip: true,
+          title: "密码",
+          key: "accountPwd"
+        },
         {
           width: 180,
           align: "center",
@@ -81,13 +88,6 @@ export default {
         {
           width: 130,
           align: "center",
-          tooltip: true,
-          title: "密码",
-          key: "accountPwd"
-        },
-        {
-          width: 130,
-          align: "center",
           title: "登录状态",
           key: "accountState",
           render: (h, params) => {
@@ -98,31 +98,15 @@ export default {
           }
         },
         {
-          width: 180,
+          width: 190,
           align: "center",
           tooltip: true,
           title: "微信ID",
           key: "accountWxid"
         },
         {
-          width: 150,
-          align: "center",
-          tooltip: true,
-          title: "所属分组",
-          key: "groupName"
-        },
-        { width: 100, align: "center", title: "分组ID", key: "groupId" },
-        {
-          width: 150,
-          align: "center",
-          tooltip: true,
-          title: "操作人",
-          key: "userId"
-        },
-        {
           width: 230,
           title: "操作",
-          fixed: "right",
           align: "center",
           render: (h, params) => {
             return h("div", [
@@ -165,7 +149,6 @@ export default {
                     disabled: this.mutex,
                     icon: "md-trash"
                   },
-                  style: { marginRight: "5px" },
                   on: {
                     click: () => {
                       this.operationConfig = {
@@ -216,16 +199,11 @@ export default {
           accountIsValid: item.accountIsValid,
           accountPwd: item.accountPwd,
           accountState: item.accountState,
-          accountWxid: item.accountWxid
-            ? item.accountWxid
-            : "无微信ID或信息异常",
-          groupName: item.groupName ? item.groupName : "无",
-          groupId: item.groupId ? String(item.groupId) : "无",
-          userId: item.userId
+          accountWxid: item.accountWxid ? item.accountWxid : "未登录或账号异常"
         })
       })
-    },
-    async getAccountDataByGroupID(group_id) {
+    }
+    /* async getAccountDataByGroupID(group_id) {
       const postArgs = {
         group_id,
         pageSize: this.pageSize,
@@ -233,8 +211,7 @@ export default {
       }
       const res = await this.$http.post("/account/getAccount", postArgs)
       console.log(res)
-    }
+    } */
   }
 }
 </script>
-<style lang="scss" scoped></style>

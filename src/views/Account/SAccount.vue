@@ -52,12 +52,6 @@ export default {
       SelectModalRef: "SAccountSelectModal",
       ConfirmModalRef: "SAccountConfirmModal",
       buttonListInfos: [
-        /* {
-          id: "request",
-          name: "好友请求设置",
-          icon: "md-settings",
-          type: "success"
-        }, */
         {
           id: "ChangeMeans",
           name: "修改资料",
@@ -69,23 +63,9 @@ export default {
         { width: 60, align: "center", type: "selection" },
         { width: 130, align: "center", title: "账号", key: "account" },
         { width: 130, align: "center", title: "密码", key: "accountPwd" },
-        {
-          width: 200,
-          align: "center",
-          title: "微信ID",
-          key: "accountWxid"
-        },
-        {
-          tooltip: true,
-          align: "center",
-          title: "所属分组",
-          key: "groupName"
-        },
-        {
-          align: "center",
-          title: "分组ID",
-          key: "groupId"
-        }
+        { width: 200, align: "center", title: "微信ID", key: "accountWxid" },
+        { tooltip: true, align: "center", title: "所属分组", key: "groupName" },
+        { align: "center", title: "分组ID", key: "groupId" }
       ]
     }
   },
@@ -127,30 +107,6 @@ export default {
       const newData = data.filter(item => item.accountWxid)
       this.$refs[this.PagedTableRef].total = newData.length
     },
-    /* async requestSetByGroup(groupId) {
-      this.clear()
-      const { msg } = await this.$http.post("/account/setFriendRequest", {
-        group_id: String(groupId),
-        wxid_list: [],
-        type: this.isChecking === "需要验证" ? 0 : 1,
-        request_type: 0
-      })
-      this.initData()
-      this.$Message.success(msg)
-    },
-    async requestSetByWXID() {
-      const wxid_list = []
-      this.operationData.forEach(item => wxid_list.push(item.accountWxid))
-      const { msg } = await this.$http.post("/account/setFriendRequest", {
-        group_id: "",
-        wxid_list,
-        type: this.isChecking === "需要验证" ? 0 : 1,
-        request_type: 1
-      })
-      this.clear()
-      this.initData()
-      this.$Message.success(msg)
-    }, */
     async changeMeansByGroup(groupId) {
       this.clear()
       const change_type =

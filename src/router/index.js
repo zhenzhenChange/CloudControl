@@ -26,8 +26,13 @@ const routes = [
       },
       {
         path: "/group",
-        name: "账号分组管理",
+        name: "账号 && 分组",
         component: () => import("../views/Account/Group.vue")
+      },
+      {
+        path: "/m-account",
+        name: "账号管理",
+        component: () => import("../views/Account/MAccount.vue")
       },
       {
         path: "/s-account",
@@ -41,7 +46,7 @@ const routes = [
       },
       {
         path: "/mail",
-        name: "通讯管理",
+        name: "加粉管理",
         component: () => import("../views/MailList/MailSet.vue")
       },
       {

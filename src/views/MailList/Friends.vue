@@ -19,8 +19,18 @@
         <Icon type="md-send" color="#2D8CF0" class="mr-5 header-icon" />
         该分组下的所有账号都发送添加指定的好友的请求
       </p>
-      <div class="color-blue">分组名称：{{ GroupName }}</div>
-      <div class="color-blue mt-10">分组ID： {{ GroupID }}</div>
+      <Row>
+        <Col span="11">
+          <Input v-model="GroupName" disabled>
+            <span slot="prepend">当前分组</span>
+          </Input>
+        </Col>
+        <Col span="12" offset="1">
+          <Input v-model="GroupID" disabled>
+            <span slot="prepend">分组ID</span>
+          </Input>
+        </Col>
+      </Row>
       <Input
         clearable
         v-model="content"
@@ -143,14 +153,9 @@ export default {
       ],
       FriendsColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { align: "center", title: "分组名称", key: "groupName" },
         { align: "center", title: "分组ID", key: "groupId" },
-        {
-          sortable: true,
-          align: "center",
-          title: "创建时间",
-          key: "groupCreateDate"
-        },
+        { align: "center", title: "分组名称", key: "groupName" },
+        { align: "center", title: "创建时间", key: "groupCreateDate" },
         {
           width: 400,
           title: "操作",
@@ -160,8 +165,8 @@ export default {
               h(
                 "Button",
                 {
-                  props: { type: "warning", icon: "md-send" },
                   style: { marginRight: "5px" },
+                  props: { type: "warning", icon: "md-send" },
                   on: {
                     click: () => {
                       this.isShowModal = true
@@ -176,7 +181,6 @@ export default {
                 "Button",
                 {
                   props: { type: "info", icon: "md-paper-plane" },
-                  style: { marginRight: "5px" },
                   on: {
                     click: () => {
                       this.$refs["FriendConfirmModal"].isShowConfirmModal = true

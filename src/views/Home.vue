@@ -137,7 +137,8 @@ export default {
           title: "账户管理",
           type: "md-person",
           menuItem: [
-            { name: "账号分组管理", path: "/group" },
+            { name: "账号 && 分组", path: "/group" },
+            { name: "账号管理", path: "/m-account" },
             { name: "账号设置", path: "/s-account" }
           ]
         },
@@ -145,7 +146,7 @@ export default {
           title: "群聊通讯",
           type: "md-call",
           menuItem: [
-            { name: "通讯管理", path: "/mail" },
+            { name: "加粉管理", path: "/mail" },
             { name: "好友管理", path: "/friends" },
             { name: "群聊管理", path: "/pull-group" }
           ]

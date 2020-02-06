@@ -29,23 +29,11 @@ export default {
       ConfirmModalRef: "SpaceConfirmModal",
       SpaceColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
+        { title: "分组ID", align: "center", key: "groupId" },
+        { title: "分组名称", align: "center", key: "groupName" },
+        { title: "创建时间", align: "center", key: "groupCreateDate" },
         {
-          title: "分组名称",
-          align: "center",
-          key: "groupName"
-        },
-        {
-          title: "分组ID",
-          align: "center",
-          key: "groupId"
-        },
-        {
-          title: "创建时间",
-          align: "center",
-          key: "groupCreateDate"
-        },
-        {
-          width: 230,
+          width: 200,
           title: "操作",
           align: "center",
           render: (h, params) => {
@@ -53,8 +41,7 @@ export default {
               h(
                 "Button",
                 {
-                  props: { type: "primary", icon: "md-send" },
-                  style: { marginRight: "5px" },
+                  props: { type: "info", icon: "md-send" },
                   on: {
                     click: () => {
                       const { groupId: group_id } = params.row

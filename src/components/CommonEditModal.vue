@@ -46,7 +46,7 @@
         ref="tryButton"
         @click="tryClick"
         icon="md-checkmark"
-        :disabled="value === '' ? true : false"
+        :disabled="value"
       >
         {{ config.tryBtn }}
       </Button>
@@ -61,7 +61,7 @@ export default {
   props: { config: Object },
   data() {
     return {
-      value: "",
+      value: true,
       isShowEditModal: false
     }
   },

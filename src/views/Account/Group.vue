@@ -139,6 +139,11 @@ export default {
         params: { user_id: this.user_id }
       })
       this.$refs[this.PagedTableRef].total = data.length
+      const arr = []
+      data.forEach(item =>
+        arr.push({ label: item.groupName, value: item.groupId })
+      )
+      this.$store.commit("saveGroupData", JSON.stringify(arr))
     },
     async initData(keyWords) {
       this.data = []
@@ -159,7 +164,6 @@ export default {
         res.data.forEach(item =>
           arr.push({ label: item.groupName, value: item.groupId })
         )
-        this.$store.commit("saveGroupData", JSON.stringify(arr))
       }
       res.data.forEach((item, index) => {
         this.data.push({
@@ -191,7 +195,7 @@ export default {
         inputInfos: [
           { desc: "分组名称", label: "分组名称", model: group_name }
         ],
-        updateData: { group_id: String(group_id) },
+        updateData: { group_id },
         updateArgs: ["group_name"],
         url: "/account/updateGroup"
       }
@@ -199,22 +203,22 @@ export default {
       this.$refs[this.EditModalRef].value = false
     },
     async remove(params) {
-      let GroupIDArray = []
+      let group_id = []
       const ref = this.$refs
       if (params) {
-        GroupIDArray.push(String(params))
+        group_id.push(params)
       } else {
-        GroupIDArray = this.operationData.map(item => String(item.groupId))
+        group_id = this.operationData.map(item => item.groupId)
       }
       const { msg } = await this.$http.post("/account/deleteGroup", {
-        group_id: GroupIDArray,
+        group_id,
         user_id: this.user_id
       })
       if (msg) {
         this.allData()
         this.initData()
         ref["UnCheckButton"].unCheck()
-        this.$Message.success(`删除成功！`)
+        this.$Message.success(`删除成功（账号处于未分配状态）！`)
         ref[this.SearchInputRef].keyWords = ""
         ref[this.ConfirmModalRef].isShowConfirmModal = false
       }

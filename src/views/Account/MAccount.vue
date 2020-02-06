@@ -40,30 +40,20 @@ export default {
       ConfirmModalRef: "MAccountConfirmModal",
       buttonListInfos: [
         { id: "remove-m", name: "删除", icon: "md-trash", type: "error" },
-        {
-          id: "create-m",
-          name: "上传账号数据",
-          icon: "md-add-circle",
-          type: "primary"
-        },
-        { id: "up", name: "一键上线", icon: "md-trending-up", type: "warning" },
-        {
-          id: "down",
-          name: "一键下线",
-          type: "warning",
-          icon: "md-trending-down"
-        },
-        {
-          id: "GroupChange",
-          type: "info",
-          icon: "md-repeat",
-          name: "分组变更"
-        }
+        { id: "GroupChange", type: "info", icon: "md-repeat", name: "分组变更" }
       ],
       MAccountColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
         { width: 130, title: "账号", align: "center", key: "account" },
+        {
+          width: 150,
+          align: "center",
+          tooltip: true,
+          title: "所属分组",
+          key: "groupName"
+        },
+        { width: 100, align: "center", title: "分组ID", key: "groupId" },
         {
           width: 180,
           align: "center",
@@ -80,6 +70,13 @@ export default {
         {
           width: 130,
           align: "center",
+          tooltip: true,
+          title: "密码",
+          key: "accountPwd"
+        },
+        {
+          width: 130,
+          align: "center",
           title: "账号是否有效",
           key: "accountIsValid",
           render: (h, params) => {
@@ -88,13 +85,6 @@ export default {
             const text = row.accountIsValid ? "正常" : "无效"
             return h("Tag", { props: { type: "border", color } }, text)
           }
-        },
-        {
-          width: 130,
-          align: "center",
-          tooltip: true,
-          title: "密码",
-          key: "accountPwd"
         },
         {
           width: 130,
@@ -117,21 +107,6 @@ export default {
         },
         {
           width: 150,
-          align: "center",
-          tooltip: true,
-          title: "所属分组",
-          key: "groupName"
-        },
-        { width: 100, align: "center", title: "分组ID", key: "groupId" },
-        {
-          width: 150,
-          align: "center",
-          tooltip: true,
-          title: "操作人",
-          key: "userId"
-        },
-        {
-          width: 230,
           title: "操作",
           fixed: "right",
           align: "center",
@@ -142,41 +117,10 @@ export default {
                 {
                   props: {
                     size: "small",
-                    type: "warning",
-                    disabled: this.mutex,
-                    icon: "ios-trending-up"
-                  },
-                  style: { marginRight: "5px" },
-                  on: {
-                    click: () => {
-                      this.operationConfig = {
-                        icon: "ios-trending-up",
-                        color: "#19BE6B",
-                        title: "上线",
-                        operation: "上线",
-                        btnType: "success",
-                        btnIcon: "md-checkmark",
-                        btnText: "确定",
-                        params: "onByID",
-                        paramsValue: params.row,
-                        flag: true
-                      }
-                      this.$refs[this.ConfirmModalRef].isShowConfirmModal = true
-                    }
-                  }
-                },
-                "上线"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    size: "small",
                     type: "error",
                     disabled: this.mutex,
                     icon: "md-trash"
                   },
-                  style: { marginRight: "5px" },
                   on: {
                     click: () => {
                       this.operationConfig = {
@@ -231,12 +175,9 @@ export default {
           accountIsValid: item.accountIsValid,
           accountPwd: item.accountPwd,
           accountState: item.accountState,
-          accountWxid: item.accountWxid
-            ? item.accountWxid
-            : "无微信ID或信息异常",
-          groupName: item.groupName ? item.groupName : "无",
-          groupId: item.groupId ? String(item.groupId) : "无",
-          userId: item.userId
+          accountWxid: item.accountWxid ? item.accountWxid : "未登录或账号异常",
+          groupName: item.groupName ? item.groupName : "未分配",
+          groupId: item.groupId ? String(item.groupId) : "未分配"
         })
       })
     },
@@ -264,7 +205,7 @@ export default {
     },
     async onlineByWXID(row) {
       let arr = []
-      let WXIDArray = []
+      let list = []
       const ref = this.$refs
       if (row) {
         arr.push(row)
@@ -272,15 +213,15 @@ export default {
         arr = this.operationData
       }
       arr.forEach(item => {
-        WXIDArray.push({
+        list.push({
           account: item.account,
           a16_data62: item.account62A16,
           pwd: item.accountPwd
         })
       })
       const { data } = await this.$http.post("/account/loginMulti", {
+        list,
         group_id: "",
-        list: WXIDArray,
         request_type: "1"
       })
       if (row) {
@@ -296,10 +237,10 @@ export default {
       const obj = this.dataFormat(data)
       this.$Message.info(`成功上线账号${obj.succ}个，失败${obj.err}个！`)
     },
-    async onlineByGroup(params) {
+    async onlineByGroup(group_id) {
       this.clear()
       const { data } = await this.$http.post("/account/loginMulti", {
-        group_id: String(params),
+        group_id,
         list: [{}],
         request_type: "0"
       })
@@ -309,11 +250,11 @@ export default {
       this.$Message.info(`成功上线账号${obj.succ}个，失败${obj.err}个！`)
     },
     async offlineByWXID() {
-      const WXIDArray = []
-      this.operationData.forEach(item => WXIDArray.push(item.accountWxid))
+      const wxids = []
+      this.operationData.forEach(item => wxids.push(item.accountWxid))
       const { data } = await this.$http.post("/account/logout", {
-        groupId: 0,
-        wxids: WXIDArray,
+        wxids,
+        groupId: "",
         requestType: "1"
       })
       this.clear()
@@ -322,10 +263,10 @@ export default {
       const obj = this.dataFormat(data)
       this.$Message.info(`成功下线账号${obj.succ}个，失败${obj.err}个！`)
     },
-    async offlineByGroup(params) {
+    async offlineByGroup(groupId) {
       this.clear()
       const { data } = await this.$http.post("/account/logout", {
-        groupId: String(params),
+        groupId,
         wxids: [],
         requestType: "0"
       })
@@ -343,8 +284,8 @@ export default {
         this.operationData.forEach(item => accounts.push(item.account))
       }
       const { data } = await this.$http.post("/account/deleteAccount", {
-        groupId: "",
         accounts,
+        groupId: "",
         requestType: 1
       })
       const obj = this.dataFormat(data)
@@ -362,10 +303,10 @@ export default {
       this.allData()
       this.initData()
     },
-    async removeByGroup(groupID) {
+    async removeByGroup(groupId) {
       this.clear()
       const { data } = await this.$http.post("/account/deleteAccount", {
-        groupId: String(groupID),
+        groupId,
         accounts: [],
         requestType: 0
       })
@@ -374,9 +315,8 @@ export default {
       this.allData()
       this.initData()
     },
-    async uploadData(accountData, group_id) {
-      let list = []
-      list = accountData
+    async uploadData(accountData, groupId) {
+      let list = accountData
         .split(/[\r\n]/g)
         .map(item => item.split(/----/g))
         .map(item => {
@@ -388,7 +328,7 @@ export default {
       })
       const { data } = await this.$http.post("/account/addAccount", {
         list,
-        groupId: String(group_id),
+        groupId,
         userId: this.user_id
       })
       this.clear()
@@ -397,12 +337,12 @@ export default {
       const obj = this.dataFormat(data)
       this.$Message.info(`成功上传账号${obj.succ}个，失败${obj.err}个！`)
     },
-    async moveGroup(groupId) {
+    async moveGroup(group_id) {
       const account_list = []
       this.operationData.forEach(item => account_list.push(item.account))
       const { msg } = await this.$http.post("/account/setAccountGroup", {
-        account_list,
-        group_id: String(groupId)
+        group_id,
+        account_list
       })
       this.clear()
       this.allData()
@@ -416,8 +356,8 @@ export default {
       const SearchSelect = refs[this.SelectModalRef].$refs["SearchSelect"]
 
       select ? (select.value = "") : ""
-      SearchSelect ? (SearchSelect.value = "") : ""
       refs[this.CreateModalRef].accountData = ""
+      SearchSelect ? (SearchSelect.value = "") : ""
 
       table.$refs[table.TableRef].selectAll(false)
       refs[this.SelectModalRef].isShowSelectModal = false
@@ -425,8 +365,8 @@ export default {
       refs[this.ConfirmModalRef].isShowConfirmModal = false
     },
     dataFormat(data) {
-      const succ = data.success.length
       const err = data.error.length
+      const succ = data.success.length
       const dataObj = { succ, err }
       return dataObj
     }

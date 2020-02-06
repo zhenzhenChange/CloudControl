@@ -39,7 +39,11 @@ export default {
     clickEvent(btnID) {
       const parent = this.$parent
       const parentRefs = parent.$refs
-      if (btnID === "remove-g" || btnID === "remove-t") {
+      if (
+        btnID === "remove-g" ||
+        btnID === "remove-t" ||
+        btnID === "remove-m"
+      ) {
         if (!parent.operationData.length) {
           this.$Message.warning("请先勾选要处理的数据～")
           return
@@ -160,23 +164,6 @@ export default {
             flag: true
           }
           parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
-        } else {
-          parent.selectConfig = {
-            width: "350",
-            icon: "md-trash",
-            color: "#ED4014",
-            title: "该分组下的所有账号都将被删除",
-            selectConfig: {
-              title: "账号分组",
-              info: "分组",
-              options: JSON.parse(this.GroupData)
-            },
-            tryType: "error",
-            tryIcon: "md-trash",
-            tryBtn: "删除"
-          }
-          parentRefs[parent.SelectModalRef].params = "removeByGroup"
-          parentRefs[parent.SelectModalRef].isShowSelectModal = true
         }
       } else if (btnID === "GroupChange") {
         if (!parent.operationData.length) {
@@ -187,7 +174,7 @@ export default {
           width: "350",
           icon: "md-move",
           color: "#2D8CF0",
-          title: "将这些账号移动至另一个分组",
+          title: "将所选账号移动至另一个分组",
           selectConfig: {
             title: "账号分组",
             info: "分组",
