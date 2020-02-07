@@ -11,16 +11,9 @@ import "view-design/dist/styles/iview.css"
 
 Vue.use(ViewUI)
 
-const GlobalClick = () => {
-  // console.log(1)
-}
-
-// document.onclick = GlobalClick
-
 Vue.config.productionTip = false
 
 Vue.prototype.$http = http
-Vue.prototype.$GlobalClick = GlobalClick
 Vue.prototype.$Loading.config({ height: 3 })
 
 const componentsContext = require.context("./components", true, /.vue$/)

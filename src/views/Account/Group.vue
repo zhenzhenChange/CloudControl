@@ -56,6 +56,7 @@ export default {
           title: "创建时间",
           key: "groupCreateDate"
         },
+        { align: "center", title: "组内账号总数", key: "total" },
         {
           width: 330,
           title: "操作",
@@ -168,17 +169,26 @@ export default {
           arr.push({ label: item.groupName, value: item.groupId })
         )
       }
-      res.data.forEach((item, index) => {
+      res.data.forEach(async (item, index) => {
+        let total = await this.$http.post("/account/getAccount", {
+          group_id: String(item.groupId)
+        })
         this.data.push({
           serialNumber: index + 1,
           groupName: item.groupName,
           groupId: String(item.groupId),
-          groupCreateDate: this.$options.filters.date(item.groupCreateDate)
+          groupCreateDate: this.$options.filters.date(item.groupCreateDate),
+          total: total.data.length
         })
       })
     },
     async create() {
       const editModal = this.$refs[this.EditModalRef]
+      if (!editModal.value || editModal.value === " ") {
+        this.$Message.warning("请输入分组名称（开头不能有空格）")
+        return
+      }
+      this.$refs[this.EditModalRef].isShowEditModal = false
       const createData = { group_name: editModal.value, user_id: this.user_id }
       const { msg } = await this.$http.post("/account/addGroup", createData)
       this.$refs[this.EditModalRef].value = ""

@@ -92,13 +92,13 @@ export default {
       quickRouterLinks1: [
         { path: "/s-account", title: "账号设置", type: "md-cog" },
         { path: "/group", title: "账号 && 分组", type: "md-list" },
-        { path: "/friends", title: "好友管理", type: "md-contacts" },
+        { path: "/friends", title: "添加好友", type: "md-contacts" },
         { path: "/SetShreshold", title: "阈值设置", type: "md-arrow-up" }
       ],
       quickRouterLinks2: [
         { path: "/mail", title: "加粉管理", type: "md-contact" },
         { path: "/material", title: "素材管理", type: "md-book" },
-        { path: "/pull-group", title: "群聊管理", type: "md-hand" },
+        { path: "/pull-group", title: "拉群任务", type: "md-hand" },
         { path: "/space", title: "发朋友圈", type: "md-paper-plane" }
       ]
     }

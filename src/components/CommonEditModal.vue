@@ -70,7 +70,6 @@ export default {
   methods: {
     tryClick() {
       this.config.isUpdate ? this.update() : this.create()
-      this.isShowEditModal = false
     },
     catchClick() {
       this.$parent.updateConfig.inputInfos.forEach(info => (info.model = ""))
@@ -81,6 +80,7 @@ export default {
       this.$parent.create()
     },
     async update() {
+      this.isShowEditModal = false
       let updateData = {}
       const config = this.config
       const args = config.updateArgs

@@ -112,7 +112,7 @@
         </Breadcrumb>
         <Card>
           <div class="card-div">
-            <keep-alive><router-view /></keep-alive>
+            <router-view />
           </div>
         </Card>
       </Content>
@@ -147,8 +147,8 @@ export default {
           type: "md-call",
           menuItem: [
             { name: "加粉管理", path: "/mail" },
-            { name: "好友管理", path: "/friends" },
-            { name: "群聊管理", path: "/pull-group" }
+            { name: "添加好友", path: "/friends" },
+            { name: "拉群任务", path: "/pull-group" }
           ]
         },
         {

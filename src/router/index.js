@@ -41,7 +41,7 @@ const routes = [
       },
       {
         path: "/friends",
-        name: "好友管理",
+        name: "添加好友",
         component: () => import("../views/MailList/Friends.vue")
       },
       {
@@ -51,7 +51,7 @@ const routes = [
       },
       {
         path: "/pull-group",
-        name: "群聊管理",
+        name: "拉群任务",
         component: () => import("../views/MailList/PullGroup.vue")
       },
       {

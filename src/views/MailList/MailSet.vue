@@ -312,6 +312,25 @@ export default {
       this.freqLimit = ""
     },
     async createFansTask() {
+      const msgArr = [
+        { name: "任务名称", value: this.fansTaskName },
+        { name: "加粉数据", value: this.mailList },
+        { name: "验证信息", value: this.validInfo },
+        { name: "执行时间", value: this.startTime },
+        { name: "单号请求", value: this.requestNum },
+        { name: "间隔时间", value: this.blankTime },
+        { name: "频繁间隔", value: this.freqInte },
+        { name: "频繁上限", value: this.freqLimit }
+      ]
+      let flag = false
+      msgArr.forEach(item => {
+        if (!item.value) {
+          this.$Message.warning(`${item.name}不能为空`)
+          flag = false
+          return
+        }
+        flag = true
+      })
       const args = {
         groupId: this.currentGroupID,
         startTime: this.startTime,
@@ -323,12 +342,16 @@ export default {
         taskName: this.fansTaskName,
         content: this.validInfo
       }
-      const contact = this.mailList.split(/[\r\n]/g).filter(item => item !== "")
-      const upload = { contact, user_id: this.user_id }
-      await this.$http.post("/contact/upload", upload)
-      const res = await this.$http.post("/contact/addFriendsByContact", args)
-      this.$Message.info(res.msg)
-      this.resetClick()
+      if (flag) {
+        const contact = this.mailList
+          .split(/[\r\n]/g)
+          .filter(item => item !== "")
+        const upload = { contact, user_id: this.user_id }
+        await this.$http.post("/contact/upload", upload)
+        const res = await this.$http.post("/contact/addFriendsByContact", args)
+        this.$Message.info(res.msg)
+        this.resetClick()
+      }
     },
     async clearMailList() {
       this.$refs[this.ConfirmModalRef].isShowConfirmModal = false
