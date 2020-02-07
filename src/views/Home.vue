@@ -148,7 +148,8 @@ export default {
           menuItem: [
             { name: "加粉管理", path: "/mail" },
             { name: "添加好友", path: "/friends" },
-            { name: "拉群任务", path: "/pull-group" }
+            { name: "拉群任务", path: "/pull-group" },
+            { name: "拉群报表", path: "/report" }
           ]
         },
         {

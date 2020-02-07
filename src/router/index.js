@@ -55,6 +55,11 @@ const routes = [
         component: () => import("../views/MailList/PullGroup.vue")
       },
       {
+        path: "/report",
+        name: "拉群报表",
+        component: () => import("../views/MailList/ReportForm.vue")
+      },
+      {
         path: "/space",
         name: "发朋友圈",
         component: () => import("../views/Marketing/Space.vue")
