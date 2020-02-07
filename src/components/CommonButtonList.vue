@@ -39,11 +39,7 @@ export default {
     clickEvent(btnID) {
       const parent = this.$parent
       const parentRefs = parent.$refs
-      if (
-        btnID === "remove-g" ||
-        btnID === "remove-t" ||
-        btnID === "remove-m"
-      ) {
+      if (btnID === "remove-g" || btnID === "remove-t") {
         if (!parent.operationData.length) {
           this.$Message.warning("请先勾选要处理的数据～")
           return
@@ -86,85 +82,8 @@ export default {
         }
         parentRefs[parent.SelectModalRef].params = "send"
         parentRefs[parent.SelectModalRef].isShowSelectModal = true
-      } else if (btnID === "up") {
-        if (parent.operationData.length) {
-          parent.operationConfig = {
-            icon: "ios-trending-up",
-            color: "#19BE6B",
-            title: "一键上线",
-            operation: "上线",
-            btnType: "success",
-            btnIcon: "md-checkmark",
-            btnText: "确定",
-            params: "onNo",
-            flag: true
-          }
-          parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
-        } else {
-          parent.selectConfig = {
-            width: "350",
-            icon: "md-arrow-round-up",
-            color: "#2D8CF0",
-            title: "该分组下的账号都将上线",
-            selectConfig: {
-              title: "账号分组",
-              info: "分组",
-              options: JSON.parse(this.GroupData)
-            },
-            tryIcon: "md-checkmark",
-            tryBtn: "确定"
-          }
-          parentRefs[parent.SelectModalRef].params = "online"
-          parentRefs[parent.SelectModalRef].isShowSelectModal = true
-        }
-      } else if (btnID === "down") {
-        if (parent.operationData.length) {
-          parent.operationConfig = {
-            icon: "ios-trending-down",
-            color: "#19BE6B",
-            title: "一键下线",
-            operation: "下线",
-            btnType: "success",
-            btnIcon: "md-checkmark",
-            btnText: "确定",
-            params: "offNo",
-            flag: true
-          }
-          parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
-        } else {
-          parent.selectConfig = {
-            width: "350",
-            icon: "md-arrow-round-up",
-            color: "#2D8CF0",
-            title: "该分组下的账号都将下线",
-            selectConfig: {
-              title: "账号分组",
-              info: "分组",
-              options: JSON.parse(this.GroupData)
-            },
-            tryIcon: "md-checkmark",
-            tryBtn: "确定"
-          }
-          parentRefs[parent.SelectModalRef].params = "offline"
-          parentRefs[parent.SelectModalRef].isShowSelectModal = true
-        }
       } else if (btnID === "create-p") {
         parent.isShowUrlModal = true
-      } else if (btnID === "remove-m") {
-        if (parent.operationData.length) {
-          parent.operationConfig = {
-            icon: "md-trash",
-            color: "#ED4014",
-            title: "一键删除",
-            operation: "删除这些账号",
-            btnType: "error",
-            btnIcon: "md-trash",
-            btnText: "删除",
-            params: "removeByIDs",
-            flag: true
-          }
-          parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
-        }
       } else if (btnID === "GroupChange") {
         if (!parent.operationData.length) {
           this.$Message.warning("请先勾选要处理的数据～")

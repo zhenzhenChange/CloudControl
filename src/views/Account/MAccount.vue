@@ -147,7 +147,6 @@ export default {
     }
   },
   created() {
-    this.allData()
     this.initData()
   },
   computed: {
@@ -180,99 +179,6 @@ export default {
       })
       this.$refs[this.PagedTableRef].total = this.data.length
     },
-    async allData() {
-      const { data } = await this.$http.get("/account/getAccountInfo", {
-        params: { user_id: this.user_id }
-      })
-      let FriendCount = 0
-      let DeadAccount = 0
-      let OnlineAccount = 0
-      data.forEach(item => {
-        if (item.accountFriendCount) {
-          FriendCount += item.accountFriendCount
-        }
-        if (!item.accountIsValid) {
-          DeadAccount += 1
-        }
-        if (item.accountState) {
-          OnlineAccount += 1
-        }
-      })
-      const DataCount = { FriendCount, DeadAccount, OnlineAccount }
-      this.$store.commit("saveDataCount", JSON.stringify(DataCount))
-    },
-    async onlineByWXID(row) {
-      let arr = []
-      let list = []
-      const ref = this.$refs
-      if (row) {
-        arr.push(row)
-      } else {
-        arr = this.operationData
-      }
-      arr.forEach(item => {
-        list.push({
-          account: item.account,
-          a16_data62: item.account62A16,
-          pwd: item.accountPwd
-        })
-      })
-      const { data } = await this.$http.post("/account/loginMulti", {
-        list,
-        group_id: "",
-        request_type: "1"
-      })
-      if (row) {
-        let msg = ""
-        msg = data.success.length ? "成功" : "失败"
-        this.$Message.info(`上线${msg}！`)
-        ref[this.ConfirmModalRef].isShowConfirmModal = false
-        return
-      }
-      this.clear()
-      this.allData()
-      this.initData()
-      const obj = this.dataFormat(data)
-      this.$Message.info(`成功上线账号${obj.succ}个，失败${obj.err}个！`)
-    },
-    async onlineByGroup(group_id) {
-      this.clear()
-      const { data } = await this.$http.post("/account/loginMulti", {
-        group_id,
-        list: [{}],
-        request_type: "0"
-      })
-      this.allData()
-      this.initData()
-      const obj = this.dataFormat(data)
-      this.$Message.info(`成功上线账号${obj.succ}个，失败${obj.err}个！`)
-    },
-    async offlineByWXID() {
-      const wxids = []
-      this.operationData.forEach(item => wxids.push(item.accountWxid))
-      const { data } = await this.$http.post("/account/logout", {
-        wxids,
-        groupId: "",
-        requestType: "1"
-      })
-      this.clear()
-      this.allData()
-      this.initData()
-      const obj = this.dataFormat(data)
-      this.$Message.info(`成功下线账号${obj.succ}个，失败${obj.err}个！`)
-    },
-    async offlineByGroup(groupId) {
-      this.clear()
-      const { data } = await this.$http.post("/account/logout", {
-        groupId,
-        wxids: [],
-        requestType: "0"
-      })
-      this.allData()
-      this.initData()
-      const obj = this.dataFormat(data)
-      this.$Message.info(`成功下线账号${obj.succ}个，失败${obj.err}个！`)
-    },
     async removeByWXID(row) {
       const accounts = []
       if (row) {
@@ -298,7 +204,6 @@ export default {
         this.$Message.info(`成功删除账号${obj.succ}个，失败${obj.err}个！`)
       }
       this.clear()
-      this.allData()
       this.initData()
     },
     async removeByGroup(groupId) {
@@ -310,7 +215,6 @@ export default {
       })
       const obj = this.dataFormat(data)
       this.$Message.info(`成功删除账号${obj.succ}个，失败${obj.err}个！`)
-      this.allData()
       this.initData()
     },
     async uploadData(accountData, groupId) {
@@ -330,7 +234,6 @@ export default {
         userId: this.user_id
       })
       this.clear()
-      this.allData()
       this.initData()
       const obj = this.dataFormat(data)
       this.$Message.info(`成功上传账号${obj.succ}个，失败${obj.err}个！`)
@@ -344,7 +247,6 @@ export default {
         account_list
       })
       this.clear()
-      this.allData()
       this.initData()
       this.$Message.success(msg)
     },

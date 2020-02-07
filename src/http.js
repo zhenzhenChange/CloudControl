@@ -5,16 +5,34 @@ const http = axios.create({ baseURL: "/cloud-api" })
 
 http.interceptors.request.use(
   config => {
-    Vue.prototype.$Loading.start()
-    return config
+    if (
+      config.url === "/common/getInit" ||
+      config.url === "/account/getAccountInfo" ||
+      config.url === "/contact/getAddFriendCount" ||
+      config.url === "/group/getEnterGroupCount"
+    ) {
+      return config
+    } else {
+      Vue.prototype.$Loading.start()
+      return config
+    }
   },
   err => Promise.reject(err)
 )
 
 http.interceptors.response.use(
   res => {
-    Vue.prototype.$Loading.finish()
-    return res.data ? res.data : res
+    if (
+      res.config.url === "/common/getInit" ||
+      res.config.url === "/account/getAccountInfo" ||
+      res.config.url === "/contact/getAddFriendCount" ||
+      res.config.url === "/group/getEnterGroupCount"
+    ) {
+      return res.data ? res.data : res
+    } else {
+      Vue.prototype.$Loading.finish()
+      return res.data ? res.data : res
+    }
   },
   err => {
     Vue.prototype.$Loading.error()

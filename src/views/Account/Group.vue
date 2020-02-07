@@ -74,10 +74,13 @@ export default {
                   style: { marginRight: "5px" },
                   on: {
                     click: () => {
+                      const { groupId } = params.row
                       this.$refs["GroupTableDrawer"].isShowTableDrawer = true
                       this.$refs["GroupTableDrawer"].getAccountDataByGroupID(
-                        params.row.groupId
+                        groupId
                       )
+                      this.$refs["GroupTableDrawer"].initAllData(groupId)
+                      this.$refs["GroupTableDrawer"].groupID = groupId
                     }
                   }
                 },

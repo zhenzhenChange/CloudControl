@@ -6,49 +6,238 @@
       :closable="false"
       v-model="isShowTableDrawer"
     >
-      <ButtonList :buttonListInfos="buttonListInfos" />
+      <Button type="error" class="mr-10" icon="md-trash" @click="removeModal">
+        删除
+      </Button>
+      <Button
+        type="info"
+        class="mr-10"
+        icon="md-cloud-upload"
+        @click="isShowUploadModal = true"
+      >
+        上传账号
+      </Button>
+      <Button
+        class="mr-10"
+        type="warning"
+        icon="md-trending-up"
+        @click="isShowUpModal = true"
+      >
+        一键上线
+      </Button>
+      <Button
+        class="mr-10"
+        type="warning"
+        icon="md-trending-down"
+        @click="isShowDownModal = true"
+      >
+        一键下线
+      </Button>
+      <Button type="info" icon="md-move" @click="moveModal">
+        分组变更
+      </Button>
       <Divider dashed />
-      <UnCheckButton :el="PagedTableRef" />
-      <PagedTable
-        :data="data"
-        :ref="PagedTableRef"
-        :dataColumns="CommonColumns"
-      />
+      <div class="PagedTable">
+        <Table
+          stripe
+          border
+          :data="data"
+          :ref="TableRef"
+          :columns="CommonColumns"
+          @on-selection-change="selectionChange"
+        />
+        <div class="page mt-10">
+          <div class="mb-10">
+            <Page
+              transfer
+              show-total
+              show-sizer
+              show-elevator
+              :total="total"
+              :current="current"
+              :page-size="pageSize"
+              @on-change="changePage"
+              :page-size-opts="pageSizeOpts"
+              @on-page-size-change="changeSize"
+            />
+          </div>
+        </div>
+      </div>
     </Drawer>
+    <Modal
+      width="350"
+      :closable="false"
+      :mask-closable="false"
+      v-model="isShowDeleteModal"
+      class-name="vertical-center-modal"
+    >
+      <p slot="header">
+        <Icon
+          type="md-trash"
+          color="#ED4014"
+          class="mr-5 header-icon"
+        />一键删除
+      </p>
+      <div class="text-center">
+        <p>确定要删除所选账号吗？</p>
+      </div>
+      <div slot="footer">
+        <Button icon="md-remove-circle" @click="cancel">取消</Button>
+        <Button type="error" icon="md-trash" @click="remove">
+          删除
+        </Button>
+      </div>
+    </Modal>
+    <Modal
+      width="600"
+      :mask-closable="false"
+      v-model="isShowUploadModal"
+      class-name="vertical-center-modal"
+    >
+      <p slot="header">
+        <Icon color="#2d8cf0" type="md-add-circle" class="mr-5" />
+        上传账号至该分组
+      </p>
+      <div class="upload mb-10">
+        <span class="title mr-10">账号数据</span>
+        <Upload
+          action=""
+          :show-upload-list="false"
+          :before-upload="handleBeforeUpload"
+        >
+          <Button icon="md-cloud-upload">上传TXT文件</Button>
+        </Upload>
+      </div>
+      <Input
+        type="textarea"
+        v-model="dataList"
+        :autosize="{ minRows: 5, maxRows: 20 }"
+        placeholder="账号格式：XXXX----XXXX----XXXX（账号----密码----A16/62数据），一个账号单独一行，多个账号多行，支持A16/62"
+      >
+      </Input>
+      <div slot="footer">
+        <Button icon="md-remove-circle" @click="cancel">取消</Button>
+        <Button type="success" icon="md-checkmark" @click="upload">确定</Button>
+      </div>
+    </Modal>
+    <Modal
+      width="350"
+      :closable="false"
+      :mask-closable="false"
+      v-model="isShowUpModal"
+      class-name="vertical-center-modal"
+    >
+      <p slot="header">
+        <Icon
+          color="#FF9C08"
+          type="md-trending-up"
+          class="mr-5 header-icon"
+        />一键上线
+      </p>
+      <div class="text-center">
+        <p>确定要上线该分组下的所有账号吗？</p>
+      </div>
+      <div slot="footer">
+        <Button icon="md-remove-circle" @click="cancel">取消</Button>
+        <Button type="success" icon="md-checkmark" @click="up">
+          确定
+        </Button>
+      </div>
+    </Modal>
+    <Modal
+      width="350"
+      :closable="false"
+      :mask-closable="false"
+      v-model="isShowDownModal"
+      class-name="vertical-center-modal"
+    >
+      <p slot="header">
+        <Icon
+          color="#FF9C08"
+          type="md-trending-down"
+          class="mr-5 header-icon"
+        />一键下线
+      </p>
+      <div class="text-center">
+        <p>确定要下线该分组下的所有账号吗？</p>
+      </div>
+      <div slot="footer">
+        <Button icon="md-remove-circle" @click="cancel">取消</Button>
+        <Button type="success" icon="md-checkmark" @click="down">
+          确定
+        </Button>
+      </div>
+    </Modal>
+    <Modal
+      width="350"
+      :closable="false"
+      :mask-closable="false"
+      v-model="isShowMoveModal"
+      class-name="vertical-center-modal"
+    >
+      <p slot="header">
+        <Icon
+          type="md-move"
+          color="#2DB7F5"
+          class="mr-5 header-icon"
+        />移动至新分组
+      </p>
+      <div class="SearchSelect mr-30">
+        <span class="title mr-10">账号分组</span>
+        <Select
+          transfer
+          clearable
+          filterable
+          class="select"
+          v-model="value"
+          placeholder="请选择分组"
+        >
+          <Option
+            :key="option.value"
+            :value="option.value"
+            v-for="option in options"
+            >{{ option.label }}</Option
+          >
+        </Select>
+      </div>
+      <div class="clear-both"></div>
+      <div slot="footer">
+        <Button icon="md-remove-circle" @click="cancel">取消</Button>
+        <Button type="info" icon="md-move" @click="move">
+          移动
+        </Button>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
+import { mapState } from "vuex"
 export default {
   name: "TableDrawer",
   data() {
     return {
+      row: "",
       data: [],
+      total: 0,
+      value: "",
+      current: 1,
+      options: [],
+      groupID: "",
+      dataList: "",
+      mutex: false,
       pageSize: 10,
       pageIndex: 0,
+      selectConfig: {},
+      operationData: [],
+      isShowUpModal: false,
+      isShowDownModal: false,
+      isShowMoveModal: false,
+      isShowDeleteModal: false,
+      isShowUploadModal: false,
       isShowTableDrawer: false,
+      TableRef: "DrawerPagedTable",
       PagedTableRef: "DrawerPagedTable",
-      buttonListInfos: [
-        { id: "remove-m", name: "删除", icon: "md-trash", type: "error" },
-        {
-          id: "create-m",
-          name: "上传账号数据",
-          icon: "md-add-circle",
-          type: "primary"
-        },
-        { id: "up", name: "一键上线", icon: "md-trending-up", type: "warning" },
-        {
-          id: "down",
-          name: "一键下线",
-          type: "warning",
-          icon: "md-trending-down"
-        },
-        {
-          id: "GroupChange",
-          type: "info",
-          icon: "md-repeat",
-          name: "分组变更"
-        }
-      ],
+      pageSizeOpts: [10, 30, 50, 100, 150, 200, 400],
       CommonColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
@@ -114,55 +303,14 @@ export default {
                 {
                   props: {
                     size: "small",
-                    type: "warning",
-                    disabled: this.mutex,
-                    icon: "ios-trending-up"
-                  },
-                  style: { marginRight: "5px" },
-                  on: {
-                    click: () => {
-                      this.operationConfig = {
-                        icon: "ios-trending-up",
-                        color: "#19BE6B",
-                        title: "上线",
-                        operation: "上线",
-                        btnType: "success",
-                        btnIcon: "md-checkmark",
-                        btnText: "确定",
-                        params: "onByID",
-                        paramsValue: params.row,
-                        flag: true
-                      }
-                      this.$refs[this.ConfirmModalRef].isShowConfirmModal = true
-                    }
-                  }
-                },
-                "上线"
-              ),
-              h(
-                "Button",
-                {
-                  props: {
-                    size: "small",
                     type: "error",
-                    disabled: this.mutex,
-                    icon: "md-trash"
+                    icon: "md-trash",
+                    disabled: this.mutex
                   },
                   on: {
                     click: () => {
-                      this.operationConfig = {
-                        icon: "md-trash",
-                        color: "#ED4014",
-                        title: "删除",
-                        operation: "删除",
-                        btnType: "error",
-                        btnIcon: "md-trash",
-                        btnText: "删除",
-                        params: "removeByID",
-                        paramsValue: params.row,
-                        flag: true
-                      }
-                      this.$refs[this.ConfirmModalRef].isShowConfirmModal = true
+                      this.isShowDeleteModal = true
+                      this.row = params.row
                     }
                   }
                 },
@@ -174,35 +322,21 @@ export default {
       ]
     }
   },
-  created() {
-    // this.initData()
+  computed: {
+    ...mapState({
+      user_id: state => state.user_id,
+      GroupData: state => state.GroupData
+    })
   },
   methods: {
-    async initData() {
-      this.data = []
-      const { data } = await this.$http.get("/account/getAccountInfo", {
-        params: {
-          user_id: this.user_id,
-          pageIndex: this.pageIndex,
-          pageSize: this.pageSize
-        }
+    async initAllData(group_id) {
+      const { data } = await this.$http.post("/account/getAccount", {
+        group_id
       })
-      data.forEach((item, index) => {
-        this.data.push({
-          serialNumber: index + 1,
-          account: item.account,
-          account62A16: item.account62A16,
-          accountFriendCount: item.accountFriendCount
-            ? item.accountFriendCount
-            : "无",
-          accountIsValid: item.accountIsValid,
-          accountPwd: item.accountPwd,
-          accountState: item.accountState,
-          accountWxid: item.accountWxid ? item.accountWxid : "未登录或账号异常"
-        })
-      })
+      this.total = data.length
     },
     async getAccountDataByGroupID(group_id) {
+      this.options = JSON.parse(this.GroupData)
       this.data = []
       const postArgs = {
         group_id,
@@ -224,7 +358,158 @@ export default {
           accountWxid: item.accountWxid ? item.accountWxid : "未登录或账号异常"
         })
       })
+    },
+    changePage(index) {
+      this.current = index
+      this.pageIndex = index - 1
+      this.getAccountDataByGroupID(this.groupID)
+    },
+    changeSize(pageSize) {
+      this.pageSize = pageSize
+      this.getAccountDataByGroupID(this.groupID)
+    },
+    selectionChange(selection) {
+      this.operationData = selection
+      selection.length ? (this.mutex = true) : (this.mutex = false)
+    },
+    removeModal() {
+      if (!this.operationData.length) {
+        this.$Message.warning("请选择处理项")
+        return
+      }
+      this.isShowDeleteModal = true
+    },
+    async remove() {
+      this.isShowDeleteModal = false
+      const accounts = []
+      if (this.row) {
+        const { account } = this.row
+        accounts.push(account)
+        this.row = ""
+      } else {
+        this.operationData.forEach(item => accounts.push(item.account))
+      }
+      const { msg } = await this.$http.post("/account/deleteAccount", {
+        accounts,
+        groupId: "",
+        requestType: 1
+      })
+      this.$Message.info(msg)
+      this.initAllData(this.groupID)
+      this.$refs[this.TableRef].selectAll(false)
+      this.getAccountDataByGroupID(this.groupID)
+    },
+    cancel() {
+      this.isShowMoveModal = false
+      this.isShowDeleteModal = false
+      this.isShowUploadModal = false
+      this.isShowUpModal = false
+      this.isShowDownModal = false
+    },
+    async upload() {
+      let list = this.dataList
+        .split(/[\r\n]/g)
+        .map(item => item.split(/----/g))
+        .map(item => {
+          return { account: item[0], password: item[1], a16Data64: item[2] }
+        })
+      list.forEach((item, index) => {
+        if (!item.account || !item.password || !item.a16Data64)
+          list.splice(index, 1)
+      })
+      const { msg } = await this.$http.post("/account/addAccount", {
+        list,
+        userId: this.user_id,
+        groupId: this.groupID
+      })
+      this.$Message.info(msg)
+      this.isShowUploadModal = false
+      this.initAllData(this.groupID)
+      this.getAccountDataByGroupID(this.groupID)
+    },
+    handleBeforeUpload(file) {
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onload = () => (this.dataList = reader.result)
+      return false
+    },
+    async up() {
+      this.isShowUpModal = false
+      const { data } = await this.$http.post("/account/loginMulti", {
+        list: [{}],
+        request_type: "0",
+        group_id: this.groupID
+      })
+      this.initAllData(this.groupID)
+      this.getAccountDataByGroupID(this.groupID)
+      this.$Message.info(
+        `上线成功${data.success.length}个，失败${data.error.length}个`
+      )
+    },
+    async down() {
+      this.isShowDownModal = false
+      const { data } = await this.$http.post("/account/logout", {
+        wxids: [],
+        requestType: "0",
+        groupId: this.groupID
+      })
+      this.initAllData(this.groupID)
+      this.getAccountDataByGroupID(this.groupID)
+      this.$Message.info(
+        `下线成功${data.success.length}个，失败${data.error.length}个`
+      )
+    },
+    moveModal() {
+      if (!this.operationData.length) {
+        this.$Message.warning("请选择处理项")
+        return
+      }
+      this.isShowMoveModal = true
+    },
+    async move() {
+      this.isShowMoveModal = false
+      const account_list = []
+      this.operationData.forEach(item => account_list.push(item.account))
+      const { msg } = await this.$http.post("/account/setAccountGroup", {
+        account_list,
+        group_id: this.value
+      })
+      this.value = ""
+      this.$Message.success(msg)
+      this.initAllData(this.groupID)
+      this.getAccountDataByGroupID(this.groupID)
+      this.$refs[this.TableRef].selectAll(false)
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.upload {
+  .title {
+    width: 56px;
+    float: left;
+    height: 32px;
+    display: block;
+    line-height: 32px;
+  }
+}
+
+.SearchSelect {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .title {
+    float: left;
+    height: 32px;
+    line-height: 32px;
+  }
+  .select {
+    width: 70%;
+    margin-top: 1px;
+    ::v-deep .ivu-select-input {
+      padding-bottom: 5px;
+    }
+  }
+}
+</style>

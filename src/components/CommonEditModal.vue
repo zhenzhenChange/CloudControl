@@ -46,7 +46,6 @@
         ref="tryButton"
         @click="tryClick"
         icon="md-checkmark"
-        :disabled="value === '' ? true : false"
       >
         {{ config.tryBtn }}
       </Button>
@@ -74,11 +73,8 @@ export default {
       this.isShowEditModal = false
     },
     catchClick() {
-      this.config.isUpdate
-        ? this.$parent.updateConfig.inputInfos.forEach(
-            info => (info.model = "")
-          )
-        : ""
+      this.$parent.updateConfig.inputInfos.forEach(info => (info.model = ""))
+      this.value = ""
       this.isShowEditModal = false
     },
     create() {
