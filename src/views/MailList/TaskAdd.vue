@@ -13,7 +13,7 @@
           color="#ED4014"
           type="md-stopwatch"
           class="mr-5 header-icon"
-        />终止该分组下的所有拉群任务
+        />终止该分组下的所有加粉任务
       </p>
       <div class="text-center">
         <p>确定要终止吗？</p>
