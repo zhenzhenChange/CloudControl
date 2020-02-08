@@ -55,9 +55,9 @@ const routes = [
         component: () => import("../views/MailList/PullGroup.vue")
       },
       {
-        path: "/report",
-        name: "拉群报表",
-        component: () => import("../views/MailList/ReportForm.vue")
+        path: "/task",
+        name: "加粉报表",
+        component: () => import("../views/MailList/TaskAdd.vue")
       },
       {
         path: "/space",

@@ -85,7 +85,7 @@
         </Col>
       </Row>
       <Row class="mt-10">
-        <Col span="24">
+        <Col span="17">
           <span class="ml-10 mr-10">设置来源</span>
           <RadioGroup v-model="setOrigin">
             <Radio label="来源手机号"></Radio>
@@ -94,6 +94,11 @@
             <Radio label="来源通讯录"></Radio>
             <Radio label="自定义来源"></Radio>
           </RadioGroup>
+        </Col>
+        <Col span="6" offset="1" v-show="setOrigin === '自定义来源'">
+          <Input clearable v-model="custom" placeholder="请填写来源">
+            <span slot="prepend">自定义来源</span>
+          </Input>
         </Col>
       </Row>
       <Row class="mt-10">
@@ -255,6 +260,7 @@ export default {
     return {
       wx: "",
       data: [],
+      custom: "",
       freqInte: "",
       mailList: "",
       pageSize: 10,
@@ -313,7 +319,7 @@ export default {
                 "Button",
                 {
                   style: { marginRight: "5px" },
-                  props: { type: "warning", icon: "md-send" },
+                  props: { type: "info", icon: "md-send" },
                   on: {
                     click: () => {
                       const { groupName, groupId } = params.row
@@ -323,12 +329,12 @@ export default {
                     }
                   }
                 },
-                "发送添加好友请求"
+                "创建普通加粉任务"
               ),
               h(
                 "Button",
                 {
-                  props: { type: "info", icon: "md-paper-plane" },
+                  props: { type: "success", icon: "md-paper-plane" },
                   on: {
                     click: () => {
                       this.$refs["FriendConfirmModal"].isShowConfirmModal = true
@@ -433,6 +439,7 @@ export default {
       this.requestNum = ""
       this.freqInte = ""
       this.freqLimit = ""
+      this.custom = ""
     },
     async createFriendsTask() {
       const msgArr = [
@@ -506,5 +513,10 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.ivu-col-span-17 {
+  height: 32px;
+  line-height: 32px;
 }
 </style>

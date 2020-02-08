@@ -77,6 +77,40 @@
         </Button>
       </div>
     </Drawer>
+    <Drawer width="70" :closable="false" v-model="isShowReportDrawer">
+      <div slot="header">
+        <Icon type="md-book" color="#2D8CF0" class="mr-10" />拉群任务报表
+      </div>
+      <PagedTable
+        :data="reportData"
+        ref="ReportPagedTable"
+        :dataColumns="reportColumns"
+      />
+    </Drawer>
+    <Modal
+      width="350"
+      :closable="false"
+      :mask-closable="false"
+      v-model="isShowStopModal"
+      class-name="vertical-center-modal"
+    >
+      <p slot="header">
+        <Icon
+          color="#ED4014"
+          type="md-stopwatch"
+          class="mr-5 header-icon"
+        />终止该分组下的所有拉群任务
+      </p>
+      <div class="text-center">
+        <p>确定要终止吗？</p>
+      </div>
+      <div slot="footer">
+        <Button icon="md-remove-circle" @click="cancel">取消</Button>
+        <Button type="error" icon="md-checkmark" @click="stop">
+          确定
+        </Button>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -90,18 +124,27 @@ export default {
       finalNum: "",
       pageSize: 10,
       pageIndex: 0,
+      reportData: [],
       checkType: "一手",
       currentGroupID: "",
       isShowDrawer: false,
       currentGroupName: "",
+      isShowStopModal: false,
+      isShowReportDrawer: false,
       PagedTableRef: "PullGroupPagedTable",
+      reportColumns: [
+        { width: 70, align: "center", title: "序号", key: "serialNumber" },
+        { title: "群聊ID", align: "center", key: "ID" },
+        { title: "群聊链接", align: "center", key: "Url" },
+        { title: "群内人数", align: "center", key: "memberCount" }
+      ],
       PullGroupColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
         { align: "center", title: "分组ID", key: "groupId" },
         { align: "center", title: "分组名称", key: "groupName" },
         { align: "center", title: "创建时间", key: "groupCreateDate" },
         {
-          width: 200,
+          width: 500,
           title: "操作",
           align: "center",
           render: (h, params) => {
@@ -110,6 +153,7 @@ export default {
                 "Button",
                 {
                   props: { type: "info", icon: "md-share-alt" },
+                  style: { marginRight: "15px" },
                   on: {
                     click: () => {
                       const { groupName, groupId } = params.row
@@ -120,6 +164,35 @@ export default {
                   }
                 },
                 "创建拉群任务"
+              ),
+              h(
+                "Button",
+                {
+                  props: { type: "success", icon: "md-eye" },
+                  style: { marginRight: "15px" },
+                  on: {
+                    click: () => {
+                      const { groupId } = params.row
+                      this.isShowReportDrawer = true
+                      this.getReportData(groupId)
+                    }
+                  }
+                },
+                "查看拉群报表"
+              ),
+              h(
+                "Button",
+                {
+                  props: { type: "error", icon: "md-stopwatch" },
+                  on: {
+                    click: () => {
+                      const { groupId } = params.row
+                      this.isShowStopModal = true
+                      this.currentGroupID = groupId
+                    }
+                  }
+                },
+                "终止拉群任务"
               )
             ])
           }
@@ -194,6 +267,32 @@ export default {
       const { msg } = await this.$http.get("/group/enterGroup", { params })
       this.$Message.info(msg)
       this.resetClick()
+    },
+    cancel() {
+      this.isShowStopModal = false
+    },
+    async stop() {
+      this.isShowStopModal = false
+      const { msg } = await this.$http.get("/stopEnterGroup", {
+        params: { groupId: this.currentGroupID }
+      })
+      this.$Message.info(msg)
+    },
+    async getReportData(groupId) {
+      this.reportData = []
+      const data = await this.$http.get("/groupView", {
+        params: { groupId }
+      })
+      data.forEach((item, index) => {
+        for (const key in item) {
+          this.reportData.push({
+            serialNumber: index + 1,
+            ID: key.split("@")[0],
+            Url: key.split("###")[1],
+            memberCount: item[key].memberCount
+          })
+        }
+      })
     }
   }
 }

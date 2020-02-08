@@ -234,7 +234,7 @@ export default {
         { align: "center", title: "分组名称", key: "groupName" },
         { align: "center", title: "创建时间", key: "groupCreateDate" },
         {
-          width: 200,
+          width: 230,
           title: "操作",
           align: "center",
           render: (h, params) => {
@@ -252,7 +252,7 @@ export default {
                     }
                   }
                 },
-                "创建加粉任务"
+                "创建通讯录加粉任务"
               )
             ])
           }
