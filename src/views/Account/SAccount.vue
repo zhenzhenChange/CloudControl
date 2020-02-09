@@ -1,36 +1,41 @@
 <template>
-  <!-- 账号设置 -->
+  <!-- 账号资料设置 -->
   <div class="SAccount">
-    <ButtonList :buttonListInfos="buttonListInfos" />
-    <Divider dashed />
-    <!-- <div class="mb-10 config float-left mr-20">
-      <span class="mr-10">好友请求配置</span>
-      <RadioGroup v-model="isChecking">
-        <Radio label="需要验证"></Radio>
-        <Radio label="不需要验证"></Radio>
-      </RadioGroup>
-    </div> -->
-    <div class="clear-both"></div>
-    <div class="mb-10 config">
-      <span class="mr-10">修改资料配置</span>
-      <RadioGroup v-model="isUpdateType">
-        <Radio label="修改密码"></Radio>
-        <Radio label="修改昵称"></Radio>
-        <Radio label="修改头像"></Radio>
-      </RadioGroup>
-    </div>
-    <div class="clear-both"></div>
-    <UnCheckButton class="mt-10" :el="PagedTableRef" />
+    <Modal
+      width="450"
+      :closable="false"
+      :mask-closable="false"
+      v-model="isShowModfiyModal"
+      class-name="vertical-center-modal"
+    >
+      <p slot="header">
+        <Icon
+          color="#42BEF6"
+          type="md-create"
+          class="mr-5 header-icon"
+        />为该分组下的所有账号修改资料
+      </p>
+      <div class="mb-10 config">
+        <span class="mr-10">修改资料配置</span>
+        <RadioGroup v-model="isUpdateType">
+          <Radio label="修改密码"></Radio>
+          <Radio label="修改昵称"></Radio>
+          <Radio label="修改头像"></Radio>
+        </RadioGroup>
+      </div>
+      <div slot="footer">
+        <Button icon="md-remove-circle" @click="isShowModfiyModal = false">
+          取消
+        </Button>
+        <Button type="success" icon="md-checkmark" @click="modify">
+          确定
+        </Button>
+      </div>
+    </Modal>
     <PagedTable
       :data="data"
       :ref="PagedTableRef"
       :dataColumns="SAccountColumns"
-    />
-    <CommonSelectModal :ref="SelectModalRef" :config="selectConfig" />
-    <CommonConfirmModal
-      :data="operationData"
-      :ref="ConfirmModalRef"
-      :config="operationConfig"
     />
   </div>
 </template>
@@ -43,29 +48,39 @@ export default {
       data: [],
       pageIndex: 0,
       pageSize: 10,
-      selectConfig: {},
-      operationData: [],
-      operationConfig: {},
-      isChecking: "需要验证",
+      currentGroupID: "",
       isUpdateType: "修改密码",
+      isShowModfiyModal: false,
       PagedTableRef: "SAccountPagedTable",
-      SelectModalRef: "SAccountSelectModal",
-      ConfirmModalRef: "SAccountConfirmModal",
-      buttonListInfos: [
-        {
-          id: "ChangeMeans",
-          name: "修改资料",
-          icon: "md-repeat",
-          type: "warning"
-        }
-      ],
       SAccountColumns: [
-        { width: 60, align: "center", type: "selection" },
-        { width: 130, align: "center", title: "账号", key: "account" },
-        { width: 130, align: "center", title: "密码", key: "accountPwd" },
-        { width: 200, align: "center", title: "微信ID", key: "accountWxid" },
-        { tooltip: true, align: "center", title: "所属分组", key: "groupName" },
-        { align: "center", title: "分组ID", key: "groupId" }
+        { width: 70, align: "center", title: "序号", key: "serialNumber" },
+        { align: "center", title: "分组ID", key: "groupId" },
+        { align: "center", title: "分组名称", key: "groupName" },
+        { align: "center", title: "创建时间", key: "groupCreateDate" },
+        { align: "center", title: "组内账号总数", key: "total" },
+        {
+          width: 200,
+          title: "操作",
+          align: "center",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "Button",
+                {
+                  props: { type: "info", icon: "md-create" },
+                  on: {
+                    click: () => {
+                      const { groupId } = params.row
+                      this.isShowModfiyModal = true
+                      this.currentGroupID = groupId
+                    }
+                  }
+                },
+                "修改资料"
+              )
+            ])
+          }
+        }
       ]
     }
   },
@@ -77,38 +92,36 @@ export default {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
+    async allData() {
+      const { data } = await this.$http.get("/account/getAllGroup", {
+        params: { user_id: this.user_id }
+      })
+      this.$refs[this.PagedTableRef].total = data.length
+    },
     async initData() {
       this.data = []
-      const { data } = await this.$http.get("/account/getAccountInfo", {
+      const { data } = await this.$http.get("/account/getAllGroup", {
         params: {
           user_id: this.user_id,
           pageIndex: this.pageIndex,
           pageSize: this.pageSize
         }
       })
-      data.forEach(item => {
-        if (item.accountWxid) {
-          this.data.push({
-            account: item.account,
-            accountWxid: item.accountWxid
-              ? item.accountWxid
-              : "无微信ID或信息异常",
-            accountPwd: item.accountPwd,
-            groupName: item.groupName ? item.groupName : "无",
-            groupId: item.groupId ? String(item.groupId) : "无"
-          })
-        }
+      data.forEach(async (item, index) => {
+        let total = await this.$http.post("/account/getAccount", {
+          group_id: String(item.groupId)
+        })
+        this.data.push({
+          serialNumber: index + 1,
+          groupName: item.groupName,
+          groupId: String(item.groupId),
+          groupCreateDate: this.$options.filters.date(item.groupCreateDate),
+          total: total.data.length
+        })
       })
     },
-    async allData() {
-      const { data } = await this.$http.get("/account/getAccountInfo", {
-        params: { user_id: this.user_id }
-      })
-      const newData = data.filter(item => item.accountWxid)
-      this.$refs[this.PagedTableRef].total = newData.length
-    },
-    async changeMeansByGroup(groupId) {
-      this.clear()
+    async modify() {
+      this.isShowModfiyModal = false
       const change_type =
         this.isUpdateType === "修改密码"
           ? 2
@@ -116,11 +129,11 @@ export default {
           ? 0
           : 1
       const { msg, data } = await this.$http.post("/account/changeDatum", {
-        group_id: String(groupId),
+        type: 0,
         wxids: [],
         change_type,
-        type: 0,
-        user_id: this.user_id
+        user_id: this.user_id,
+        group_id: this.currentGroupID
       })
       if (data) {
         this.$Message.info(
@@ -130,44 +143,8 @@ export default {
       if (msg === "全部失败") {
         this.$Message.info(msg)
       }
+      this.allData()
       this.initData()
-    },
-    async changeMeansByWXID() {
-      const change_type =
-        this.isUpdateType === "修改密码"
-          ? 2
-          : this.isUpdateType === "修改昵称"
-          ? 0
-          : 1
-      const wxids = []
-      this.operationData.forEach(item => wxids.push(item.accountWxid))
-      const { msg, data } = await this.$http.post("/account/changeDatum", {
-        group_id: "",
-        wxids,
-        change_type,
-        type: 1,
-        user_id: this.user_id
-      })
-      if (data) {
-        this.$Message.info(
-          `成功修改${data.success.length}个，失败${data.error.length}个`
-        )
-      }
-      if (msg === "全部失败") {
-        this.$Message.info(msg)
-      }
-      this.clear()
-      this.initData()
-    },
-    clear() {
-      const refs = this.$refs
-      const table = refs[this.PagedTableRef]
-      const SearchSelect = refs[this.SelectModalRef].$refs["SearchSelect"]
-
-      SearchSelect ? (SearchSelect.value = "") : ""
-      refs[this.SelectModalRef].isShowSelectModal = false
-      refs[this.ConfirmModalRef].isShowConfirmModal = false
-      table.$refs[table.TableRef].selectAll(false)
     }
   }
 }

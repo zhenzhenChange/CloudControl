@@ -33,9 +33,23 @@
       >
         一键下线
       </Button>
-      <Button type="info" icon="md-move" @click="moveModal">
+      <Button
+        type="error"
+        class="mr-10"
+        icon="md-close"
+        @click="isShowTrashModal = true"
+      >
+        一键剔除无效号
+      </Button>
+      <Button class="mr-10" type="info" icon="md-move" @click="moveModal">
         分组变更
       </Button>
+      <div class="float-right friends">
+        <span class="mr-10">总好友量：{{ friends ? friends : 0 }}</span>
+        <span class="ml-10 mr-10">
+          今日好友量：{{ todayFriends ? todayFriends : 0 }}
+        </span>
+      </div>
       <Divider dashed />
       <div class="PagedTable">
         <Table
@@ -172,6 +186,30 @@
       width="350"
       :closable="false"
       :mask-closable="false"
+      v-model="isShowTrashModal"
+      class-name="vertical-center-modal"
+    >
+      <p slot="header">
+        <Icon
+          color="#ED4014"
+          type="md-close"
+          class="mr-5 header-icon"
+        />一键剔除该分组下的无效账号
+      </p>
+      <div class="text-center">
+        <p>确定要剔除吗？</p>
+      </div>
+      <div slot="footer">
+        <Button icon="md-remove-circle" @click="cancel">取消</Button>
+        <Button type="error" icon="md-checkmark" @click="trash">
+          确定
+        </Button>
+      </div>
+    </Modal>
+    <Modal
+      width="350"
+      :closable="false"
+      :mask-closable="false"
       v-model="isShowMoveModal"
       class-name="vertical-center-modal"
     >
@@ -221,17 +259,21 @@ export default {
       total: 0,
       value: "",
       current: 1,
+      allData: [],
       options: [],
+      friends: "",
       groupID: "",
       dataList: "",
       mutex: false,
       pageSize: 10,
       pageIndex: 0,
+      todayFriends: "",
       selectConfig: {},
       operationData: [],
       isShowUpModal: false,
       isShowDownModal: false,
       isShowMoveModal: false,
+      isShowTrashModal: false,
       isShowDeleteModal: false,
       isShowUploadModal: false,
       isShowTableDrawer: false,
@@ -330,10 +372,17 @@ export default {
   },
   methods: {
     async initAllData(group_id) {
+      this.friends = 0
       const { data } = await this.$http.post("/account/getAccount", {
         group_id
       })
+      this.allData = data
       this.total = data.length
+      let friends = 0
+      data.forEach(item => {
+        friends += item.accountFriendCount
+      })
+      this.friends = friends
     },
     async getAccountDataByGroupID(group_id) {
       this.options = JSON.parse(this.GroupData)
@@ -405,6 +454,7 @@ export default {
       this.isShowUploadModal = false
       this.isShowUpModal = false
       this.isShowDownModal = false
+      this.isShowTrashModal = false
     },
     async upload() {
       let list = this.dataList
@@ -479,6 +529,24 @@ export default {
       this.initAllData(this.groupID)
       this.getAccountDataByGroupID(this.groupID)
       this.$refs[this.TableRef].selectAll(false)
+    },
+    async trash() {
+      this.isShowTrashModal = false
+      const accounts = []
+      this.allData.forEach(item => {
+        if (!item.accountIsValid) {
+          accounts.push(item.account)
+        }
+      })
+      const { msg } = await this.$http.post("/account/deleteAccount", {
+        accounts,
+        groupId: "",
+        requestType: 1
+      })
+      this.$Message.info(msg)
+      this.initAllData(this.groupID)
+      this.$refs[this.TableRef].selectAll(false)
+      this.getAccountDataByGroupID(this.groupID)
     }
   }
 }
@@ -511,5 +579,10 @@ export default {
       padding-bottom: 5px;
     }
   }
+}
+
+.friends {
+  height: 32px;
+  line-height: 32px;
 }
 </style>

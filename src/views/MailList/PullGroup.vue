@@ -5,82 +5,30 @@
       :ref="PagedTableRef"
       :dataColumns="PullGroupColumns"
     />
-    <Drawer width="600" :closable="false" v-model="isShowDrawer">
-      <div slot="header">
-        <Icon type="md-create" color="#2D8CF0" class="mr-10" />创建拉群任务
-      </div>
-      <Row>
-        <Col span="10">
-          <Input v-model="currentGroupName" disabled>
-            <span slot="prepend">当前分组</span>
-          </Input>
-        </Col>
-        <Col span="13" offset="1">
-          <Input v-model="currentGroupID" disabled>
-            <span slot="prepend">分组ID</span>
-          </Input>
-        </Col>
-      </Row>
-      <Row class="mt-10">
-        <Col span="10">
-          <Input clearable v-model="finalNum" placeholder="请设置群最终人数">
-            <span slot="prepend">最终人数</span>
-          </Input>
-        </Col>
-        <Col span="13" offset="1">
-          <Input
-            disabled
-            placeholder="群最终人数（包括群主与小号），且要 <= 39"
-          />
-        </Col>
-      </Row>
-      <Row class="mt-10">
-        <Col span="10">
-          <span class="ml-10 mr-10">类型选择</span>
-          <RadioGroup v-model="checkType">
-            <Radio label="一手"></Radio>
-            <Radio label="二手"></Radio>
-          </RadioGroup>
-        </Col>
-      </Row>
-      <Row class="mt-10">
-        <Col span="24">
-          <Input disabled placeholder="每次上传都会清空上一次" />
-        </Col>
-      </Row>
-      <Row class="mt-10">
-        <Col span="24">
-          <Input
-            type="textarea"
-            v-model="urlList"
-            :autosize="{ minRows: 5, maxRows: 15 }"
-            placeholder="请将群链接粘贴至此处，一条链接占一行"
-          />
-        </Col>
-      </Row>
-      <Row class="mt-10">
-        <Col span="12">
-          <Input disabled :placeholder="`群链接总数：${urlListLength}`" />
-        </Col>
-      </Row>
-      <div class="drawer-footer">
-        <Button
-          class="mr-10"
-          type="warning"
-          icon="md-refresh"
-          @click="resetClick"
-        >
-          重置
-        </Button>
-        <Button type="success" icon="md-checkmark" @click="createGroupTask">
-          立即提交
-        </Button>
-      </div>
-    </Drawer>
     <Drawer width="70" :closable="false" v-model="isShowReportDrawer">
       <div slot="header">
         <Icon type="md-book" color="#2D8CF0" class="mr-10" />拉群任务报表
       </div>
+      <Row>
+        <Col span="24">
+          <Input
+            type="textarea"
+            v-model="supplyUrlList"
+            :autosize="{ minRows: 5, maxRows: 15 }"
+            placeholder="补充群Url"
+          />
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="6">
+          <Button type="success" long icon="md-checkmark" @click="supplyGroup">
+            立即提交
+          </Button>
+        </Col>
+        <Col span="12" offset="6">
+          <Input disabled :placeholder="`群链接总数：${supplyUrlListLength}`" />
+        </Col>
+      </Row>
       <PagedTable
         :data="reportData"
         ref="ReportPagedTable"
@@ -124,6 +72,8 @@ export default {
       finalNum: "",
       pageSize: 10,
       pageIndex: 0,
+      groupTaskName: "",
+      supplyUrlList: "",
       reportData: [],
       checkType: "一手",
       currentGroupID: "",
@@ -149,22 +99,6 @@ export default {
           align: "center",
           render: (h, params) => {
             return h("div", [
-              h(
-                "Button",
-                {
-                  props: { type: "info", icon: "md-share-alt" },
-                  style: { marginRight: "15px" },
-                  on: {
-                    click: () => {
-                      const { groupName, groupId } = params.row
-                      this.isShowDrawer = true
-                      this.currentGroupID = groupId
-                      this.currentGroupName = groupName
-                    }
-                  }
-                },
-                "创建拉群任务"
-              ),
               h(
                 "Button",
                 {
@@ -206,8 +140,9 @@ export default {
   },
   computed: {
     ...mapState({ user_id: state => state.user_id }),
-    urlListLength() {
-      return this.urlList.split(/[\r\n]/g).filter(item => item !== "").length
+    supplyUrlListLength() {
+      return this.supplyUrlList.split(/[\r\n]/g).filter(item => item !== "")
+        .length
     }
   },
   methods: {
@@ -235,39 +170,6 @@ export default {
         })
       })
     },
-    handleBeforeUpload(file) {
-      const reader = new FileReader()
-      reader.readAsText(file)
-      reader.onload = () => (this.urlList = reader.result)
-      return false
-    },
-    resetClick() {
-      this.finalNum = this.urlList = ""
-    },
-    async createGroupTask() {
-      if (!this.finalNum) {
-        this.$Message.warning("请设置群最终人数！")
-        return
-      }
-      if (this.finalNum > 39) {
-        this.$Message.warning("群最终人数不能大于39！")
-        return
-      }
-      if (!this.urlList) {
-        this.$Message.warning("请填入群链接！")
-        return
-      }
-      let grpUrl = this.urlList.split(/[\r\n]/g).filter(item => item !== "")
-      const params = {
-        maxPeople: this.finalNum - 5,
-        groupId: this.currentGroupID,
-        opType: this.checkType === "一手" ? "0" : "1"
-      }
-      await this.$http.post("/group/setGroupURL", grpUrl)
-      const { msg } = await this.$http.get("/group/enterGroup", { params })
-      this.$Message.info(msg)
-      this.resetClick()
-    },
     cancel() {
       this.isShowStopModal = false
     },
@@ -293,7 +195,8 @@ export default {
           })
         }
       })
-    }
+    },
+    async supplyGroup() {}
   }
 }
 </script>

@@ -26,7 +26,7 @@ const routes = [
       },
       {
         path: "/group",
-        name: "账号 && 分组",
+        name: "账号 & & 分组",
         component: () => import("../views/Account/Group.vue")
       },
       {
@@ -36,7 +36,7 @@ const routes = [
       },
       {
         path: "/s-account",
-        name: "账号设置",
+        name: "账号资料设置",
         component: () => import("../views/Account/SAccount.vue")
       },
       {
@@ -56,7 +56,7 @@ const routes = [
       },
       {
         path: "/task",
-        name: "加粉报表",
+        name: "加粉任务",
         component: () => import("../views/MailList/TaskAdd.vue")
       },
       {

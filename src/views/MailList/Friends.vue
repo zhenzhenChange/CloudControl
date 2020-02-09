@@ -55,6 +55,15 @@
         </Col>
       </Row>
       <Row class="mt-10">
+        <Col span="24">
+          <span class="ml-10 mr-10">号码格式</span>
+          <RadioGroup v-model="mailType">
+            <Radio label="纯手机号"></Radio>
+            <Radio label="姓名----手机号"></Radio>
+          </RadioGroup>
+        </Col>
+      </Row>
+      <Row class="mt-10">
         <Col span="6">
           <div class="upload">
             <span class="title ml-10 mr-10">加粉数据</span>
@@ -272,8 +281,9 @@ export default {
       requestNum: "",
       operationData: [],
       currentGroupID: "",
-      friendsTaskName: "",
+      mailType: "纯手机号",
       isShowDrawer: false,
+      friendsTaskName: "",
       setOrigin: "来源手机号",
       operationConfig: {},
       currentGroupName: "",

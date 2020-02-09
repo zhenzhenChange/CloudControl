@@ -91,6 +91,16 @@
         </Col>
       </Row>
       <Row class="mt-10">
+        <Col span="11">
+          <Input clearable v-model="passageway" placeholder="可自定义加粉通道">
+            <span slot="prepend">加粉通道</span>
+          </Input>
+        </Col>
+        <Col span="12" offset="1">
+          <Input disabled placeholder="默认为13通道（通讯录）"> </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10">
         <Col span="24">
           <Input clearable v-model="validInfo" placeholder="可自定义验证信息">
             <span slot="prepend">验证信息</span>
@@ -210,6 +220,7 @@ export default {
       startTime: "",
       validInfo: "",
       requestNum: "",
+      passageway: "",
       fansTaskName: "",
       operationData: [],
       currentGroupID: "",
@@ -310,6 +321,7 @@ export default {
       this.requestNum = ""
       this.freqInte = ""
       this.freqLimit = ""
+      this.passageway = ""
     },
     async createFansTask() {
       const msgArr = [

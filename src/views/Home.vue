@@ -137,9 +137,9 @@ export default {
           title: "账户管理",
           type: "md-person",
           menuItem: [
-            { name: "账号 && 分组", path: "/group" },
+            { name: "账号 & & 分组", path: "/group" },
             { name: "空闲账号管理", path: "/m-account" },
-            { name: "账号设置", path: "/s-account" }
+            { name: "账号资料设置", path: "/s-account" }
           ]
         },
         {
@@ -149,7 +149,7 @@ export default {
             { name: "加粉管理", path: "/mail" },
             { name: "添加好友", path: "/friends" },
             { name: "拉群任务", path: "/pull-group" },
-            { name: "加粉报表", path: "/task" }
+            { name: "加粉任务", path: "/task" }
           ]
         },
         {
