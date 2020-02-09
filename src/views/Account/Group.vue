@@ -136,8 +136,8 @@ export default {
       GroupColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { align: "center", title: "分组名称", key: "groupName" },
         { align: "center", title: "分组ID", key: "groupId" },
+        { align: "center", title: "分组名称", key: "groupName" },
         {
           sortable: true,
           align: "center",
@@ -371,14 +371,13 @@ export default {
       }
       let grpUrl = this.urlList.split(/[\r\n]/g).filter(item => item !== "")
       const params = {
-        maxPeople: this.finalNum - 5,
         groupId: this.currentGroupID,
+        taskName: this.groupTaskName,
+        maxPeople: this.finalNum - 5,
         opType: this.checkType === "一手" ? "0" : "1"
       }
-      await this.$http.post("/group/setGroupURL", {
-        grpUrl,
-        taskName: this.groupTaskName
-      })
+      const args = { grpUrl, taskName: this.groupTaskName }
+      await this.$http.post("/group/setGroupURL", args)
       const { msg } = await this.$http.get("/group/enterGroup", { params })
       this.$Message.info(msg)
       this.resetClick()

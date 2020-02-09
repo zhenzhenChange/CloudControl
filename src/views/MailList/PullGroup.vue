@@ -9,26 +9,6 @@
       <div slot="header">
         <Icon type="md-book" color="#2D8CF0" class="mr-10" />拉群任务报表
       </div>
-      <Row>
-        <Col span="24">
-          <Input
-            type="textarea"
-            v-model="supplyUrlList"
-            :autosize="{ minRows: 5, maxRows: 15 }"
-            placeholder="补充群Url"
-          />
-        </Col>
-      </Row>
-      <Row class="mt-10">
-        <Col span="6">
-          <Button type="success" long icon="md-checkmark" @click="supplyGroup">
-            立即提交
-          </Button>
-        </Col>
-        <Col span="12" offset="6">
-          <Input disabled :placeholder="`群链接总数：${supplyUrlListLength}`" />
-        </Col>
-      </Row>
       <PagedTable
         :data="reportData"
         ref="ReportPagedTable"
@@ -59,6 +39,61 @@
         </Button>
       </div>
     </Modal>
+    <Modal
+      width="450"
+      :closable="false"
+      :mask-closable="false"
+      v-model="isShowAddModal"
+      class-name="vertical-center-modal"
+    >
+      <p slot="header">
+        <Icon
+          color="#57C5F7"
+          type="md-add"
+          class="mr-5 header-icon"
+        />为该订单补充群Url
+      </p>
+      <Row>
+        <Col span="24">
+          <Input clearable v-model="addPeople" placeholder="请设置群最终人数">
+            <span slot="prepend">最终人数</span>
+          </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="24">
+          <span class="ml-10 mr-10">类型选择</span>
+          <RadioGroup v-model="addType">
+            <Radio label="一手"></Radio>
+            <Radio label="二手"></Radio>
+          </RadioGroup>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="24">
+          <Input
+            disabled
+            :placeholder="`共补充 ${supplyUrlListLength} 条群Url`"
+          />
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="24">
+          <Input
+            type="textarea"
+            v-model="supplyUrlList"
+            :autosize="{ minRows: 5, maxRows: 15 }"
+            placeholder="请将群链接粘贴至此处，一条链接占一行"
+          />
+        </Col>
+      </Row>
+      <div slot="footer">
+        <Button icon="md-remove-circle" @click="cancel">取消</Button>
+        <Button type="success" icon="md-checkmark" @click="addUrl">
+          确定
+        </Button>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -67,18 +102,23 @@ import { mapState } from "vuex"
 export default {
   data() {
     return {
+      row: "",
       data: [],
       urlList: "",
       finalNum: "",
       pageSize: 10,
       pageIndex: 0,
+      addPeople: "",
       groupTaskName: "",
       supplyUrlList: "",
       reportData: [],
+      addType: "一手",
       checkType: "一手",
       currentGroupID: "",
       isShowDrawer: false,
+      currentTaskName: "",
       currentGroupName: "",
+      isShowAddModal: false,
       isShowStopModal: false,
       isShowReportDrawer: false,
       PagedTableRef: "PullGroupPagedTable",
@@ -89,10 +129,25 @@ export default {
         { title: "群内人数", align: "center", key: "memberCount" }
       ],
       PullGroupColumns: [
-        { width: 70, align: "center", title: "序号", key: "serialNumber" },
+        { align: "center", title: "任务名称", key: "taskName" },
+        {
+          width: 180,
+          align: "center",
+          title: "群聊Urls数量",
+          key: "grpUrl",
+          render: (h, params) => {
+            const { grpUrl } = params.row
+            /*  let url = ""
+            grpUrl.forEach(item => (url += `${item}<br/>`)) */
+            return h("div", [
+              h("span", { domProps: { innerHTML: grpUrl.length } })
+            ])
+          }
+        },
+        { align: "center", title: "最大人数", key: "maxPeople" },
+        { align: "center", title: "类型", key: "opType" },
+        // { align: "center", title: "分组名称", key: "groupName" },
         { align: "center", title: "分组ID", key: "groupId" },
-        { align: "center", title: "分组名称", key: "groupName" },
-        { align: "center", title: "创建时间", key: "groupCreateDate" },
         {
           width: 500,
           title: "操作",
@@ -102,13 +157,27 @@ export default {
               h(
                 "Button",
                 {
+                  props: { type: "info", icon: "md-add" },
+                  style: { marginRight: "15px" },
+                  on: {
+                    click: () => {
+                      this.isShowAddModal = true
+                      this.row = params.row
+                    }
+                  }
+                },
+                "补充群Urls"
+              ),
+              h(
+                "Button",
+                {
                   props: { type: "success", icon: "md-eye" },
                   style: { marginRight: "15px" },
                   on: {
                     click: () => {
-                      const { groupId } = params.row
+                      const { taskName, groupId } = params.row
                       this.isShowReportDrawer = true
-                      this.getReportData(groupId)
+                      this.getReportData(taskName, groupId)
                     }
                   }
                 },
@@ -120,9 +189,10 @@ export default {
                   props: { type: "error", icon: "md-stopwatch" },
                   on: {
                     click: () => {
-                      const { groupId } = params.row
+                      const { taskName, groupId } = params.row
                       this.isShowStopModal = true
                       this.currentGroupID = groupId
+                      this.currentTaskName = taskName
                     }
                   }
                 },
@@ -135,7 +205,6 @@ export default {
     }
   },
   created() {
-    this.allData()
     this.initData()
   },
   computed: {
@@ -146,44 +215,35 @@ export default {
     }
   },
   methods: {
-    async allData() {
-      const { data } = await this.$http.get("/account/getAllGroup", {
-        params: { user_id: this.user_id }
-      })
-      this.$refs[this.PagedTableRef].total = data.length
-    },
     async initData() {
       this.data = []
-      const { data } = await this.$http.get("/account/getAllGroup", {
-        params: {
-          user_id: this.user_id,
-          pageIndex: this.pageIndex,
-          pageSize: this.pageSize
-        }
-      })
-      data.forEach((item, index) => {
+      const data = await this.$http.get("/getEnterGroupInfo")
+      this.$refs[this.PagedTableRef].total = Object.keys(data).length
+      for (const key in data) {
         this.data.push({
-          serialNumber: index + 1,
-          groupName: item.groupName,
-          groupId: String(item.groupId),
-          groupCreateDate: this.$options.filters.date(item.groupCreateDate)
+          grpUrl: JSON.parse(data[key]).grpUrl,
+          groupId: JSON.parse(data[key]).groupId,
+          taskName: JSON.parse(data[key]).taskName,
+          maxPeople: JSON.parse(data[key]).maxPeople,
+          opType: JSON.parse(data[key]).opType === 0 ? "一手" : "二手"
         })
-      })
+      }
     },
     cancel() {
+      this.isShowAddModal = false
       this.isShowStopModal = false
     },
     async stop() {
       this.isShowStopModal = false
       const { msg } = await this.$http.get("/stopEnterGroup", {
-        params: { groupId: this.currentGroupID }
+        params: { groupId: this.currentGroupID, taskName: this.currentTaskName }
       })
       this.$Message.info(msg)
     },
-    async getReportData(groupId) {
+    async getReportData(taskName, groupId) {
       this.reportData = []
       const data = await this.$http.get("/groupView", {
-        params: { groupId }
+        params: { taskName, groupId }
       })
       data.forEach((item, index) => {
         for (const key in item) {
@@ -196,7 +256,34 @@ export default {
         }
       })
     },
-    async supplyGroup() {}
+    async addUrl() {
+      if (!this.addPeople) {
+        this.$Message.warning("请设置群最终人数！")
+        return
+      }
+      if (this.addPeople > 39) {
+        this.$Message.warning("群最终人数不能大于39！")
+        return
+      }
+      if (!this.supplyUrlList) {
+        this.$Message.warning("请填入群链接！")
+        return
+      }
+      this.isShowAddModal = false
+      const { groupId, taskName } = this.row
+      const grpUrl = this.supplyUrlList
+        .split(/[\r\n]/g)
+        .filter(item => item !== "")
+      const args = {
+        grpUrl,
+        groupId,
+        taskName,
+        maxPeople: this.addPeople - 5,
+        opType: this.addType === "一手" ? 0 : 1
+      }
+      const { msg } = await this.$http.post("/group/addGroupURL", args)
+      this.$Message.info(msg)
+    }
   }
 }
 </script>

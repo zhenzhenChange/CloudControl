@@ -87,13 +87,13 @@ export default {
       data: [],
       taskObj: {},
       currentGroupID: "",
+      currentTaskName: "",
       isShowStopAddModal: false,
       isShowTaskAddDrawer: false,
       Columns: [
-        { width: 70, align: "center", title: "序号", key: "serialNumber" },
         { align: "center", title: "分组ID", key: "groupId" },
-        { align: "center", title: "分组名称", key: "groupName" },
-        { align: "center", title: "创建时间", key: "groupCreateDate" },
+        { align: "center", title: "任务名称", key: "taskName" },
+        { align: "center", title: "单号请求", key: "maxRequest" },
         {
           width: 400,
           title: "操作",
@@ -121,9 +121,10 @@ export default {
                   props: { type: "error", icon: "md-stopwatch" },
                   on: {
                     click: () => {
-                      const { groupId } = params.row
+                      const { taskName, groupId } = params.row
                       this.isShowStopAddModal = true
                       this.currentGroupID = groupId
+                      this.currentTaskName = taskName
                     }
                   }
                 },
@@ -136,36 +137,23 @@ export default {
     }
   },
   created() {
-    this.allData()
     this.initData()
   },
   computed: {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
-    async allData() {
-      const { data } = await this.$http.get("/account/getAllGroup", {
-        params: { user_id: this.user_id }
-      })
-      this.$refs["TaskPagedTable"].total = data.length
-    },
     async initData() {
       this.data = []
-      const { data } = await this.$http.get("/account/getAllGroup", {
-        params: {
-          user_id: this.user_id,
-          pageIndex: this.pageIndex,
-          pageSize: this.pageSize
-        }
-      })
-      data.forEach((item, index) => {
+      const data = await this.$http.get("/getAddFriendOrder")
+      this.$refs["TaskPagedTable"].total = Object.keys(data).length
+      for (const key in data) {
         this.data.push({
-          serialNumber: index + 1,
-          groupName: item.groupName,
-          groupId: String(item.groupId),
-          groupCreateDate: this.$options.filters.date(item.groupCreateDate)
+          groupId: JSON.parse(data[key]).groupId,
+          taskName: JSON.parse(data[key]).taskName,
+          maxRequest: JSON.parse(data[key]).maxRequest
         })
-      })
+      }
     },
     cancel() {
       this.isShowStopAddModal = false
@@ -173,7 +161,7 @@ export default {
     async stop() {
       this.isShowStopAddModal = false
       const { msg } = await this.$http.get("/stopAddFriend", {
-        params: { groupId: this.currentGroupID }
+        params: { groupId: this.currentGroupID, taskName: this.currentTaskName }
       })
       this.$Message.info(msg)
     },
