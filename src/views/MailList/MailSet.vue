@@ -327,6 +327,7 @@ export default {
       const msgArr = [
         { name: "任务名称", value: this.fansTaskName },
         { name: "加粉数据", value: this.mailList },
+        { name: "加粉通道", value: this.passageway },
         { name: "验证信息", value: this.validInfo },
         { name: "执行时间", value: this.startTime },
         { name: "单号请求", value: this.requestNum },
@@ -352,7 +353,8 @@ export default {
         frequentlyInterval: this.freqInte,
         frequentlyMaxNumber: this.freqLimit,
         taskName: this.fansTaskName,
-        content: this.validInfo
+        content: this.validInfo,
+        origin: this.passageway
       }
       if (flag) {
         const contact = this.mailList

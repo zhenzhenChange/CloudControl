@@ -471,6 +471,27 @@ export default {
         }
         flag = true
       })
+      if (this.setOrigin === "自定义来源") {
+        if (!this.custom) {
+          this.$Message.warning(`自定义来源不能为空`)
+          return
+        }
+      }
+      /* <Radio label="来源手机号"></Radio>
+            <Radio label="来源微信号"></Radio>
+            <Radio label="来源腾讯QQ"></Radio>
+            <Radio label="来源通讯录"></Radio>
+            <Radio label="自定义来源"></Radio> */
+      const type =
+        this.setOrigin === "来源手机号"
+          ? "15"
+          : this.setOrigin === "来源微信号"
+          ? "3"
+          : this.setOrigin === "来源腾讯QQ"
+          ? "1"
+          : this.setOrigin === "来源通讯录"
+          ? "13"
+          : this.custom
       let requestList = this.mailList
         .split(/[\r\n]/g)
         .filter(item => item !== "")
@@ -478,7 +499,7 @@ export default {
         groupId: this.currentGroupID,
         startTime: this.startTime,
         requestList,
-        origin: 0,
+        origin: type,
         endTime: 20,
         interval: this.blankTime,
         maxRequest: this.requestNum,
