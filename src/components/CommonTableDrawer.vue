@@ -47,7 +47,7 @@
       <div class="float-right friends">
         <span class="mr-10">总好友量：{{ friends ? friends : 0 }}</span>
         <span class="ml-10 mr-10">
-          今日好友量：{{ todayFriends ? todayFriends : 0 }}
+          今日通过好友量：{{ todayFriends ? todayFriends : 0 }}
         </span>
       </div>
       <Divider dashed />
@@ -376,6 +376,10 @@ export default {
       const { data } = await this.$http.post("/account/getAccount", {
         group_id
       })
+      const res = await this.$http.get("/getAddFriendView", {
+        params: { groupId: group_id }
+      })
+      this.todayFriends = res.passCount
       this.allData = data
       this.total = data.length
       let friends = 0

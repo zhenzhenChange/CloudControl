@@ -66,11 +66,19 @@
         </Col>
       </Row>
       <Row class="mt-25">
-        <Col span="24">
+        <Col span="11">
           <Card class="text-center">
             <p slot="title">打招呼次数</p>
             <div>
               <h1>{{ taskObj.sayHelloCount }}</h1>
+            </div>
+          </Card>
+        </Col>
+        <Col span="11" offset="2">
+          <Card class="text-center">
+            <p slot="title">剩余手机号数</p>
+            <div>
+              <h1>{{ taskObj.phoneNumberNotUsed }}</h1>
             </div>
           </Card>
         </Col>

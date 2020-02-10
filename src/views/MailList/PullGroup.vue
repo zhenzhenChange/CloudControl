@@ -8,6 +8,14 @@
     <Drawer width="70" :closable="false" v-model="isShowReportDrawer">
       <div slot="header">
         <Icon type="md-book" color="#2D8CF0" class="mr-10" />拉群任务报表
+        <Button
+          type="info"
+          class="ml-10"
+          icon="md-download"
+          @click="exportData"
+        >
+          导出报表
+        </Button>
       </div>
       <PagedTable
         :data="reportData"
@@ -283,6 +291,24 @@ export default {
       }
       const { msg } = await this.$http.post("/group/addGroupURL", args)
       this.$Message.info(msg)
+    },
+    exportData() {
+      const date = new Date()
+      const year = date.getFullYear()
+      let month = date.getMonth() + 1
+      let day = date.getDate()
+      let hours = date.getHours()
+      let minutes = date.getMinutes()
+      let seconds = date.getSeconds()
+      if (month >= 1 && month <= 9) month = "0" + month
+      if (day >= 0 && day <= 9) day = "0" + day
+      if (hours >= 0 && hours <= 9) hours = "0" + hours
+      if (minutes >= 0 && minutes <= 9) minutes = "0" + minutes
+      if (seconds >= 0 && seconds <= 9) seconds = "0" + seconds
+      const Time = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+      const PagedTable = this.$refs.ReportPagedTable
+      const Table = PagedTable.$refs[PagedTable.TableRef]
+      Table.exportCsv({ filename: `拉群订单报表  ${Time}` })
     }
   }
 }
