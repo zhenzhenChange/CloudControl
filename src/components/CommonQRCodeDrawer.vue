@@ -6,30 +6,23 @@
     <div class="qrcode">
       <Row>
         <Col span="4">
-          <Button
-            type="info"
-            icon="md-hand"
-            class="float-left"
-            @click="handleQRCode"
-          >
+          <Button type="info" icon="md-hand" @click="handleQRCode">
             生成群链接
           </Button>
         </Col>
-        <Col span="19" offset="1">
-          <Input
-            disabled
-            placeholder="上传二维码点击生成群链接（清空请刷新页面，避免解码缓存，导致浏览器卡死）"
-          />
+        <Col span="3" offset="1">
+          <Button long type="warning" icon="md-trash" @click="clear">
+            清空
+          </Button>
         </Col>
       </Row>
-
       <Input
         class="mt-10"
         type="textarea"
         v-model="qrcode"
         :autosize="{ minRows: 10, maxRows: 20 }"
       ></Input>
-      <SpaceUpload :style="60" ref="urlUpload"></SpaceUpload>
+      <SpaceUpload :style="60" ref="urlUpload" />
     </div>
   </Drawer>
 </template>
@@ -63,6 +56,10 @@ export default {
           }
         }
       })
+    },
+    clear() {
+      this.qrcode = ""
+      this.$refs.urlUpload.uploadList = []
     }
   }
 }

@@ -5,7 +5,7 @@
       :ref="PagedTableRef"
       :dataColumns="PullGroupColumns"
     />
-    <Drawer width="70" :closable="false" v-model="isShowReportDrawer">
+    <Drawer width="80" :closable="false" v-model="isShowReportDrawer">
       <div slot="header">
         <Icon type="md-book" color="#2D8CF0" class="mr-10" />拉群任务报表
         <Button
@@ -18,6 +18,7 @@
         </Button>
       </div>
       <PagedTable
+        :show="'no'"
         :data="reportData"
         ref="ReportPagedTable"
         :dataColumns="reportColumns"
@@ -132,9 +133,14 @@ export default {
       PagedTableRef: "PullGroupPagedTable",
       reportColumns: [
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { title: "群聊ID", align: "center", key: "ID" },
-        { title: "群聊链接", align: "center", key: "Url" },
-        { title: "群内人数", align: "center", key: "memberCount" }
+        { title: "群名称", align: "center", key: "chatRoonName" },
+        { title: "群ID", align: "center", key: "ID" },
+        { title: "群Url", align: "center", key: "url" },
+        { title: "当前群人数", align: "center", key: "memberCount" },
+        { title: "拉群前人数", align: "center", key: "beforeCount" },
+        { title: "群成员WXID", align: "center", key: "WXID" },
+        { title: "群成员昵称", align: "center", key: "nickName" },
+        { title: "群成员手机号", align: "center", key: "phone" }
       ],
       PullGroupColumns: [
         { align: "center", title: "任务名称", key: "taskName" },
@@ -218,8 +224,10 @@ export default {
   computed: {
     ...mapState({ user_id: state => state.user_id }),
     supplyUrlListLength() {
-      return this.supplyUrlList.split(/[\r\n]/g).filter(item => item !== "")
-        .length
+      const length = this.supplyUrlList
+        .split(/[\r\n]/g)
+        .filter(item => item !== "").length
+      return length
     }
   },
   methods: {
@@ -232,7 +240,7 @@ export default {
           grpUrl: JSON.parse(data[key]).grpUrl,
           groupId: JSON.parse(data[key]).groupId,
           taskName: JSON.parse(data[key]).taskName,
-          maxPeople: JSON.parse(data[key]).maxPeople,
+          maxPeople: JSON.parse(data[key]).maxPeople + 5,
           opType: JSON.parse(data[key]).opType === 0 ? "一手" : "二手"
         })
       }
@@ -254,14 +262,18 @@ export default {
         params: { taskName, groupId }
       })
       data.forEach((item, index) => {
-        for (const key in item) {
-          this.reportData.push({
-            serialNumber: index + 1,
-            ID: key.split("@")[0],
-            Url: key.split("###")[1],
-            memberCount: item[key].memberCount
-          })
-        }
+        let memberCount = item.groupInfo.memberCount
+        this.reportData.push({
+          url: item.url,
+          serialNumber: index + 1,
+          memberCount: memberCount,
+          chatRoonName: item.chatRoonName,
+          ID: item.chatRoonName.split("@")[0],
+          WXID: "",
+          nickName: "",
+          phone: "",
+          beforeCount: memberCount - Object.keys(item.idtoMd5).length
+        })
       })
     },
     async addUrl() {

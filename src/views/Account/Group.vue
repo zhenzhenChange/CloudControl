@@ -15,11 +15,34 @@
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="GroupColumns" />
     <TableDrawer ref="GroupTableDrawer" />
     <Drawer width="600" :closable="false" v-model="isShowDrawer">
-      <div slot="header">
-        <Icon type="md-create" color="#2D8CF0" class="mr-10" />创建拉群任务
+      <div slot="header" class="header-drawer">
+        <div>
+          <Icon type="md-create" color="#2D8CF0" class="mr-10" />创建拉群任务
+        </div>
+        <div>
+          <Button
+            type="error"
+            class="mr-10"
+            icon="md-barcode"
+            @click="showQRCodeDrawer"
+          >
+            二维码解码
+          </Button>
+          <Button
+            class="mr-10"
+            type="warning"
+            icon="md-refresh"
+            @click="resetClick"
+          >
+            重置
+          </Button>
+          <Button type="success" icon="md-checkmark" @click="createGroupTask">
+            立即提交
+          </Button>
+        </div>
       </div>
       <Row>
-        <Col span="11">
+        <Col span="10">
           <Input clearable v-model="groupTaskName" placeholder="请设置任务名称">
             <span slot="prepend">任务名称</span>
           </Input>
@@ -79,20 +102,8 @@
           <Input disabled :placeholder="`群链接总数：${urlListLength}`" />
         </Col>
       </Row>
-      <div class="drawer-footer">
-        <Button
-          class="mr-10"
-          type="warning"
-          icon="md-refresh"
-          @click="resetClick"
-        >
-          重置
-        </Button>
-        <Button type="success" icon="md-checkmark" @click="createGroupTask">
-          立即提交
-        </Button>
-      </div>
     </Drawer>
+    <CommonQRCodeDrawer ref="QRCodeDrawer" />
   </div>
 </template>
 
@@ -381,20 +392,18 @@ export default {
       const { msg } = await this.$http.get("/group/enterGroup", { params })
       this.$Message.info(msg)
       this.resetClick()
+    },
+    showQRCodeDrawer() {
+      this.$refs["QRCodeDrawer"].isShowQRCodeDrawer = true
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.drawer-footer {
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  text-align: right;
-  padding: 10px 16px;
-  position: absolute;
-  background: #fff;
-  border-top: 1px solid #e8e8e8;
+.header-drawer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>

@@ -9,7 +9,7 @@
       :columns="dataColumns"
       @on-selection-change="selectionChange"
     />
-    <div class="page">
+    <div class="page" v-if="show ? false : true">
       <div class="mb-10">
         <Page
           transfer
@@ -31,7 +31,7 @@
 <script>
 export default {
   name: "PagedTable",
-  props: { data: Array, dataColumns: Array },
+  props: { data: Array, dataColumns: Array, show: String },
   data() {
     return {
       total: 0,

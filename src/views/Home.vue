@@ -31,15 +31,6 @@
     <Layout class="layout">
       <Header class="header">
         <div>
-          <Button
-            type="error"
-            class="mr-10"
-            icon="md-barcode"
-            @click="showQRCodeDrawer"
-          >
-            二维码解码
-          </Button>
-          <CommonQRCodeDrawer ref="QRCodeDrawer" />
           <Poptip
             transfer
             width="400"
@@ -67,9 +58,9 @@
                   <Button
                     long
                     type="success"
+                    @click="IPChecking"
                     :loading="IPloading"
                     icon="md-git-commit"
-                    @click="IPChecking"
                   >
                     提交
                   </Button>
@@ -78,7 +69,7 @@
             </div>
           </Poptip>
         </div>
-        <div class="float-left">
+        <div>
           <h1><Icon type="md-cloud-circle" class="mr-10" />云控营销管理平台</h1>
         </div>
         <div>
@@ -104,16 +95,14 @@
           <BreadcrumbItem
             replace
             :key="index"
-            :to="item.path === '/home' ? '/data' : item.path"
             v-for="(item, index) in routeList"
+            :to="item.path === '/home' ? '/data' : item.path"
           >
             {{ item.name }}
           </BreadcrumbItem>
         </Breadcrumb>
         <Card>
-          <div class="card-div">
-            <router-view />
-          </div>
+          <div class="card-div"><router-view /></div>
         </Card>
       </Content>
       <Footer class="footer">&copy; Cloud</Footer>
@@ -196,9 +185,6 @@ export default {
       localStorage.removeItem("GroupData")
       localStorage.removeItem("Shreshold")
       localStorage.removeItem("DataCount")
-    },
-    showQRCodeDrawer() {
-      this.$refs["QRCodeDrawer"].isShowQRCodeDrawer = true
     },
     async IPChecking() {
       if (!this.orderno) {
