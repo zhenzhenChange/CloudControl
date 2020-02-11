@@ -237,6 +237,7 @@ export default {
       this.$Message.info(msg)
     },
     async getReportData(taskName, groupId) {
+      this.$Spin.show()
       this.reportData = []
       const data = await this.$http.get("/groupView", { params: { taskName, groupId } })
       // const report = []
@@ -270,6 +271,7 @@ export default {
           }
         }
       })
+      this.$Spin.hide()
     },
     async addUrl() {
       if (!this.addPeople) {

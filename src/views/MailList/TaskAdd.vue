@@ -169,8 +169,10 @@ export default {
       this.$Message.info(msg)
     },
     async taskAddData(groupId) {
+      this.$Spin.show()
       const res = await this.$http.get("/getAddFriendView", { params: { groupId } })
       this.taskObj = res
+      this.$Spin.hide()
     }
   }
 }

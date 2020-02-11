@@ -274,6 +274,7 @@ export default {
   },
   methods: {
     async initAllData(group_id) {
+      this.$Spin.show()
       this.friends = 0
       const { data } = await this.$http.post("/account/getAccount", { group_id })
       const res = await this.$http.get("/getAddFriendView", { params: { groupId: group_id } })
@@ -283,8 +284,10 @@ export default {
       let friends = 0
       data.forEach(item => (friends += item.accountFriendCount))
       this.friends = friends
+      this.$Spin.hide()
     },
     async getAccountDataByGroupID(group_id) {
+      this.$Spin.show()
       this.data = []
       this.options = JSON.parse(this.GroupData)
       const pageSize = String(this.pageSize)
@@ -304,6 +307,7 @@ export default {
         })
       })
       this.todayFriends = res.passCount
+      this.$Spin.hide()
     },
     changePage(index) {
       this.current = index

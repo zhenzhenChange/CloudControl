@@ -89,7 +89,7 @@
       </Row>
       <Row class="mt-10">
         <Col span="24">
-          <Input clearable v-model="validInfo" placeholder="可自定义验证信息">
+          <Input clearable v-model="validInfo" placeholder="可自定义验证信息（默认为素材库模板）">
             <span slot="prepend">验证信息</span>
           </Input>
         </Col>
@@ -380,7 +380,6 @@ export default {
       const msgArr = [
         { name: "任务名称", value: this.friendsTaskName },
         { name: "加粉数据", value: this.mailList },
-        { name: "验证信息", value: this.validInfo },
         { name: "执行时间", value: this.startTime },
         { name: "单号请求", value: this.requestNum },
         { name: "间隔时间", value: this.blankTime },
