@@ -67,20 +67,14 @@ export default {
   },
   methods: {
     async allData() {
-      const { data } = await this.$http.get("/account/getAllGroup", {
-        params: { user_id: this.user_id }
-      })
+      const params = { user_id: this.user_id }
+      const { data } = await this.$http.get("/account/getAllGroup", { params })
       this.$refs[this.PagedTableRef].total = data.length
     },
     async initData() {
       this.data = []
-      const { data } = await this.$http.get("/account/getAllGroup", {
-        params: {
-          user_id: this.user_id,
-          pageIndex: this.pageIndex,
-          pageSize: this.pageSize
-        }
-      })
+      const params = { user_id: this.user_id, pageIndex: this.pageIndex, pageSize: this.pageSize }
+      const { data } = await this.$http.get("/account/getAllGroup", { params })
       data.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,
@@ -93,9 +87,8 @@ export default {
     },
     async sendFriendSpace(params) {
       this.$refs[this.ConfirmModalRef].isShowConfirmModal = false
-      const { msg } = await this.$http.post("/account/sendFriendCircle", {
-        group_id: String(params)
-      })
+      const group_id = String(params)
+      const { msg } = await this.$http.post("/account/sendFriendCircle", { group_id })
       this.$Message.info(msg)
     }
   }

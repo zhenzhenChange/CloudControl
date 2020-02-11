@@ -1,19 +1,12 @@
 <template>
   <div class="mt-10">
     <h3>{{ desc }}</h3>
-    <div
-      :key="index"
-      class="upload-list mt-10"
-      v-for="(item, index) in uploadList"
-    >
+    <div :key="index" class="upload-list mt-10" v-for="(item, index) in uploadList">
       <template>
         <img :src="item" />
         <div class="upload-list-cover">
           <Icon type="ios-eye-outline" @click.native="handleView(item)"></Icon>
-          <Icon
-            type="ios-trash-outline"
-            @click.native="handleRemove(index)"
-          ></Icon>
+          <Icon type="ios-trash-outline" @click.native="handleRemove(index)"></Icon>
         </div>
       </template>
     </div>
@@ -70,23 +63,15 @@ export default {
       if (this.uploadLimit) {
         check = this.uploadList.length < this.uploadLimit
         if (!check) {
-          this.$Notice.warning({
-            title: `最多可上传${this.uploadLimit}张图片！`
-          })
+          this.$Notice.warning({ title: `最多可上传${this.uploadLimit}张图片！` })
           return
         }
       }
       const fileType = file.type
-      if (
-        fileType === "image/jpeg" ||
-        fileType === "image/jpg" ||
-        fileType === "image/png"
-      ) {
+      if (fileType === "image/jpeg" || fileType === "image/jpg" || fileType === "image/png") {
         const reader = new FileReader()
         reader.readAsDataURL(file)
-        reader.onload = () => {
-          this.uploadList.push(reader.result)
-        }
+        reader.onload = () => this.uploadList.push(reader.result)
       }
       return check
     }

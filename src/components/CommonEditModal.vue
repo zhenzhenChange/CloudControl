@@ -8,11 +8,7 @@
     class-name="vertical-center-modal"
   >
     <p slot="header">
-      <Icon
-        :type="config.icon"
-        :color="config.color"
-        class="mr-5 header-icon"
-      />
+      <Icon :type="config.icon" :color="config.color" class="mr-5 header-icon" />
       {{ config.title }}
     </p>
     <div v-if="!config.isUpdate">
@@ -41,12 +37,7 @@
     </div>
     <div slot="footer">
       <Button icon="md-remove-circle" @click="catchClick">取消</Button>
-      <Button
-        type="success"
-        ref="tryButton"
-        @click="tryClick"
-        icon="md-checkmark"
-      >
+      <Button type="success" ref="tryButton" @click="tryClick" icon="md-checkmark">
         {{ config.tryBtn }}
       </Button>
     </div>
@@ -85,12 +76,8 @@ export default {
       const config = this.config
       const args = config.updateArgs
       const length = args.length
-      for (let key in config.updateData) {
-        updateData[key] = config.updateData[key]
-      }
-      for (let i = 0; i < length; i++) {
-        updateData[args[i]] = config.inputInfos[i].model
-      }
+      for (let key in config.updateData) updateData[key] = config.updateData[key]
+      for (let i = 0; i < length; i++) updateData[args[i]] = config.inputInfos[i].model
       updateData = Object.assign({}, updateData, { user_id: this.user_id })
       const res = await this.$http.post(config.url, updateData)
       if (res) {

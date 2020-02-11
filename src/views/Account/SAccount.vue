@@ -24,19 +24,11 @@
         </RadioGroup>
       </div>
       <div slot="footer">
-        <Button icon="md-remove-circle" @click="isShowModfiyModal = false">
-          取消
-        </Button>
-        <Button type="success" icon="md-checkmark" @click="modify">
-          确定
-        </Button>
+        <Button icon="md-remove-circle" @click="isShowModfiyModal = false">取消</Button>
+        <Button type="success" icon="md-checkmark" @click="modify">确定</Button>
       </div>
     </Modal>
-    <PagedTable
-      :data="data"
-      :ref="PagedTableRef"
-      :dataColumns="SAccountColumns"
-    />
+    <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="SAccountColumns" />
   </div>
 </template>
 
@@ -93,24 +85,17 @@ export default {
   },
   methods: {
     async allData() {
-      const { data } = await this.$http.get("/account/getAllGroup", {
-        params: { user_id: this.user_id }
-      })
+      const params = { user_id: this.user_id }
+      const { data } = await this.$http.get("/account/getAllGroup", { params })
       this.$refs[this.PagedTableRef].total = data.length
     },
     async initData() {
       this.data = []
-      const { data } = await this.$http.get("/account/getAllGroup", {
-        params: {
-          user_id: this.user_id,
-          pageIndex: this.pageIndex,
-          pageSize: this.pageSize
-        }
-      })
+      const params = { user_id: this.user_id, pageIndex: this.pageIndex, pageSize: this.pageSize }
+      const { data } = await this.$http.get("/account/getAllGroup", { params })
       data.forEach(async (item, index) => {
-        let total = await this.$http.post("/account/getAccount", {
-          group_id: String(item.groupId)
-        })
+        const group_id = String(item.groupId)
+        let total = await this.$http.post("/account/getAccount", { group_id })
         this.data.push({
           serialNumber: index + 1,
           groupName: item.groupName,
@@ -122,23 +107,13 @@ export default {
     },
     async modify() {
       this.isShowModfiyModal = false
-      const change_type =
-        this.isUpdateType === "修改密码"
-          ? 2
-          : this.isUpdateType === "修改昵称"
-          ? 0
-          : 1
-      const { msg, data } = await this.$http.post("/account/changeDatum", {
-        type: 0,
-        wxids: [],
-        change_type,
-        user_id: this.user_id,
-        group_id: this.currentGroupID
-      })
+      const isUpdateType = this.isUpdateType
+      const change_type = isUpdateType === "修改密码" ? 2 : isUpdateType === "修改昵称" ? 0 : 1
+      const group_id = this.currentGroupID
+      const args = { type: 0, wxids: [], change_type, user_id: this.user_id, group_id }
+      const { msg, data } = await this.$http.post("/account/changeDatum", args)
       if (data) {
-        this.$Message.info(
-          `成功修改${data.success.length}个，失败${data.error.length}个`
-        )
+        this.$Message.info(`成功修改${data.success.length}个，失败${data.error.length}个`)
       }
       if (msg === "全部失败") {
         this.$Message.info(msg)

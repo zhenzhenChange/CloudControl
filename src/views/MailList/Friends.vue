@@ -2,42 +2,19 @@
   <div class="Friends">
     <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider class="float-left" dashed />
-    <PagedTable
-      :data="data"
-      :ref="PagedTableRef"
-      :dataColumns="FriendsColumns"
-    />
+    <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="FriendsColumns" />
     <CommonConfirmModal ref="FriendConfirmModal" :config="config" />
     <Drawer width="900" :closable="false" v-model="isShowDrawer">
       <div slot="header" class="header-drawer">
+        <div><Icon class="mr-10" color="#2D8CF0" type="md-create" />创建搜索加粉任务</div>
         <div>
-          <Icon
-            class="mr-10"
-            color="#2D8CF0"
-            type="md-create"
-          />创建搜索加粉任务
-        </div>
-        <div>
-          <Button
-            class="mr-10"
-            type="warning"
-            icon="md-refresh"
-            @click="resetClick"
-          >
-            重置
-          </Button>
-          <Button type="success" icon="md-checkmark" @click="createFriendsTask">
-            立即提交
-          </Button>
+          <Button class="mr-10" type="warning" icon="md-refresh" @click="resetClick">重置</Button>
+          <Button type="success" icon="md-checkmark" @click="createFriendsTask">立即提交</Button>
         </div>
       </div>
       <Row>
         <Col span="11">
-          <Input
-            clearable
-            v-model="friendsTaskName"
-            placeholder="请设置任务名称"
-          >
+          <Input clearable v-model="friendsTaskName" placeholder="请设置任务名称">
             <span slot="prepend">任务名称</span>
           </Input>
         </Col>
@@ -119,31 +96,18 @@
       </Row>
       <Row class="mt-10">
         <Col span="11">
-          <Input
-            clearable
-            class="float-left"
-            v-model="startTime"
-            placeholder="请设置开始执行时间"
-          >
+          <Input clearable class="float-left" v-model="startTime" placeholder="请设置开始执行时间">
             <span slot="prepend">执行时间</span>
           </Input>
         </Col>
         <Col span="12" offset="1">
-          <Input
-            disabled
-            :placeholder="`任务将于 ${startTime ? startTime : 0} 秒后开始执行`"
-          >
+          <Input disabled :placeholder="`任务将于 ${startTime ? startTime : 0} 秒后开始执行`">
           </Input>
         </Col>
       </Row>
       <Row class="mt-10">
         <Col span="11">
-          <Input
-            clearable
-            class="float-left"
-            v-model="blankTime"
-            placeholder="请设置间隔时长"
-          >
+          <Input clearable class="float-left" v-model="blankTime" placeholder="请设置间隔时长">
             <span slot="prepend">间隔时长</span>
           </Input>
         </Col>
@@ -151,9 +115,7 @@
           <Input
             disabled
             :placeholder="
-              `多个账号进行加粉时，为单个账号设置间隔时长 ${
-                blankTime ? blankTime : 0
-              } 秒`
+              `多个账号进行加粉时，为单个账号设置间隔时长 ${blankTime ? blankTime : 0} 秒`
             "
           >
           </Input>
@@ -171,43 +133,26 @@
       </Row>
       <Row class="mt-10">
         <Col span="11">
-          <Input
-            clearable
-            class="float-left"
-            v-model="freqInte"
-            placeholder="请设置频繁间隔"
-          >
+          <Input clearable class="float-left" v-model="freqInte" placeholder="请设置频繁间隔">
             <span slot="prepend">频繁间隔</span>
           </Input>
         </Col>
         <Col span="12" offset="1">
           <Input
             disabled
-            :placeholder="
-              `每频繁一次隔 ${freqInte ? freqInte : 0} 秒后，重新开始加粉`
-            "
+            :placeholder="`每频繁一次隔 ${freqInte ? freqInte : 0} 秒后，重新开始加粉`"
           >
           </Input>
         </Col>
       </Row>
       <Row class="mt-10 mb-10">
         <Col span="11">
-          <Input
-            clearable
-            class="float-left"
-            v-model="freqLimit"
-            placeholder="请设置频繁上限"
-          >
+          <Input clearable class="float-left" v-model="freqLimit" placeholder="请设置频繁上限">
             <span slot="prepend">频繁上限</span>
           </Input>
         </Col>
         <Col span="12" offset="1">
-          <Input
-            disabled
-            :placeholder="
-              `总频繁数达到 ${freqLimit ? freqLimit : 0} 次后，停止加粉`
-            "
-          >
+          <Input disabled :placeholder="`总频繁数达到 ${freqLimit ? freqLimit : 0} 次后，停止加粉`">
           </Input>
         </Col>
       </Row>
@@ -236,11 +181,7 @@
       </Input>
       <div class="upload mb-10 mt-10 ml-7">
         <span class="title mr-10">账号列表</span>
-        <Upload
-          action=""
-          :show-upload-list="false"
-          :before-upload="handleBeforeUpload2"
-        >
+        <Upload action="" :show-upload-list="false" :before-upload="handleBeforeUpload2">
           <Button icon="md-cloud-upload">上传本地TXT文件</Button>
         </Upload>
       </div>
@@ -254,9 +195,7 @@
       </Input>
       <div slot="footer">
         <Button icon="md-remove-circle" @click="catchClick">取消</Button>
-        <Button type="success" icon="md-checkmark" @click="sendRequestByWX">
-          确定
-        </Button>
+        <Button type="success" icon="md-checkmark" @click="sendRequestByWX">确定</Button>
       </div>
     </Modal>
   </div>
@@ -372,20 +311,14 @@ export default {
   },
   methods: {
     async allData() {
-      const { data } = await this.$http.get("/account/getAllGroup", {
-        params: { user_id: this.user_id }
-      })
+      const params = { user_id: this.user_id }
+      const { data } = await this.$http.get("/account/getAllGroup", { params })
       this.$refs[this.PagedTableRef].total = data.length
     },
     async initData() {
       this.data = []
-      const { data } = await this.$http.get("/account/getAllGroup", {
-        params: {
-          user_id: this.user_id,
-          pageIndex: this.pageIndex,
-          pageSize: this.pageSize
-        }
-      })
+      const params = { user_id: this.user_id, pageIndex: this.pageIndex, pageSize: this.pageSize }
+      const { data } = await this.$http.get("/account/getAllGroup", { params })
       data.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,
@@ -397,9 +330,7 @@ export default {
     },
     async sendByGroup({ groupId: group_id }) {
       this.$refs["FriendConfirmModal"].isShowConfirmModal = false
-      const { msg } = await this.$http.post("/contact/sendMessageByGroup", {
-        group_id
-      })
+      const { msg } = await this.$http.post("/contact/sendMessageByGroup", { group_id })
       this.$Message.info(msg)
     },
     async sendRequestByWX() {
@@ -412,13 +343,9 @@ export default {
         return
       }
       this.isShowWXModal = false
-      let contact = []
-      contact = this.wxUserList.split(/[\r\n]/g).filter(item => item !== "")
-      const { msg } = await this.$http.post("/contact/addFriends", {
-        wxid: this.wx,
-        request_list: contact,
-        content: this.wxContent
-      })
+      let contact = this.wxUserList.split(/[\r\n]/g).filter(item => item !== "")
+      const args = { wxid: this.wx, request_list: contact, content: this.wxContent }
+      const { msg } = await this.$http.post("/contact/addFriends", args)
       this.$Message.info(msg)
       this.wx = this.wxContent = this.wxUserList = ""
     },
@@ -429,9 +356,7 @@ export default {
     handleBeforeUpload2(file) {
       const reader = new FileReader()
       reader.readAsText(file)
-      reader.onload = () => {
-        this.wxUserList = reader.result
-      }
+      reader.onload = () => (this.wxUserList = reader.result)
       return false
     },
     handleBeforeUpload(file) {
@@ -477,11 +402,6 @@ export default {
           return
         }
       }
-      /* <Radio label="来源手机号"></Radio>
-            <Radio label="来源微信号"></Radio>
-            <Radio label="来源腾讯QQ"></Radio>
-            <Radio label="来源通讯录"></Radio>
-            <Radio label="自定义来源"></Radio> */
       const type =
         this.setOrigin === "来源手机号"
           ? "15"
@@ -492,9 +412,7 @@ export default {
           : this.setOrigin === "来源通讯录"
           ? "13"
           : this.custom
-      let requestList = this.mailList
-        .split(/[\r\n]/g)
-        .filter(item => item !== "")
+      let requestList = this.mailList.split(/[\r\n]/g).filter(item => item !== "")
       const args = {
         groupId: this.currentGroupID,
         startTime: this.startTime,
@@ -516,9 +434,7 @@ export default {
     },
     async clearMailList() {
       this.$refs[this.ConfirmModalRef].isShowConfirmModal = false
-      const { msg } = await this.$http.post("/contact/clearContact", {
-        user_id: this.user_id
-      })
+      const { msg } = await this.$http.post("/contact/clearContact", { user_id: this.user_id })
       this.$Message.info(msg)
     }
   }

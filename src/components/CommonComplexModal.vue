@@ -7,18 +7,12 @@
     class-name="vertical-center-modal"
   >
     <p slot="header">
-      <Icon
-        type="md-contact"
-        color="#2D8CF0"
-        class="mr-5 header-icon"
-      />添加通讯录好友
+      <Icon type="md-contact" color="#2D8CF0" class="mr-5 header-icon" />添加通讯录好友
     </p>
     <div class="text-center">确定要为该分组下的所有账号添加通讯录好友吗？</div>
     <div slot="footer">
       <Button icon="md-remove-circle" @click="catchClick">取消</Button>
-      <Button type="primary" icon="md-checkmark" @click="tryClick">
-        确定
-      </Button>
+      <Button type="primary" icon="md-checkmark" @click="tryClick">确定</Button>
     </div>
   </Modal>
 </template>

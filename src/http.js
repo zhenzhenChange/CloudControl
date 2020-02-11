@@ -38,9 +38,7 @@ http.interceptors.response.use(
     Vue.prototype.$Loading.error()
     const status = err.response.status
     const msg = `服务器错误，请稍后重试！错误代码：${status}`
-    if (status) {
-      Vue.prototype.$Message.error(msg)
-    }
+    if (status) Vue.prototype.$Message.error(msg)
     return Promise.reject(err)
   }
 )

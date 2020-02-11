@@ -29,10 +29,7 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      user_id: state => state.user_id,
-      Shreshold: state => state.Shreshold
-    })
+    ...mapState({ user_id: state => state.user_id, Shreshold: state => state.Shreshold })
   },
   created() {
     this.limit = this.Shreshold
@@ -48,10 +45,8 @@ export default {
         return
       }
       this.limitLoading = true
-      const { msg } = await this.$http.post("/common/setShreshold", {
-        user_id: this.user_id,
-        shreshold: this.limit
-      })
+      const arg = { user_id: this.user_id, shreshold: this.limit }
+      const { msg } = await this.$http.post("/common/setShreshold", arg)
       this.$store.commit("saveShreshold", this.limit)
       this.$Message.info(msg)
       this.limitLoading = false

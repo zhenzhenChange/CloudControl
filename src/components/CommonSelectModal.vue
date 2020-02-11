@@ -7,11 +7,7 @@
     class-name="vertical-center-modal"
   >
     <p slot="header">
-      <Icon
-        :type="config.icon"
-        :color="config.color"
-        class="mr-5 header-icon"
-      />
+      <Icon :type="config.icon" :color="config.color" class="mr-5 header-icon" />
       {{ config.title }}
     </p>
     <div class="flex-div" v-if="config.selectConfig">

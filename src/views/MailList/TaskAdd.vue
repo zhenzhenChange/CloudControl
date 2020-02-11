@@ -20,15 +20,11 @@
       </div>
       <div slot="footer">
         <Button icon="md-remove-circle" @click="cancel">取消</Button>
-        <Button type="error" icon="md-checkmark" @click="stop">
-          确定
-        </Button>
+        <Button type="error" icon="md-checkmark" @click="stop">确定</Button>
       </div>
     </Modal>
     <Drawer width="40" :closable="false" v-model="isShowTaskAddDrawer">
-      <div slot="header">
-        <Icon type="md-book" color="#2D8CF0" class="mr-10" />加粉任务报表
-      </div>
+      <div slot="header"><Icon type="md-book" color="#2D8CF0" class="mr-10" />加粉任务报表</div>
       <Row>
         <Col span="11">
           <Card class="text-center">
@@ -168,15 +164,12 @@ export default {
     },
     async stop() {
       this.isShowStopAddModal = false
-      const { msg } = await this.$http.get("/stopAddFriend", {
-        params: { groupId: this.currentGroupID, taskName: this.currentTaskName }
-      })
+      const params = { groupId: this.currentGroupID, taskName: this.currentTaskName }
+      const { msg } = await this.$http.get("/stopAddFriend", { params })
       this.$Message.info(msg)
     },
     async taskAddData(groupId) {
-      const res = await this.$http.get("/getAddFriendView", {
-        params: { groupId }
-      })
+      const res = await this.$http.get("/getAddFriendView", { params: { groupId } })
       this.taskObj = res
     }
   }

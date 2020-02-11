@@ -6,9 +6,7 @@
       <div class="clouds_three"></div>
     </div>
     <Card class="login-card">
-      <p slot="title">
-        <Icon type="md-cloud-done" class="mr-10" />欢迎使用平台-请先登录
-      </p>
+      <p slot="title"><Icon type="md-cloud-done" class="mr-10" />欢迎使用平台-请先登录</p>
       <Form :model="loginForm" class="">
         <FormItem>
           <Input
@@ -33,9 +31,7 @@
           </Input>
         </FormItem>
         <FormItem>
-          <Button type="info" long @click="login" icon="md-log-in">
-            登录
-          </Button>
+          <Button type="info" long @click="login" icon="md-log-in">登录</Button>
         </FormItem>
       </Form>
     </Card>

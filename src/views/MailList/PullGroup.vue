@@ -1,21 +1,10 @@
 <template>
   <div class="PullGroup">
-    <PagedTable
-      :data="data"
-      :ref="PagedTableRef"
-      :dataColumns="PullGroupColumns"
-    />
+    <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="PullGroupColumns" />
     <Drawer width="80" :closable="false" v-model="isShowReportDrawer">
       <div slot="header">
         <Icon type="md-book" color="#2D8CF0" class="mr-10" />拉群任务报表
-        <Button
-          type="info"
-          class="ml-10"
-          icon="md-download"
-          @click="exportData"
-        >
-          导出报表
-        </Button>
+        <Button type="info" class="ml-10" icon="md-download" @click="exportData">导出报表</Button>
       </div>
       <PagedTable
         :show="'no'"
@@ -43,9 +32,7 @@
       </div>
       <div slot="footer">
         <Button icon="md-remove-circle" @click="cancel">取消</Button>
-        <Button type="error" icon="md-checkmark" @click="stop">
-          确定
-        </Button>
+        <Button type="error" icon="md-checkmark" @click="stop">确定</Button>
       </div>
     </Modal>
     <Modal
@@ -56,11 +43,7 @@
       class-name="vertical-center-modal"
     >
       <p slot="header">
-        <Icon
-          color="#57C5F7"
-          type="md-add"
-          class="mr-5 header-icon"
-        />为该订单补充群Url
+        <Icon color="#57C5F7" type="md-add" class="mr-5 header-icon" />为该订单补充群Url
       </p>
       <Row>
         <Col span="24">
@@ -80,10 +63,7 @@
       </Row>
       <Row class="mt-10">
         <Col span="24">
-          <Input
-            disabled
-            :placeholder="`共补充 ${supplyUrlListLength} 条群Url`"
-          />
+          <Input disabled :placeholder="`共补充 ${supplyUrlListLength} 条群Url`" />
         </Col>
       </Row>
       <Row class="mt-10">
@@ -98,9 +78,7 @@
       </Row>
       <div slot="footer">
         <Button icon="md-remove-circle" @click="cancel">取消</Button>
-        <Button type="success" icon="md-checkmark" @click="addUrl">
-          确定
-        </Button>
+        <Button type="success" icon="md-checkmark" @click="addUrl">确定</Button>
       </div>
     </Modal>
   </div>
@@ -153,9 +131,7 @@ export default {
             const { grpUrl } = params.row
             /*  let url = ""
             grpUrl.forEach(item => (url += `${item}<br/>`)) */
-            return h("div", [
-              h("span", { domProps: { innerHTML: grpUrl.length } })
-            ])
+            return h("div", [h("span", { domProps: { innerHTML: grpUrl.length } })])
           }
         },
         { align: "center", title: "最大人数", key: "maxPeople" },
@@ -224,9 +200,7 @@ export default {
   computed: {
     ...mapState({ user_id: state => state.user_id }),
     supplyUrlListLength() {
-      const length = this.supplyUrlList
-        .split(/[\r\n]/g)
-        .filter(item => item !== "").length
+      const length = this.supplyUrlList.split(/[\r\n]/g).filter(item => item !== "").length
       return length
     }
   },
@@ -251,16 +225,13 @@ export default {
     },
     async stop() {
       this.isShowStopModal = false
-      const { msg } = await this.$http.get("/stopEnterGroup", {
-        params: { groupId: this.currentGroupID, taskName: this.currentTaskName }
-      })
+      const params = { groupId: this.currentGroupID, taskName: this.currentTaskName }
+      const { msg } = await this.$http.get("/stopEnterGroup", { params })
       this.$Message.info(msg)
     },
     async getReportData(taskName, groupId) {
       this.reportData = []
-      const data = await this.$http.get("/groupView", {
-        params: { taskName, groupId }
-      })
+      const data = await this.$http.get("/groupView", { params: { taskName, groupId } })
       data.forEach((item, index) => {
         let memberCount = item.groupInfo.memberCount
         this.reportData.push({
@@ -291,16 +262,9 @@ export default {
       }
       this.isShowAddModal = false
       const { groupId, taskName } = this.row
-      const grpUrl = this.supplyUrlList
-        .split(/[\r\n]/g)
-        .filter(item => item !== "")
-      const args = {
-        grpUrl,
-        groupId,
-        taskName,
-        maxPeople: this.addPeople - 5,
-        opType: this.addType === "一手" ? 0 : 1
-      }
+      const grpUrl = this.supplyUrlList.split(/[\r\n]/g).filter(item => item !== "")
+      const opType = this.addType === "一手" ? 0 : 1
+      const args = { grpUrl, groupId, taskName, maxPeople: this.addPeople - 5, opType }
       const { msg } = await this.$http.post("/group/addGroupURL", args)
       this.$Message.info(msg)
     },

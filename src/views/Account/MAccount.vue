@@ -4,16 +4,8 @@
     <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider dashed />
     <UnCheckButton :el="PagedTableRef" />
-    <PagedTable
-      :data="data"
-      :ref="PagedTableRef"
-      :dataColumns="MAccountColumns"
-    />
-    <CommonConfirmModal
-      :ref="ConfirmModalRef"
-      :data="operationData"
-      :config="operationConfig"
-    />
+    <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="MAccountColumns" />
+    <CommonConfirmModal :ref="ConfirmModalRef" :data="operationData" :config="operationConfig" />
     <CommonSelectModal :ref="SelectModalRef" :config="selectConfig" />
     <CommonCreateModal :ref="CreateModalRef" :config="createConfig" />
   </div>
@@ -45,34 +37,11 @@ export default {
       MAccountColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 130, title: "账号", align: "center", key: "account" },
-        {
-          width: 150,
-          align: "center",
-          tooltip: true,
-          title: "所属分组",
-          key: "groupName"
-        },
+        { width: 150, align: "center", tooltip: true, title: "所属分组", key: "groupName" },
         { width: 100, align: "center", title: "分组ID", key: "groupId" },
-        {
-          width: 180,
-          align: "center",
-          tooltip: true,
-          title: "账号A16数据",
-          key: "account62A16"
-        },
-        {
-          width: 100,
-          align: "center",
-          title: "好友数",
-          key: "accountFriendCount"
-        },
-        {
-          width: 130,
-          align: "center",
-          tooltip: true,
-          title: "密码",
-          key: "accountPwd"
-        },
+        { width: 180, align: "center", tooltip: true, title: "账号A16数据", key: "account62A16" },
+        { width: 100, align: "center", title: "好友数", key: "accountFriendCount" },
+        { width: 130, align: "center", tooltip: true, title: "密码", key: "accountPwd" },
         {
           width: 130,
           align: "center",
@@ -97,13 +66,7 @@ export default {
             return h("Tag", { props: { type: "dot", color } }, text)
           }
         },
-        {
-          width: 180,
-          align: "center",
-          tooltip: true,
-          title: "微信ID",
-          key: "accountWxid"
-        },
+        { width: 180, align: "center", tooltip: true, title: "微信ID", key: "accountWxid" },
         {
           width: 150,
           title: "操作",
@@ -114,12 +77,7 @@ export default {
               h(
                 "Button",
                 {
-                  props: {
-                    size: "small",
-                    type: "error",
-                    disabled: this.mutex,
-                    icon: "md-trash"
-                  },
+                  props: { size: "small", type: "error", disabled: this.mutex, icon: "md-trash" },
                   on: {
                     click: () => {
                       this.operationConfig = {
@@ -155,23 +113,18 @@ export default {
   methods: {
     async initData() {
       this.data = []
-      const { data } = await this.$http.get("/account/getAccountInfo", {
-        params: { user_id: this.user_id }
-      })
+      const params = { user_id: this.user_id }
+      const { data } = await this.$http.get("/account/getAccountInfo", { params })
       data.forEach(item => {
         if (!item.groupId) {
           this.data.push({
             account: item.account,
             account62A16: item.account62A16,
-            accountFriendCount: item.accountFriendCount
-              ? item.accountFriendCount
-              : "无",
+            accountFriendCount: item.accountFriendCount ? item.accountFriendCount : "无",
             accountIsValid: item.accountIsValid,
             accountPwd: item.accountPwd,
             accountState: item.accountState,
-            accountWxid: item.accountWxid
-              ? item.accountWxid
-              : "未登录或账号异常",
+            accountWxid: item.accountWxid ? item.accountWxid : "未登录或账号异常",
             groupName: item.groupName ? item.groupName : "未分配",
             groupId: item.groupId ? String(item.groupId) : "未分配"
           })
@@ -187,11 +140,8 @@ export default {
       } else {
         this.operationData.forEach(item => accounts.push(item.account))
       }
-      const { data } = await this.$http.post("/account/deleteAccount", {
-        accounts,
-        groupId: "",
-        requestType: 1
-      })
+      const args = { accounts, groupId: "", requestType: 1 }
+      const { data } = await this.$http.post("/account/deleteAccount", args)
       const obj = this.dataFormat(data)
       if (row) {
         if (obj.succ) {
@@ -208,11 +158,8 @@ export default {
     },
     async removeByGroup(groupId) {
       this.clear()
-      const { data } = await this.$http.post("/account/deleteAccount", {
-        groupId,
-        accounts: [],
-        requestType: 0
-      })
+      const args = { groupId, accounts: [], requestType: 0 }
+      const { data } = await this.$http.post("/account/deleteAccount", args)
       const obj = this.dataFormat(data)
       this.$Message.info(`成功删除账号${obj.succ}个，失败${obj.err}个！`)
       this.initData()
@@ -225,14 +172,10 @@ export default {
           return { account: item[0], password: item[1], a16Data64: item[2] }
         })
       list.forEach((item, index) => {
-        if (!item.account || !item.password || !item.a16Data64)
-          list.splice(index, 1)
+        if (!item.account || !item.password || !item.a16Data64) list.splice(index, 1)
       })
-      const { data } = await this.$http.post("/account/addAccount", {
-        list,
-        groupId,
-        userId: this.user_id
-      })
+      const args = { list, groupId, userId: this.user_id }
+      const { data } = await this.$http.post("/account/addAccount", args)
       this.clear()
       this.initData()
       const obj = this.dataFormat(data)
@@ -242,10 +185,7 @@ export default {
       group_id = String(group_id)
       const account_list = []
       this.operationData.forEach(item => account_list.push(item.account))
-      const { msg } = await this.$http.post("/account/setAccountGroup", {
-        group_id,
-        account_list
-      })
+      const { msg } = await this.$http.post("/account/setAccountGroup", { group_id, account_list })
       this.clear()
       this.initData()
       this.$Message.success(msg)

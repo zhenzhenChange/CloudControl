@@ -5,40 +5,20 @@
     <Divider dashed />
     <ButtonList :buttonListInfos="buttonListInfos" />
     <CommonEditModal :config="updateConfig" :ref="EditModalRef" />
-    <CommonConfirmModal
-      :data="operationData"
-      :ref="ConfirmModalRef"
-      :config="operationConfig"
-    />
+    <CommonConfirmModal :data="operationData" :ref="ConfirmModalRef" :config="operationConfig" />
     <Divider class="float-left" dashed />
     <UnCheckButton ref="UnCheckButton" :el="PagedTableRef" />
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="GroupColumns" />
     <TableDrawer ref="GroupTableDrawer" />
     <Drawer width="600" :closable="false" v-model="isShowDrawer">
       <div slot="header" class="header-drawer">
+        <div><Icon type="md-create" color="#2D8CF0" class="mr-10" />创建拉群任务</div>
         <div>
-          <Icon type="md-create" color="#2D8CF0" class="mr-10" />创建拉群任务
-        </div>
-        <div>
-          <Button
-            type="error"
-            class="mr-10"
-            icon="md-barcode"
-            @click="showQRCodeDrawer"
-          >
+          <Button type="error" class="mr-10" icon="md-barcode" @click="showQRCodeDrawer">
             二维码解码
           </Button>
-          <Button
-            class="mr-10"
-            type="warning"
-            icon="md-refresh"
-            @click="resetClick"
-          >
-            重置
-          </Button>
-          <Button type="success" icon="md-checkmark" @click="createGroupTask">
-            立即提交
-          </Button>
+          <Button class="mr-10" type="warning" icon="md-refresh" @click="resetClick">重置</Button>
+          <Button type="success" icon="md-checkmark" @click="createGroupTask">立即提交</Button>
         </div>
       </div>
       <Row>
@@ -67,10 +47,7 @@
           </Input>
         </Col>
         <Col span="13" offset="1">
-          <Input
-            disabled
-            placeholder="群最终人数（包括群主与小号），且要 <= 39"
-          />
+          <Input disabled placeholder="群最终人数（包括群主与小号），且要 <= 39" />
         </Col>
       </Row>
       <Row class="mt-10">
@@ -149,12 +126,7 @@ export default {
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
         { align: "center", title: "分组ID", key: "groupId" },
         { align: "center", title: "分组名称", key: "groupName" },
-        {
-          sortable: true,
-          align: "center",
-          title: "创建时间",
-          key: "groupCreateDate"
-        },
+        { sortable: true, align: "center", title: "创建时间", key: "groupCreateDate" },
         { align: "center", title: "组内账号总数", key: "total" },
         {
           width: 430,
@@ -181,20 +153,13 @@ export default {
               h(
                 "Button",
                 {
-                  props: {
-                    size: "small",
-                    type: "success",
-                    icon: "md-eye",
-                    disabled: this.mutex
-                  },
                   style: { marginRight: "5px" },
+                  props: { size: "small", type: "success", icon: "md-eye", disabled: this.mutex },
                   on: {
                     click: () => {
                       const { groupId } = params.row
                       this.$refs["GroupTableDrawer"].isShowTableDrawer = true
-                      this.$refs["GroupTableDrawer"].getAccountDataByGroupID(
-                        groupId
-                      )
+                      this.$refs["GroupTableDrawer"].getAccountDataByGroupID(groupId)
                       this.$refs["GroupTableDrawer"].initAllData(groupId)
                       this.$refs["GroupTableDrawer"].groupID = groupId
                     }
@@ -205,13 +170,8 @@ export default {
               h(
                 "Button",
                 {
-                  props: {
-                    size: "small",
-                    type: "primary",
-                    icon: "md-create",
-                    disabled: this.mutex
-                  },
                   style: { marginRight: "5px" },
+                  props: { size: "small", type: "info", icon: "md-create", disabled: this.mutex },
                   on: {
                     click: () => {
                       this.update(params.row)
@@ -223,12 +183,7 @@ export default {
               h(
                 "Button",
                 {
-                  props: {
-                    type: "error",
-                    size: "small",
-                    icon: "md-trash",
-                    disabled: this.mutex
-                  },
+                  props: { type: "error", size: "small", icon: "md-trash", disabled: this.mutex },
                   on: {
                     click: () => {
                       const { groupId: group_id } = params.row
@@ -257,14 +212,11 @@ export default {
   },
   methods: {
     async allData() {
-      const { data } = await this.$http.get("/account/getAllGroup", {
-        params: { user_id: this.user_id }
-      })
+      const params = { user_id: this.user_id }
+      const { data } = await this.$http.get("/account/getAllGroup", { params })
       this.$refs[this.PagedTableRef].total = data.length
       const arr = []
-      data.forEach(item =>
-        arr.push({ label: item.groupName, value: String(item.groupId) })
-      )
+      data.forEach(item => arr.push({ label: item.groupName, value: String(item.groupId) }))
       this.$store.commit("saveGroupData", JSON.stringify(arr))
     },
     async initData(keyWords) {
@@ -272,38 +224,28 @@ export default {
       let arr = []
       let res = null
       if (keyWords) {
-        res = await this.$http.get("/account/getGroupByName", {
-          params: { group_name: keyWords, user_id: this.user_id }
-        })
+        const params = { group_name: keyWords, user_id: this.user_id }
+        res = await this.$http.get("/account/getGroupByName", { params })
       } else {
-        res = await this.$http.get("/account/getAllGroup", {
-          params: {
-            user_id: this.user_id,
-            pageIndex: this.pageIndex,
-            pageSize: this.pageSize
-          }
-        })
-        res.data.forEach(item =>
-          arr.push({ label: item.groupName, value: item.groupId })
-        )
+        const params = { user_id: this.user_id, pageIndex: this.pageIndex, pageSize: this.pageSize }
+        res = await this.$http.get("/account/getAllGroup", { params })
+        res.data.forEach(item => arr.push({ label: item.groupName, value: item.groupId }))
       }
       res.data.forEach(async (item, index) => {
-        let total = await this.$http.post("/account/getAccount", {
-          group_id: String(item.groupId)
-        })
+        let total = await this.$http.post("/account/getAccount", { group_id: String(item.groupId) })
         this.data.push({
           serialNumber: index + 1,
+          total: total.data.length,
           groupName: item.groupName,
           groupId: String(item.groupId),
-          groupCreateDate: this.$options.filters.date(item.groupCreateDate),
-          total: total.data.length
+          groupCreateDate: this.$options.filters.date(item.groupCreateDate)
         })
       })
     },
     async create() {
       const editModal = this.$refs[this.EditModalRef]
       if (!editModal.value || editModal.value === " ") {
-        this.$Message.warning("请输入分组名称（开头不能有空格）")
+        this.$Message.warning("请输入分组名称（不能以空格开头）")
         return
       }
       this.$refs[this.EditModalRef].isShowEditModal = false
@@ -323,9 +265,7 @@ export default {
         title: "编辑分组",
         isUpdate: true,
         tryBtn: "保存",
-        inputInfos: [
-          { desc: "分组名称", label: "分组名称", model: group_name }
-        ],
+        inputInfos: [{ desc: "分组名称", label: "分组名称", model: group_name }],
         updateData: { group_id },
         updateArgs: ["group_name"],
         url: "/account/updateGroup"
@@ -341,10 +281,8 @@ export default {
       } else {
         group_id = this.operationData.map(item => item.groupId)
       }
-      const { msg } = await this.$http.post("/account/deleteGroup", {
-        group_id,
-        user_id: this.user_id
-      })
+      const args = { group_id, user_id: this.user_id }
+      const { msg } = await this.$http.post("/account/deleteGroup", args)
       if (msg) {
         this.allData()
         this.initData()

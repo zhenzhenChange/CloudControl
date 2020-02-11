@@ -10,19 +10,11 @@
       {{ config.title }}
     </p>
     <div v-if="config.createConfig">
-      <SearchSelect
-        ref="select"
-        class="float-left"
-        :config="config.createConfig"
-      />
+      <SearchSelect ref="select" class="float-left" :config="config.createConfig" />
     </div>
     <div class="upload mb-10">
       <span class="title mr-10">账号数据</span>
-      <Upload
-        action=""
-        :show-upload-list="false"
-        :before-upload="handleBeforeUpload"
-      >
+      <Upload action="" :show-upload-list="false" :before-upload="handleBeforeUpload">
         <Button icon="md-cloud-upload">批量上传账号</Button>
       </Upload>
     </div>
@@ -54,9 +46,7 @@ export default {
     handleBeforeUpload(file) {
       const reader = new FileReader()
       reader.readAsText(file)
-      reader.onload = () => {
-        this.accountData = reader.result
-      }
+      reader.onload = () => (this.accountData = reader.result)
       return false
     },
     catchClick() {

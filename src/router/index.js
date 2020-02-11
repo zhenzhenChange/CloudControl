@@ -8,12 +8,7 @@ Vue.use(ViewUI)
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: "/",
-    name: "login",
-    component: Login,
-    meta: { isPublic: true }
-  },
+  { path: "/", name: "login", component: Login, meta: { isPublic: true } },
   {
     path: "/home",
     name: "首页",
@@ -78,11 +73,7 @@ const routes = [
   }
 ]
 
-const router = new VueRouter({
-  base: "/cloud-control/",
-  mode: "history",
-  routes
-})
+const router = new VueRouter({ base: "/cloud-control/", mode: "history", routes })
 
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
@@ -97,8 +88,6 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
-router.afterEach(() => {
-  ViewUI.LoadingBar.finish()
-})
+router.afterEach(() => ViewUI.LoadingBar.finish())
 
 export default router

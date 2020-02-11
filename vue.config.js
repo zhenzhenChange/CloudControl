@@ -2,8 +2,8 @@ module.exports = {
   devServer: {
     proxy: {
       "/cloud-api": {
-        target: "http://39.108.132.32:8080",
         changeOrigin: true,
+        target: "http://39.108.132.32:8080",
         pathRewrite: { "^/cloud-api": "/api" }
       }
     }

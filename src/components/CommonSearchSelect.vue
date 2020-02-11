@@ -11,12 +11,9 @@
       :placeholder="`请选择${config.info}`"
       :style="config.width ? `width:${config.width}` : 'width:200px;'"
     >
-      <Option
-        :key="option.value"
-        :value="option.value"
-        v-for="option in config.options"
-        >{{ option.label }}</Option
-      >
+      <Option :key="option.value" :value="option.value" v-for="option in config.options">
+        {{ option.label }}
+      </Option>
     </Select>
   </div>
 </template>

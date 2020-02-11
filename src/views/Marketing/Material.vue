@@ -3,12 +3,7 @@
     <TabPane label="朋友圈素材" icon="md-people">
       <Card class="template-card">
         <p slot="title" class="title">素材模板</p>
-        <Input
-          clearable
-          size="large"
-          placeholder="请填写标题"
-          v-model="template.title"
-        >
+        <Input clearable size="large" placeholder="请填写标题" v-model="template.title">
           <span slot="prepend">标题</span>
         </Input>
         <Input
@@ -19,11 +14,7 @@
           :autosize="{ minRows: 5, maxRows: 10 }"
         >
         </Input>
-        <SpaceUpload
-          :uploadLimit="9"
-          ref="SpaceUpload"
-          :desc="'最多可上传9张图片'"
-        />
+        <SpaceUpload :uploadLimit="9" ref="SpaceUpload" :desc="'最多可上传9张图片'" />
         <div class="mt-10">
           <Button
             long
@@ -32,8 +23,9 @@
             icon="md-checkbox"
             @click="saveTemplate"
             :loading="templateLoading"
-            >保存</Button
           >
+            保存
+          </Button>
         </div>
       </Card>
     </TabPane>
@@ -56,20 +48,16 @@
             icon="md-checkbox"
             @click="saveQuickInfo"
             :loading="quickLoading"
-            >保存</Button
           >
+            保存
+          </Button>
         </div>
       </Card>
     </TabPane>
     <TabPane label="个人信息模板" icon="md-person">
       <Card class="template-card">
         <p slot="title" class="title">个人信息模板</p>
-        <Input
-          clearable
-          size="large"
-          placeholder="请设置密码"
-          v-model="personInfo.pwd"
-        >
+        <Input clearable size="large" placeholder="请设置密码" v-model="personInfo.pwd">
           <span slot="prepend">密码模板</span>
         </Input>
         <Input
@@ -99,8 +87,9 @@
             icon="md-checkbox"
             @click="savePersonInfo"
             :loading="personLoading"
-            >保存</Button
           >
+            保存
+          </Button>
         </div>
       </Card>
     </TabPane>
@@ -123,8 +112,9 @@
             icon="md-checkbox"
             @click="saveVerifyInfo"
             :loading="verifyLoading"
-            >保存</Button
           >
+            保存
+          </Button>
         </div>
       </Card>
     </TabPane>
@@ -154,9 +144,8 @@ export default {
   },
   methods: {
     async _initData() {
-      const { data, msg } = await this.$http.get("/marketing/getInfo", {
-        params: { user_id: this.user_id }
-      })
+      const params = { user_id: this.user_id }
+      const { data, msg } = await this.$http.get("/marketing/getInfo", { params })
       const picURL = []
       const avaUrl = []
       data.friendCriclePicURL
@@ -186,10 +175,7 @@ export default {
       this.templateLoading = true
       this.template.user_id = this.user_id
       this.template.picURL = this.$refs.SpaceUpload.uploadList
-      const { msg } = await this.$http.post(
-        "/marketing/setFriendCricle",
-        this.template
-      )
+      const { msg } = await this.$http.post("/marketing/setFriendCricle", this.template)
       this.templateLoading = false
       this._initData()
       this.$Message.info(msg)
@@ -201,10 +187,7 @@ export default {
       }
       this.quickLoading = true
       this.quickInfo.user_id = this.user_id
-      const { msg } = await this.$http.post(
-        "/marketing/setSendMsg",
-        this.quickInfo
-      )
+      const { msg } = await this.$http.post("/marketing/setSendMsg", this.quickInfo)
       this.quickLoading = false
       this._initData()
       this.$Message.info(msg)
@@ -221,10 +204,7 @@ export default {
       this.personLoading = true
       this.personInfo.user_id = this.user_id
       this.personInfo.avatarUrl = this.$refs.UploadAvatar.uploadList[0]
-      const { msg } = await this.$http.post(
-        "/marketing/setInfo",
-        this.personInfo
-      )
+      const { msg } = await this.$http.post("/marketing/setInfo", this.personInfo)
       this.personLoading = false
       this._initData()
       this.$Message.info(msg)
@@ -236,10 +216,7 @@ export default {
       }
       this.verifyLoading = true
       this.verifyInfo.user_id = this.user_id
-      const { msg } = await this.$http.post(
-        "/marketing/setAddMsg",
-        this.verifyInfo
-      )
+      const { msg } = await this.$http.post("/marketing/setAddMsg", this.verifyInfo)
       this.verifyLoading = false
       this._initData()
       this.$Message.info(msg)

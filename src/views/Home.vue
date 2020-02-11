@@ -1,18 +1,8 @@
 <template>
   <div class="layout">
     <Sider class="sider">
-      <Menu
-        ref="show"
-        theme="dark"
-        width="auto"
-        @on-select="selectMenu"
-        :active-name="$route.path"
-      >
-        <Submenu
-          :key="index"
-          :name="index"
-          v-for="(subMenu, index) in subMenuList"
-        >
+      <Menu ref="show" theme="dark" width="auto" @on-select="selectMenu" :active-name="$route.path">
+        <Submenu :key="index" :name="index" v-for="(subMenu, index) in subMenuList">
           <template slot="title">
             <Icon ref="Icon" :type="subMenu.type" />{{ subMenu.title }}
           </template>
@@ -46,12 +36,7 @@
                 <Input clearable v-model="secret" placeholder="请输入密钥">
                   <span slot="prepend">密钥</span>
                 </Input>
-                <Input
-                  clearable
-                  class="mt-10"
-                  v-model="orderno"
-                  placeholder="请输入订单号"
-                >
+                <Input clearable class="mt-10" v-model="orderno" placeholder="请输入订单号">
                   <span slot="prepend">订单</span>
                 </Input>
                 <div class="mt-10">
@@ -75,19 +60,12 @@
         <div>
           <div class="float-left mr-30">
             <span class="mr-20">是否开启代理</span>
-            <i-switch
-              size="large"
-              true-value="0"
-              false-value="1"
-              @on-change="changeIsOpen"
-            >
+            <i-switch size="large" true-value="0" false-value="1" @on-change="changeIsOpen">
               <span slot="open">开启</span>
               <span slot="close">关闭</span>
             </i-switch>
           </div>
-          <Button type="info" @click="logout" icon="md-log-out">
-            退出登录
-          </Button>
+          <Button type="info" @click="logout" icon="md-log-out">退出登录</Button>
         </div>
       </Header>
       <Content class="content">
@@ -173,9 +151,7 @@ export default {
         const ref = this.$refs.menuItem
         const length = ref.length
         for (let i = 0; i < length; i++) {
-          if (ref[i].active) {
-            ref[i].$parent.opened = true
-          }
+          if (ref[i].active) ref[i].$parent.opened = true
         }
       })
     },
@@ -196,9 +172,8 @@ export default {
         return
       }
       this.IPloading = true
-      const res = await this.$http.get("/proxyInfo", {
-        params: { orderno: this.orderno, secret: this.secret }
-      })
+      const params = { orderno: this.orderno, secret: this.secret }
+      const res = await this.$http.get("/proxyInfo", { params })
       this.IPloading = false
       if (res.Success === false) {
         this.$Notice.error({ title: "验证失败！" })
@@ -212,9 +187,7 @@ export default {
     },
     async changeIsOpen(value) {
       value === "0" ? (this.isShow = true) : (this.isShow = false)
-      const { msg } = await this.$http.get("openProxy", {
-        params: { isOpen: value }
-      })
+      const { msg } = await this.$http.get("openProxy", { params: { isOpen: value } })
       this.$Message.info(msg)
     }
   }

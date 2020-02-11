@@ -1,19 +1,13 @@
 <template>
   <Drawer width="50" :closable="false" v-model="isShowQRCodeDrawer">
-    <div slot="header">
-      <Icon type="md-barcode" color="#2D8CF0" class="mr-10" />二维码解码
-    </div>
+    <div slot="header"><Icon type="md-barcode" color="#2D8CF0" class="mr-10" />二维码解码</div>
     <div class="qrcode">
       <Row>
         <Col span="4">
-          <Button type="info" icon="md-hand" @click="handleQRCode">
-            生成群链接
-          </Button>
+          <Button type="info" icon="md-hand" @click="handleQRCode">生成群链接</Button>
         </Col>
         <Col span="3" offset="1">
-          <Button long type="warning" icon="md-trash" @click="clear">
-            清空
-          </Button>
+          <Button long type="warning" icon="md-trash" @click="clear">清空</Button>
         </Col>
       </Row>
       <Input

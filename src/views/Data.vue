@@ -3,14 +3,8 @@
     <div class="root-div">
       <Card class="root-card" v-for="(item, index) in dataCard" :key="index">
         <p slot="title">{{ item.title }}</p>
-        <Card
-          :key="sonIndex"
-          class="son-card"
-          v-for="(sonItem, sonIndex) in item.data"
-        >
-          <Tooltip slot="title" :content="sonItem.title">
-            {{ sonItem.title }}
-          </Tooltip>
+        <Card :key="sonIndex" class="son-card" v-for="(sonItem, sonIndex) in item.data">
+          <Tooltip slot="title" :content="sonItem.title">{{ sonItem.title }}</Tooltip>
           <div class="text-center">
             <h1 :class="sonItem.color">{{ sonItem.data }}</h1>
           </div>
@@ -107,18 +101,11 @@ export default {
   },
   created() {
     this.initData()
-    setInterval(() => {
-      this.initData()
-    }, 5000)
-    if (this.user_id) {
-      this.initGroupData()
-    }
+    setInterval(() => this.initData(), 5000)
+    if (this.user_id) this.initGroupData()
   },
   computed: {
-    ...mapState({
-      user_id: state => state.user_id,
-      DataCount: state => state.DataCount
-    })
+    ...mapState({ user_id: state => state.user_id, DataCount: state => state.DataCount })
   },
   methods: {
     async initData() {
@@ -136,53 +123,37 @@ export default {
       this.dataCard[2].data[1].data = 0
       this.dataCard[2].data[2].data = 0
       this.dataCard[2].data[3].data = 0
-      const { data } = await this.$http.get("/account/getAccountInfo", {
-        params: { user_id: this.user_id }
-      })
+
+      const params = { user_id: this.user_id }
+
+      const { data } = await this.$http.get("/account/getAccountInfo", { params })
       this.dataCard[0].data[0].data = data.length
       data.forEach(item => {
-        if (item.accountFriendCount) {
-          this.dataCard[1].data[0].data += item.accountFriendCount
-        }
-        if (item.accountState) {
-          this.dataCard[0].data[1].data += 1
-        }
-        if (!item.accountState) {
-          this.dataCard[0].data[2].data += 1
-        }
-        if (!item.accountIsValid) {
-          this.dataCard[0].data[3].data += 1
-        }
+        if (item.accountFriendCount) this.dataCard[1].data[0].data += item.accountFriendCount
+        if (item.accountState) this.dataCard[0].data[1].data += 1
+        if (!item.accountState) this.dataCard[0].data[2].data += 1
+        if (!item.accountIsValid) this.dataCard[0].data[3].data += 1
       })
-      const InitRes = await this.$http.get("/common/getInit", {
-        params: { user_id: this.user_id }
-      })
+
+      const InitRes = await this.$http.get("/common/getInit", { params })
       this.dataCard[1].data[1].data = InitRes.data.addCount
-      this.dataCard[1].data[2].data =
-        InitRes.data.addCount - InitRes.data.ssAllPassCount
+      this.dataCard[1].data[2].data = InitRes.data.addCount - InitRes.data.ssAllPassCount
       this.dataCard[1].data[3].data = InitRes.data.ssAllPassCount
       this.$store.commit("saveShreshold", InitRes.data.suLoginShreshold)
 
-      const GroupRes = await this.$http.get("/group/getEnterGroupCount", {
-        params: { userId: this.user_id }
-      })
+      const GroupRes = await this.$http.get("/group/getEnterGroupCount", { params })
       this.dataCard[2].data[0].data = GroupRes.data.count
       this.dataCard[2].data[1].data = GroupRes.data.goingCount
 
-      const FriendRes = await this.$http.get("/contact/getAddFriendCount", {
-        params: { user_id: this.user_id }
-      })
+      const FriendRes = await this.$http.get("/contact/getAddFriendCount", { params })
       this.dataCard[2].data[2].data = FriendRes.data.count
       this.dataCard[2].data[3].data = FriendRes.data.goingCount
     },
     async initGroupData() {
       const arr = []
-      const { data } = await this.$http.get("/account/getAllGroup", {
-        params: { user_id: this.user_id }
-      })
-      data.forEach(item =>
-        arr.push({ label: item.groupName, value: String(item.groupId) })
-      )
+      const params = { user_id: this.user_id }
+      const { data } = await this.$http.get("/account/getAllGroup", { params })
+      data.forEach(item => arr.push({ label: item.groupName, value: String(item.groupId) }))
       this.$store.commit("saveGroupData", JSON.stringify(arr))
     }
   }
