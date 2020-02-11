@@ -1,7 +1,7 @@
 <template>
   <div class="PullGroup">
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="PullGroupColumns" />
-    <Drawer width="80" :closable="false" v-model="isShowReportDrawer">
+    <Drawer width="90" :closable="false" v-model="isShowReportDrawer">
       <div slot="header">
         <Icon type="md-book" color="#2D8CF0" class="mr-10" />拉群任务报表
         <Button type="info" class="ml-10" icon="md-download" @click="exportData">导出报表</Button>
@@ -110,15 +110,15 @@ export default {
       isShowReportDrawer: false,
       PagedTableRef: "PullGroupPagedTable",
       reportColumns: [
-        { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { title: "群名称", align: "center", key: "chatRoonName" },
-        { title: "群ID", align: "center", key: "ID" },
-        { title: "群Url", align: "center", key: "url" },
-        { title: "当前群人数", align: "center", key: "memberCount" },
-        { title: "拉群前人数", align: "center", key: "beforeCount" },
+        { title: "群成员手机号", align: "center", key: "phone" },
         { title: "群成员WXID", align: "center", key: "WXID" },
         { title: "群成员昵称", align: "center", key: "nickName" },
-        { title: "群成员手机号", align: "center", key: "phone" }
+        { title: "群名称", align: "center", key: "roomName" },
+        { width: 130, title: "群ID", align: "center", key: "groupID" },
+        { title: "群Url", align: "center", key: "groupUrl" },
+        { width: 110, title: "当前群人数", align: "center", key: "memberCount" },
+        { width: 110, title: "拉群前人数", align: "center", key: "beforeCount" },
+        { width: 170, title: "上传时间", align: "center", key: "uploadTime" }
       ],
       PullGroupColumns: [
         { align: "center", title: "任务名称", key: "taskName" },
@@ -198,10 +198,9 @@ export default {
     this.initData()
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id }),
+    ...mapState({ user_id: state => state.user_id, GroupData: state => state.GroupData }),
     supplyUrlListLength() {
-      const length = this.supplyUrlList.split(/[\r\n]/g).filter(item => item !== "").length
-      return length
+      return this.supplyUrlList.split(/[\r\n]/g).filter(item => item !== "").length
     }
   },
   methods: {
@@ -209,8 +208,16 @@ export default {
       this.data = []
       const data = await this.$http.get("/getEnterGroupInfo")
       this.$refs[this.PagedTableRef].total = Object.keys(data).length
+      // let groupName = ""
       for (const key in data) {
+        /*  JSON.parse(this.GroupData).forEach(item => {
+          console.log(item)
+          if (JSON.parse(data[key]).groupId === Number(item.value)) {
+            groupName = item.label
+          }
+        }) */
         this.data.push({
+          // groupName: groupName /*  ? groupName : "分组或已被删除" */,
           grpUrl: JSON.parse(data[key]).grpUrl,
           groupId: JSON.parse(data[key]).groupId,
           taskName: JSON.parse(data[key]).taskName,
@@ -232,19 +239,36 @@ export default {
     async getReportData(taskName, groupId) {
       this.reportData = []
       const data = await this.$http.get("/groupView", { params: { taskName, groupId } })
-      data.forEach((item, index) => {
-        let memberCount = item.groupInfo.memberCount
-        this.reportData.push({
-          url: item.url,
-          serialNumber: index + 1,
-          memberCount: memberCount,
-          chatRoonName: item.chatRoonName,
-          ID: item.chatRoonName.split("@")[0],
-          WXID: "",
-          nickName: "",
-          phone: "",
-          beforeCount: memberCount - Object.keys(item.idtoMd5).length
-        })
+      // const report = []
+      let WXID = ""
+      let phone = ""
+      let nickName = ""
+      let uploadTime = this.getSystemTime()
+      data.forEach(item => {
+        if (item) {
+          let memberCount = item.groupInfo.memberCount
+          for (const key in item.idtoMd5) {
+            item.groupInfo.chatRoomMember.map(memberItem => {
+              if (key === memberItem.userName) {
+                WXID = key
+                phone = item.idtoMd5[key]
+                nickName = memberItem.nickName
+                // report.push({ WXID: key, phone: item.idtoMd5[key], nickName: memberItem.nickName })
+              }
+            })
+            this.reportData.push({
+              WXID,
+              phone,
+              nickName,
+              uploadTime,
+              memberCount,
+              groupUrl: item.url,
+              roomName: item.roomName,
+              groupID: item.chatRoomName.split("@")[0],
+              beforeCount: memberCount - Object.keys(item.idtoMd5).length
+            })
+          }
+        }
       })
     },
     async addUrl() {
@@ -269,6 +293,12 @@ export default {
       this.$Message.info(msg)
     },
     exportData() {
+      const Time = this.getSystemTime()
+      const PagedTable = this.$refs.ReportPagedTable
+      const Table = PagedTable.$refs[PagedTable.TableRef]
+      Table.exportCsv({ filename: `拉群订单报表  ${Time}` })
+    },
+    getSystemTime() {
       const date = new Date()
       const year = date.getFullYear()
       let month = date.getMonth() + 1
@@ -281,10 +311,7 @@ export default {
       if (hours >= 0 && hours <= 9) hours = "0" + hours
       if (minutes >= 0 && minutes <= 9) minutes = "0" + minutes
       if (seconds >= 0 && seconds <= 9) seconds = "0" + seconds
-      const Time = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
-      const PagedTable = this.$refs.ReportPagedTable
-      const Table = PagedTable.$refs[PagedTable.TableRef]
-      Table.exportCsv({ filename: `拉群订单报表  ${Time}` })
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
     }
   }
 }

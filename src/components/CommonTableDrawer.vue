@@ -20,8 +20,8 @@
         分组变更
       </Button>
       <div class="float-right friends">
-        <span class="mr-10">总好友量：{{ friends ? friends : 0 }}</span>
-        <span class="ml-10 mr-10"> 今日通过好友量：{{ todayFriends ? todayFriends : 0 }} </span>
+        <span class="mr-10">总好友量：{{ friends }}</span>
+        <span class="ml-10 mr-10"> 今日通过好友量：{{ todayFriends }} </span>
       </div>
       <Divider dashed />
       <div class="PagedTable">
@@ -290,8 +290,8 @@ export default {
       const pageSize = String(this.pageSize)
       const pageIndex = String(this.pageIndex)
       const postArgs = { group_id, pageSize, pageIndex }
-      const { data } = await this.$http.post("/account/getAccount", postArgs)
-      data.forEach((item, index) => {
+      const res = await this.$http.post("/account/getAccount", postArgs)
+      res.data.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,
           account: item.account,
@@ -303,6 +303,7 @@ export default {
           accountWxid: item.accountWxid ? item.accountWxid : "未登录或账号异常"
         })
       })
+      this.todayFriends = res.passCount
     },
     changePage(index) {
       this.current = index
