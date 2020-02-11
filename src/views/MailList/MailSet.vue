@@ -78,7 +78,7 @@
           </Input>
         </Col>
         <Col span="12" offset="1">
-          <Input disabled placeholder="默认为13通道（通讯录）" />
+          <Input disabled placeholder="默认为15通道（通讯录）" />
         </Col>
       </Row>
       <Row class="mt-10">
