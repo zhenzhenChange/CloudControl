@@ -53,7 +53,7 @@ export default {
         this.$parent.onlineByWXID(null)
       } else if (this.config.params === "offNo") {
         this.$parent.offlineByWXID()
-      } else if (this.config.params === "removeByIDs") {
+      } else if (this.config.params === "remove-m") {
         this.$parent.removeByWXID(null)
       } else if (this.config.params === "removeByID") {
         this.$parent.removeByWXID(this.config.paramsValue)

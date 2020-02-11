@@ -366,6 +366,7 @@ export default {
       })
       const args = { list, userId: this.user_id, groupId: this.groupID }
       const { msg } = await this.$http.post("/account/addAccount", args)
+      this.dataList = ""
       this.$Message.info(msg)
       this.isShowUploadModal = false
       this.initAllData(this.groupID)

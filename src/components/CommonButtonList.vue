@@ -183,6 +183,23 @@ export default {
           flag: true
         }
         parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
+      } else if (btnID === "remove-m") {
+        if (!parent.operationData.length) {
+          this.$Message.warning("请先勾选要处理的数据～")
+          return
+        }
+        parent.operationConfig = {
+          icon: "md-trash",
+          color: "#ED4014",
+          title: "删除",
+          operation: "删除",
+          btnType: "error",
+          btnIcon: "md-trash",
+          btnText: "删除",
+          params: "remove-m",
+          flag: true
+        }
+        parentRefs[parent.ConfirmModalRef].isShowConfirmModal = true
       }
     }
   }
