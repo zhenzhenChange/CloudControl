@@ -14,11 +14,7 @@ const routes = [
     name: "首页",
     component: () => import("../views/Home.vue"),
     children: [
-      {
-        path: "/data",
-        name: "数据报表",
-        component: () => import("../views/Data.vue")
-      },
+      { path: "/data", name: "数据报表", component: () => import("../views/Data.vue") },
       {
         path: "/group",
         name: "账号 & & 分组",
@@ -39,26 +35,14 @@ const routes = [
         name: "添加好友",
         component: () => import("../views/MailList/Friends.vue")
       },
-      {
-        path: "/mail",
-        name: "加粉管理",
-        component: () => import("../views/MailList/MailSet.vue")
-      },
+      { path: "/mail", name: "加粉管理", component: () => import("../views/MailList/MailSet.vue") },
       {
         path: "/pull-group",
         name: "拉群任务",
         component: () => import("../views/MailList/PullGroup.vue")
       },
-      {
-        path: "/task",
-        name: "加粉任务",
-        component: () => import("../views/MailList/TaskAdd.vue")
-      },
-      {
-        path: "/space",
-        name: "发朋友圈",
-        component: () => import("../views/Marketing/Space.vue")
-      },
+      { path: "/task", name: "加粉任务", component: () => import("../views/MailList/TaskAdd.vue") },
+      { path: "/space", name: "发朋友圈", component: () => import("../views/Marketing/Space.vue") },
       {
         path: "/material",
         name: "素材管理",
