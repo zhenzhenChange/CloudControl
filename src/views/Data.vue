@@ -174,12 +174,9 @@ export default {
     .root-card {
       flex: 1;
       padding: 0;
-      display: flex;
       margin-left: 10px;
       margin-right: 10px;
       text-align: center;
-      align-items: center;
-      justify-content: center;
       .son-card {
         width: 170px;
         float: left;

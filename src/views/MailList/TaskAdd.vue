@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Button type="error" icon="md-stopwatch" @click="clearFirends">定时清理好友通过量</Button>
     <PagedTable :data="data" ref="TaskPagedTable" :dataColumns="Columns" />
     <Modal
       width="350"
@@ -182,6 +183,20 @@ export default {
     },
     onClose() {
       clearInterval(this.timer)
+    },
+    async clearFirends() {
+      const params = { hours: 24 }
+      this.$Modal.confirm({
+        title: "开启定时",
+        content: "确定吗？",
+        okText: "确定",
+        cancelText: "取消",
+        onOk: async () => {
+          const { msg } = await this.$http.get("/initFriendCount", { params })
+          this.$Message.info(msg)
+        },
+        onCancel() {}
+      })
     }
   }
 }
