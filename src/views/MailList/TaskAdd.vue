@@ -1,6 +1,5 @@
 <template>
   <div>
-    <Button type="error" icon="md-stopwatch" @click="clearFirends">定时清理好友通过量</Button>
     <PagedTable :data="data" ref="TaskPagedTable" :dataColumns="Columns" />
     <Modal
       width="350"
@@ -183,8 +182,8 @@ export default {
     },
     onClose() {
       clearInterval(this.timer)
-    },
-    async clearFirends() {
+    }
+    /* async clearFirends() {
       const params = { hours: 24 }
       this.$Modal.confirm({
         title: "开启定时",
@@ -197,7 +196,7 @@ export default {
         },
         onCancel() {}
       })
-    }
+    } */
   }
 }
 </script>

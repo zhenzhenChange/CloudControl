@@ -1,9 +1,7 @@
 <template>
   <div>
     <Drawer width="90" placement="left" :closable="false" v-model="isShowTableDrawer">
-      <Button type="error" class="mr-10" icon="md-trash" @click="removeModal">
-        删除
-      </Button>
+      <Button type="error" class="mr-10" icon="md-trash" @click="removeModal">删除</Button>
       <Button type="info" class="mr-10" icon="md-cloud-upload" @click="isShowUploadModal = true">
         上传账号
       </Button>
@@ -16,9 +14,7 @@
       <Button type="error" class="mr-10" icon="md-close" @click="isShowTrashModal = true">
         一键剔除无效号
       </Button>
-      <Button class="mr-10" type="info" icon="md-move" @click="moveModal">
-        分组变更
-      </Button>
+      <Button class="mr-10" type="info" icon="md-move" @click="moveModal">分组变更</Button>
       <div class="float-right friends">
         <span class="mr-10">总好友量：{{ friends }}</span>
         <span class="ml-10 mr-10"> 今日通过好友量：{{ todayFriends }} </span>
@@ -200,6 +196,7 @@ export default {
       mutex: false,
       pageSize: 10,
       pageIndex: 0,
+      errorMsg: [],
       todayFriends: "",
       selectConfig: {},
       operationData: [],
@@ -293,7 +290,17 @@ export default {
       const pageIndex = String(this.pageIndex)
       const postArgs = { group_id, pageSize, pageIndex }
       const res = await this.$http.post("/account/getAccount", postArgs)
+      const params = { groupId: group_id }
+      const errData = await this.$http.get("/getErrorAccount", { params })
+      let errMsg = ""
       res.data.forEach((item, index) => {
+        if (Array.isArray(errData)) {
+          errData.forEach(sonItem => {
+            if (item.account === sonItem.account) {
+              errMsg = sonItem.errorMsg
+            }
+          })
+        }
         this.data.push({
           serialNumber: index + 1,
           account: item.account,
@@ -302,7 +309,7 @@ export default {
           accountIsValid: item.accountIsValid,
           accountPwd: item.accountPwd,
           accountState: item.accountState,
-          accountWxid: item.accountWxid ? item.accountWxid : "未登录或账号异常"
+          accountWxid: item.accountWxid || errMsg
         })
       })
       this.todayFriends = res.passCount
@@ -380,6 +387,20 @@ export default {
       this.isShowUpModal = false
       const args = { list: [{}], request_type: "0", group_id: this.groupID }
       const { data } = await this.$http.post("/account/loginMulti", args)
+      let account = ""
+      let errorMsg = ""
+      if (data.error.length !== 0) {
+        data.error.forEach(item => {
+          const msg = JSON.parse(item.msg).Message
+          account = item.account
+          const start = msg.indexOf("<Content><![CDATA[") + 18
+          const end = msg.lastIndexOf("]]></Content>")
+          errorMsg = msg.substring(start, end)
+          this.errorMsg.push({ account, errorMsg })
+        })
+        const saveArgs = { data: this.errorMsg, groupId: this.groupID }
+        await this.$http.post("/saveErrorAccount", saveArgs)
+      }
       this.initAllData(this.groupID)
       this.getAccountDataByGroupID(this.groupID)
       this.$Message.info(`上线成功${data.success.length}个，失败${data.error.length}个`)

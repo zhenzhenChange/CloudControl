@@ -237,7 +237,6 @@ export default {
       this.$Message.info(msg)
     },
     async getReportData(taskName, groupId) {
-      this.$Spin.show()
       this.reportData = []
       const data = await this.$http.get("/groupView", { params: { taskName, groupId } })
       // const report = []
@@ -245,33 +244,38 @@ export default {
       let phone = ""
       let nickName = ""
       let uploadTime = this.getSystemTime()
+      let msg = ""
       data.forEach(item => {
         if (item) {
-          let memberCount = item.groupInfo.memberCount
-          for (const key in item.idtoMd5) {
-            item.groupInfo.chatRoomMember.map(memberItem => {
-              if (key === memberItem.userName) {
-                WXID = key
-                phone = item.idtoMd5[key]
-                nickName = memberItem.nickName
-                // report.push({ WXID: key, phone: item.idtoMd5[key], nickName: memberItem.nickName })
-              }
-            })
-            this.reportData.push({
-              WXID,
-              phone,
-              nickName,
-              uploadTime,
-              memberCount,
-              groupUrl: item.url,
-              roomName: item.roomName,
-              groupID: item.chatRoomName.split("@")[0],
-              beforeCount: memberCount - Object.keys(item.idtoMd5).length
-            })
+          if (item.roomName === "有异常,请检查账号状态") {
+            msg = "有异常,请检查账号状态或账号是否有好友"
+          } else {
+            let memberCount = item.groupInfo.memberCount
+            for (const key in item.idtoMd5) {
+              item.groupInfo.chatRoomMember.map(memberItem => {
+                if (key === memberItem.userName) {
+                  WXID = key
+                  phone = item.idtoMd5[key]
+                  nickName = memberItem.nickName
+                  // report.push({ WXID: key, phone: item.idtoMd5[key], nickName: memberItem.nickName })
+                }
+              })
+              this.reportData.push({
+                WXID,
+                phone,
+                nickName,
+                uploadTime,
+                memberCount,
+                groupUrl: item.url,
+                roomName: item.roomName,
+                groupID: item.chatRoomName.split("@")[0],
+                beforeCount: memberCount - Object.keys(item.idtoMd5).length
+              })
+            }
           }
         }
       })
-      this.$Spin.hide()
+      this.$Message.error(msg)
     },
     async addUrl() {
       if (!this.addPeople) {
