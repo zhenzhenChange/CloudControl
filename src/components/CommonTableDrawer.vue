@@ -287,7 +287,6 @@ export default {
       this.$Spin.hide()
     },
     async getAccountDataByGroupID(group_id) {
-      this.$Spin.show()
       this.data = []
       this.options = JSON.parse(this.GroupData)
       const pageSize = String(this.pageSize)
@@ -307,7 +306,6 @@ export default {
         })
       })
       this.todayFriends = res.passCount
-      this.$Spin.hide()
     },
     changePage(index) {
       this.current = index

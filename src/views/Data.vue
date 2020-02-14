@@ -54,6 +54,7 @@ import { mapState } from "vuex"
 export default {
   data() {
     return {
+      timer: null,
       dataCard: [
         {
           title: "微信账号统计",
@@ -101,8 +102,12 @@ export default {
   },
   created() {
     this.initData()
-    setInterval(() => this.initData(), 5000)
+    clearInterval(this.timer)
+    this.timer = setInterval(() => this.initData(), 5000)
     if (this.user_id) this.initGroupData()
+  },
+  destroyed() {
+    clearInterval(this.timer)
   },
   computed: {
     ...mapState({ user_id: state => state.user_id, DataCount: state => state.DataCount })
@@ -169,9 +174,12 @@ export default {
     .root-card {
       flex: 1;
       padding: 0;
+      display: flex;
       margin-left: 10px;
       margin-right: 10px;
       text-align: center;
+      align-items: center;
+      justify-content: center;
       .son-card {
         width: 170px;
         float: left;

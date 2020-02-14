@@ -23,7 +23,7 @@
         <Button type="error" icon="md-checkmark" @click="stop">确定</Button>
       </div>
     </Modal>
-    <Drawer width="40" :closable="false" v-model="isShowTaskAddDrawer">
+    <Drawer width="40" :closable="false" v-model="isShowTaskAddDrawer" @on-close="onClose">
       <div slot="header"><Icon type="md-book" color="#2D8CF0" class="mr-10" />加粉任务报表</div>
       <Row>
         <Col span="11">
@@ -89,6 +89,7 @@ export default {
   data() {
     return {
       data: [],
+      timer: null,
       taskObj: {},
       currentGroupID: "",
       currentTaskName: "",
@@ -112,8 +113,10 @@ export default {
                   on: {
                     click: () => {
                       this.isShowTaskAddDrawer = true
-                      const { groupId } = params.row
-                      this.taskAddData(groupId)
+                      const { taskName, groupId } = params.row
+                      clearInterval(this.timer)
+                      this.taskAddData(taskName, groupId)
+                      this.syncGetData(taskName, groupId)
                     }
                   }
                 },
@@ -129,6 +132,7 @@ export default {
                       this.isShowStopAddModal = true
                       this.currentGroupID = groupId
                       this.currentTaskName = taskName
+                      clearInterval(this.timer)
                     }
                   }
                 },
@@ -168,11 +172,16 @@ export default {
       const { msg } = await this.$http.get("/stopAddFriend", { params })
       this.$Message.info(msg)
     },
-    async taskAddData(groupId) {
-      this.$Spin.show()
-      const res = await this.$http.get("/getAddFriendView", { params: { groupId } })
+    async taskAddData(taskName, groupId) {
+      const params = { taskName, groupId }
+      const res = await this.$http.get("/getAddFriendView", { params })
       this.taskObj = res
-      this.$Spin.hide()
+    },
+    syncGetData(taskName, groupId) {
+      this.timer = setInterval(() => this.taskAddData(taskName, groupId), 5000)
+    },
+    onClose() {
+      clearInterval(this.timer)
     }
   }
 }

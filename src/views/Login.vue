@@ -13,7 +13,7 @@
             clearable
             type="text"
             size="large"
-            placeholder="account"
+            placeholder="用户账号"
             v-model="loginForm.user_account"
           >
             <Icon type="md-person" slot="prepend" />
@@ -24,7 +24,7 @@
             clearable
             size="large"
             type="password"
-            placeholder="password"
+            placeholder="用户密码"
             v-model="loginForm.user_pwd"
           >
             <Icon type="md-lock" slot="prepend" />
@@ -42,7 +42,7 @@
 export default {
   data() {
     return {
-      loginForm: { user_account: "admin", user_pwd: "123456" }
+      loginForm: { user_account: "", user_pwd: "" }
     }
   },
   methods: {
