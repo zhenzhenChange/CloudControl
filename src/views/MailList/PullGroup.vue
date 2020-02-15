@@ -211,7 +211,6 @@ export default {
       // let groupName = ""
       for (const key in data) {
         /*  JSON.parse(this.GroupData).forEach(item => {
-          console.log(item)
           if (JSON.parse(data[key]).groupId === Number(item.value)) {
             groupName = item.label
           }

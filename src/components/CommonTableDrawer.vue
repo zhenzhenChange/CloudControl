@@ -275,7 +275,6 @@ export default {
       const res = await this.$http.get("/getGroupPassAndAll", { params: { groupId: group_id } })
       this.todayFriends = res.todayPassCount
       this.friends = res.allCount
-      console.log(res)
       this.allData = data
       this.total = data.length
     },
