@@ -271,17 +271,13 @@ export default {
   },
   methods: {
     async initAllData(group_id) {
-      this.$Spin.show()
-      this.friends = 0
       const { data } = await this.$http.post("/account/getAccount", { group_id })
-      const res = await this.$http.get("/getAddFriendView", { params: { groupId: group_id } })
-      this.todayFriends = res.passCount
+      const res = await this.$http.get("/getGroupPassAndAll", { params: { groupId: group_id } })
+      this.todayFriends = res.todayPassCount
+      this.friends = res.allCount
+      console.log(res)
       this.allData = data
       this.total = data.length
-      let friends = 0
-      data.forEach(item => (friends += item.accountFriendCount))
-      this.friends = friends
-      this.$Spin.hide()
     },
     async getAccountDataByGroupID(group_id) {
       this.data = []
