@@ -66,6 +66,7 @@ VueRouter.prototype.push = function push(location) {
 
 router.beforeEach((to, from, next) => {
   if (!to.meta.isPublic && !localStorage.getItem("user_id")) {
+    Vue.prototype.$Message.error("请先登录~")
     return next("/")
   }
   ViewUI.LoadingBar.start()

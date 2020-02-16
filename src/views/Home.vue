@@ -65,7 +65,17 @@
               <span slot="close">关闭</span>
             </i-switch>
           </div>
-          <Button type="info" @click="logout" icon="md-log-out">退出登录</Button>
+          <Dropdown transfer>
+            <Button type="info" @click="logout">
+              退出登录
+              <Icon type="ios-arrow-down" class="ml-10"></Icon>
+            </Button>
+            <DropdownMenu slot="list">
+              <DropdownItem>
+                <a type="info" @click="isShowChangePwd = true">修改密码</a>
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
       </Header>
       <Content class="content">
@@ -85,15 +95,39 @@
       </Content>
       <Footer class="footer">&copy; Cloud</Footer>
     </Layout>
+    <Drawer width="20" :closable="false" v-model="isShowChangePwd">
+      <div slot="header" class="header-drawer">
+        <div><Icon class="mr-10" color="#2D8CF0" type="md-create" />修改密码</div>
+        <div>
+          <Button type="success" icon="md-checkmark" @click="changePwd">立即提交</Button>
+        </div>
+      </div>
+      <Row class="mt-10">
+        <Col span="24">
+          <Input v-model="oldPwd" clearable placeholder="请输入原密码">
+            <span slot="prepend">原密码</span>
+          </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="24">
+          <Input v-model="newPwd" clearable placeholder="请输入新密码">
+            <span slot="prepend">新密码</span>
+          </Input>
+        </Col>
+      </Row>
+    </Drawer>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex"
 export default {
   name: "home",
   data() {
     return {
       isShow: false,
+      isShowChangePwd: false,
       secret: "",
       orderno: "",
       routeList: [],
@@ -127,7 +161,9 @@ export default {
             { name: "素材管理", path: "/material" }
           ]
         }
-      ]
+      ],
+      oldPwd: "",
+      newPwd: ""
     }
   },
   mounted() {
@@ -140,6 +176,9 @@ export default {
       this.routeList = this.$route.matched
       this.iviewMenuChange()
     }
+  },
+  computed: {
+    ...mapState({ user_id: state => state.user_id })
   },
   methods: {
     selectMenu(name) {
@@ -189,6 +228,22 @@ export default {
       value === "0" ? (this.isShow = true) : (this.isShow = false)
       const { msg } = await this.$http.get("openProxy", { params: { isOpen: value } })
       this.$Message.info(msg)
+    },
+    async changePwd() {
+      if (!this.oldPwd) {
+        this.$Message.error("原密码不能为空！")
+        return
+      }
+      if (!this.newPwd) {
+        this.$Message.error("新密码不能为空！")
+        return
+      }
+      const args = { oldPwd: this.oldPwd, newPwd: this.newPwd, userId: this.user_id }
+      const { msg } = await this.$http.post("/account/updatePassword", args)
+      this.$Message.info(msg)
+      this.oldPwd = this.newPwd = ""
+      this.$router.push("/")
+      localStorage.removeItem("user_id")
     }
   }
 }
@@ -232,5 +287,11 @@ export default {
       padding: 0 50px 10px 50px;
     }
   }
+}
+
+.header-drawer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 </style>
