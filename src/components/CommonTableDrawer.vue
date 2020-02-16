@@ -216,7 +216,7 @@ export default {
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
         { width: 130, align: "center", title: "账号", key: "account" },
         { width: 130, align: "center", tooltip: true, title: "密码", key: "accountPwd" },
-        { width: 180, align: "center", tooltip: true, title: "账号A16数据", key: "account62A16" },
+        { width: 180, align: "center", tooltip: true, title: "账号A16/62", key: "account62A16" },
         { width: 100, align: "center", title: "好友数", key: "accountFriendCount" },
         {
           width: 130,
