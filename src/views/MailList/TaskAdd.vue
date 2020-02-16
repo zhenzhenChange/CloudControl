@@ -178,7 +178,7 @@ export default {
       this.taskObj = res
     },
     syncGetData(taskName, groupId) {
-      this.timer = setInterval(() => this.taskAddData(taskName, groupId), 5000)
+      this.timer = setInterval(() => this.taskAddData(taskName, groupId), 15000)
     },
     onClose() {
       clearInterval(this.timer)
