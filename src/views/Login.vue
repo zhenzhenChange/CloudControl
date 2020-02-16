@@ -51,8 +51,10 @@ export default {
       if (msg === "登录成功") {
         this.$store.commit("saveID", String(data.userId))
         this.$router.push("/data")
+        this.$Message.success(msg)
+      } else {
+        this.$Message.info(msg)
       }
-      this.$Message.success(msg)
     }
   }
 }
