@@ -15,6 +15,7 @@
         一键剔除无效号
       </Button>
       <Button class="mr-10" type="info" icon="md-move" @click="moveModal">分组变更</Button>
+      <Button class="mr-10" type="info" icon="md-download" @click="exportData">导出数据</Button>
       <div class="float-right friends">
         <span class="mr-10">总好友量：{{ friends }}</span>
         <span class="ml-10 mr-10"> 今日通过好友量：{{ todayFriends }} </span>
@@ -64,7 +65,7 @@
       </div>
     </Modal>
     <Modal
-      width="600"
+      width="800"
       :mask-closable="false"
       v-model="isShowUploadModal"
       class-name="vertical-center-modal"
@@ -386,12 +387,21 @@ export default {
       let errorMsg = ""
       if (data.error.length !== 0) {
         data.error.forEach(item => {
-          const msg = JSON.parse(item.msg).Message
-          account = item.account
-          const start = msg.indexOf("<Content><![CDATA[") + 18
-          const end = msg.lastIndexOf("]]></Content>")
-          errorMsg = msg.substring(start, end)
-          this.errorMsg.push({ account, errorMsg })
+          if (JSON.parse(item.msg).Data.baseResponse.errMsg.string) {
+            const msg = JSON.parse(item.msg).Data.baseResponse.errMsg.string
+            account = item.account
+            const start = msg.indexOf("<Content><![CDATA[") + 18
+            const end = msg.lastIndexOf("]]></Content>")
+            errorMsg = msg.substring(start, end)
+            this.errorMsg.push({ account, errorMsg })
+          } else {
+            const msg = JSON.parse(item.msg).Message
+            account = item.account
+            const start = msg.indexOf("<Content><![CDATA[") + 18
+            const end = msg.lastIndexOf("]]></Content>")
+            errorMsg = msg.substring(start, end)
+            this.errorMsg.push({ account, errorMsg })
+          }
         })
         const saveArgs = { data: this.errorMsg, groupId: this.groupID }
         await this.$http.post("/saveErrorAccount", saveArgs)
@@ -439,6 +449,26 @@ export default {
       this.initAllData(this.groupID)
       this.$refs[this.TableRef].selectAll(false)
       this.getAccountDataByGroupID(this.groupID)
+    },
+    exportData() {
+      const Time = this.getSystemTime()
+      const Table = this.$refs[this.TableRef]
+      Table.exportCsv({ filename: `账号数据  ${Time}` })
+    },
+    getSystemTime() {
+      const date = new Date()
+      const year = date.getFullYear()
+      let month = date.getMonth() + 1
+      let day = date.getDate()
+      let hours = date.getHours()
+      let minutes = date.getMinutes()
+      let seconds = date.getSeconds()
+      if (month >= 1 && month <= 9) month = "0" + month
+      if (day >= 0 && day <= 9) day = "0" + day
+      if (hours >= 0 && hours <= 9) hours = "0" + hours
+      if (minutes >= 0 && minutes <= 9) minutes = "0" + minutes
+      if (seconds >= 0 && seconds <= 9) seconds = "0" + seconds
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
     }
   }
 }
