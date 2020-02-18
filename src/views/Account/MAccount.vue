@@ -39,9 +39,15 @@ export default {
         { width: 130, title: "账号", align: "center", key: "account" },
         { width: 150, align: "center", tooltip: true, title: "所属分组", key: "groupName" },
         { width: 100, align: "center", title: "分组ID", key: "groupId" },
-        { width: 180, align: "center", tooltip: true, title: "账号A16数据", key: "account62A16" },
+        {
+          width: 300,
+          align: "center",
+          tooltip: true,
+          title: "账号A16/62数据",
+          key: "account62A16"
+        },
         { width: 100, align: "center", title: "好友数", key: "accountFriendCount" },
-        { width: 130, align: "center", tooltip: true, title: "密码", key: "accountPwd" },
+        { width: 180, align: "center", tooltip: true, title: "密码", key: "accountPwd" },
         {
           width: 130,
           align: "center",
@@ -66,7 +72,7 @@ export default {
             return h("Tag", { props: { type: "dot", color } }, text)
           }
         },
-        { width: 180, align: "center", tooltip: true, title: "微信ID", key: "accountWxid" },
+        { width: 230, align: "center", tooltip: true, title: "微信ID", key: "accountWxid" },
         {
           width: 150,
           title: "操作",

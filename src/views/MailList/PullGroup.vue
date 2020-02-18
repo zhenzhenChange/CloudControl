@@ -121,7 +121,7 @@ export default {
         { width: 170, title: "上传时间", align: "center", key: "uploadTime" }
       ],
       PullGroupColumns: [
-        { align: "center", title: "任务名称", key: "taskName" },
+        { width: 200, align: "center", title: "任务名称", key: "taskName" },
         {
           width: 180,
           align: "center",
@@ -129,18 +129,17 @@ export default {
           key: "grpUrl",
           render: (h, params) => {
             const { grpUrl } = params.row
-            /*  let url = ""
-            grpUrl.forEach(item => (url += `${item}<br/>`)) */
             return h("div", [h("span", { domProps: { innerHTML: grpUrl.length } })])
           }
         },
-        { align: "center", title: "最大人数", key: "maxPeople" },
-        { align: "center", title: "类型", key: "opType" },
-        // { align: "center", title: "分组名称", key: "groupName" },
-        { align: "center", title: "分组ID", key: "groupId" },
+        { width: 180, align: "center", title: "最大人数", key: "maxPeople" },
+        { width: 180, align: "center", title: "类型", key: "opType" },
+        { width: 180, align: "center", title: "订单状态", key: "pullState" },
+        { width: 180, align: "center", title: "分组ID", key: "groupId" },
         {
-          width: 500,
+          width: 550,
           title: "操作",
+          fixed: "right",
           align: "center",
           render: (h, params) => {
             return h("div", [
@@ -165,9 +164,9 @@ export default {
                   style: { marginRight: "15px" },
                   on: {
                     click: () => {
-                      const { taskName, groupId } = params.row
+                      const { taskName, groupId, maxPeople } = params.row
                       this.isShowReportDrawer = true
-                      this.getReportData(taskName, groupId)
+                      this.getReportData(taskName, groupId, maxPeople)
                     }
                   }
                 },
@@ -207,21 +206,21 @@ export default {
     async initData() {
       this.data = []
       const data = await this.$http.get("/getEnterGroupInfo")
-      this.$refs[this.PagedTableRef].total = Object.keys(data).length
-      // let groupName = ""
+      const Table = this.$refs[this.PagedTableRef]
+      if (Table) {
+        Table.total = Object.keys(data).length
+      }
       for (const key in data) {
-        /*  JSON.parse(this.GroupData).forEach(item => {
-          if (JSON.parse(data[key]).groupId === Number(item.value)) {
-            groupName = item.label
-          }
-        }) */
+        const newData = JSON.parse(data[key])
+        const params = { groupId: newData.groupId, taskName: newData.taskName }
+        const state = await this.$http.get("/order/getEnterGroupOrderState", { params })
         this.data.push({
-          // groupName: groupName /*  ? groupName : "分组或已被删除" */,
-          grpUrl: JSON.parse(data[key]).grpUrl,
-          groupId: JSON.parse(data[key]).groupId,
-          taskName: JSON.parse(data[key]).taskName,
-          maxPeople: JSON.parse(data[key]).maxPeople + 5,
-          opType: JSON.parse(data[key]).opType === 0 ? "一手" : "二手"
+          grpUrl: newData.grpUrl,
+          groupId: newData.groupId,
+          taskName: newData.taskName,
+          maxPeople: newData.maxPeople + 5,
+          opType: newData.opType === 0 ? "一手" : "二手",
+          pullState: state === 0 ? "进行中" : "已完成"
         })
       }
     },
@@ -235,10 +234,9 @@ export default {
       const { msg } = await this.$http.get("/stopEnterGroup", { params })
       this.$Message.info(msg)
     },
-    async getReportData(taskName, groupId) {
+    async getReportData(taskName, groupId, max) {
       this.reportData = []
       const data = await this.$http.get("/groupView", { params: { taskName, groupId } })
-      // const report = []
       let WXID = ""
       let phone = ""
       let nickName = ""
@@ -247,28 +245,46 @@ export default {
       data.forEach(item => {
         if (item) {
           if (item.roomName === "有异常,请检查账号状态") {
-            msg = "有异常,请检查账号状态或账号是否有好友"
+            msg = "部分有异常,请检查账号状态或账号是否有好友"
           } else {
             let memberCount = item.groupInfo.memberCount
-            for (const key in item.idtoMd5) {
-              item.groupInfo.chatRoomMember.map(memberItem => {
-                if (key === memberItem.userName) {
-                  WXID = key
-                  phone = item.idtoMd5[key]
-                  nickName = memberItem.nickName
-                  // report.push({ WXID: key, phone: item.idtoMd5[key], nickName: memberItem.nickName })
-                }
-              })
-              this.reportData.push({
-                WXID,
-                phone,
-                nickName,
-                uploadTime,
-                memberCount,
-                groupUrl: item.url,
-                roomName: item.roomName,
-                groupID: item.chatRoomName.split("@")[0],
-                beforeCount: memberCount - Object.keys(item.idtoMd5).length
+            const chatRoomMember = item.groupInfo.chatRoomMember
+            const flag = Object.keys(item.idtoMd5).length === 0
+            if (!flag) {
+              for (const key in item.idtoMd5) {
+                chatRoomMember.map(memberItem => {
+                  if (key === memberItem.userName) {
+                    WXID = key
+                    phone = item.idtoMd5[key]
+                    nickName = memberItem.nickName
+                  }
+                })
+                this.reportData.push({
+                  WXID,
+                  phone,
+                  nickName,
+                  uploadTime,
+                  memberCount,
+                  groupUrl: item.url,
+                  roomName: item.roomName,
+                  groupID: item.chatRoomName.split("@")[0],
+                  beforeCount: memberCount - Object.keys(item.idtoMd5).length
+                })
+              }
+            } else {
+              console.log(max)
+              chatRoomMember.forEach(sonItem => {
+                this.reportData.push({
+                  WXID: sonItem.userName,
+                  phone: "未上传或非本平台",
+                  nickName: sonItem.nickName,
+                  uploadTime,
+                  memberCount,
+                  groupUrl: item.url,
+                  roomName: item.roomName,
+                  groupID: item.chatRoomName.split("@")[0],
+                  beforeCount: max - memberCount - 5
+                })
               })
             }
           }

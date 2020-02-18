@@ -78,7 +78,7 @@
           </Input>
         </Col>
         <Col span="12" offset="1">
-          <Input disabled placeholder="默认为15通道（通讯录）" />
+          <Input disabled placeholder="默认为10通道（通讯录）" />
         </Col>
       </Row>
       <Row class="mt-10">
@@ -174,7 +174,6 @@ export default {
       mailType: "纯手机号",
       operationConfig: {},
       currentGroupName: "",
-      mailOrigin: "手机搜索",
       PagedTableRef: "MailPagedTable",
       ConfirmModalRef: "MailConfirmModal",
       buttonListInfos: [
@@ -277,24 +276,40 @@ export default {
         }
         flag = true
       })
+      const rand = Math.floor(Math.random() * (1 - 100) + 100)
       const args = {
-        groupId: this.currentGroupID,
-        startTime: this.startTime,
+        content: this.validInfo,
         endTime: 20,
-        interval: this.blankTime,
-        maxRequest: this.requestNum,
         frequentlyInterval: this.freqInte,
         frequentlyMaxNumber: this.freqLimit,
-        taskName: this.fansTaskName,
-        content: this.validInfo,
-        origin: this.passageway
+        groupId: this.currentGroupID,
+        interval: this.blankTime,
+        maxRequest: this.requestNum,
+        origin: 10,
+        phoneGroup: `${rand}${this.currentGroupID}`,
+        startTime: this.startTime,
+        taskName: this.fansTaskName
       }
       if (flag) {
         const contact = this.mailList.split(/[\r\n]/g).filter(item => item !== "")
-        const upload = { contact, user_id: this.user_id }
-        await this.$http.post("/contact/upload", upload)
-        const res = await this.$http.post("/contact/addFriendsByContact", args)
-        this.$Message.info(res.msg)
+        const contactData = []
+        if (this.mailType === "纯手机号") {
+          contact.forEach(item => contactData.push({ name: null, phoneNumber: item }))
+        } else {
+          contact.forEach(item => {
+            const name = item.split(/----/g)[0]
+            const phoneNumber = item.split(/----/g)[1]
+            contactData.push({ name, phoneNumber })
+          })
+        }
+        const upload = {
+          data: contactData,
+          userId: this.user_id,
+          phoneGroup: `${rand}${this.currentGroupID}`
+        }
+        await this.$http.post("/contact/addPhoneToSQL", upload)
+        const { msg } = await this.$http.post("/contact/addFriendFromSQL", args)
+        this.$Message.info(msg)
         this.resetClick()
       }
     },

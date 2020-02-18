@@ -6,7 +6,7 @@
         <Col span="4">
           <Button type="info" icon="md-hand" @click="handleQRCode">生成群链接</Button>
         </Col>
-        <Col span="3" offset="1">
+        <Col span="3">
           <Button long type="warning" icon="md-trash" @click="clear">清空</Button>
         </Col>
       </Row>

@@ -199,7 +199,6 @@ export default {
       pageIndex: 0,
       errorMsg: [],
       todayFriends: "",
-      selectConfig: {},
       operationData: [],
       isShowUpModal: false,
       isShowDownModal: false,
@@ -209,7 +208,6 @@ export default {
       isShowUploadModal: false,
       isShowTableDrawer: false,
       TableRef: "DrawerPagedTable",
-      PagedTableRef: "DrawerPagedTable",
       pageSizeOpts: [10, 30, 50, 100, 150, 200, 400],
       CommonColumns: [
         { width: 60, align: "center", type: "selection" },
@@ -267,48 +265,54 @@ export default {
       ]
     }
   },
+  created() {
+    this.options = JSON.parse(this.GroupData)
+  },
   computed: {
     ...mapState({ user_id: state => state.user_id, GroupData: state => state.GroupData })
   },
   methods: {
+    async checkHeart(groupId) {
+      const heartData = await this.$http.get("/heart/sendHeartBeat", { params: { groupId } })
+      heartData.forEach(item => {
+        if (item.response === "false") this.up()
+      })
+    },
     async initAllData(group_id) {
       const { data } = await this.$http.post("/account/getAccount", { group_id })
-      const res = await this.$http.get("/getGroupPassAndAll", { params: { groupId: group_id } })
-      this.todayFriends = res.todayPassCount
-      this.friends = res.allCount
       this.allData = data
       this.total = data.length
+
+      const res = await this.$http.get("/getGroupPassAndAll", { params: { groupId: group_id } })
+      this.friends = res.allCount
+      this.todayFriends = res.todayPassCount
     },
     async getAccountDataByGroupID(group_id) {
       this.data = []
-      this.options = JSON.parse(this.GroupData)
-      const pageSize = String(this.pageSize)
-      const pageIndex = String(this.pageIndex)
-      const postArgs = { group_id, pageSize, pageIndex }
-      const res = await this.$http.post("/account/getAccount", postArgs)
+      const args = { group_id, pageSize: String(this.pageSize), pageIndex: String(this.pageIndex) }
+      const { data } = await this.$http.post("/account/getAccount", args)
+
       const params = { groupId: group_id }
       const errData = await this.$http.get("/getErrorAccount", { params })
+
       let errMsg = ""
-      res.data.forEach((item, index) => {
+      data.forEach((item, index) => {
         if (Array.isArray(errData)) {
           errData.forEach(sonItem => {
-            if (item.account === sonItem.account) {
-              errMsg = sonItem.errorMsg
-            }
+            if (item.account === sonItem.account) errMsg = sonItem.errorMsg
           })
         }
         this.data.push({
           serialNumber: index + 1,
           account: item.account,
           account62A16: item.account62A16,
-          accountFriendCount: item.accountFriendCount ? item.accountFriendCount : "无",
+          accountFriendCount: item.accountFriendCount || "无",
           accountIsValid: item.accountIsValid,
           accountPwd: item.accountPwd,
           accountState: item.accountState,
-          accountWxid: item.accountWxid || errMsg
+          accountWxid: errMsg || item.accountWxid || "未登录"
         })
       })
-      this.todayFriends = res.passCount
     },
     changePage(index) {
       this.current = index
@@ -334,12 +338,9 @@ export default {
       this.isShowDeleteModal = false
       const accounts = []
       if (this.row) {
-        const { account } = this.row
-        accounts.push(account)
+        accounts.push(this.row.account)
         this.row = ""
-      } else {
-        this.operationData.forEach(item => accounts.push(item.account))
-      }
+      } else this.operationData.forEach(item => accounts.push(item.account))
       const args = { accounts, groupId: "", requestType: 1 }
       const { msg } = await this.$http.post("/account/deleteAccount", args)
       this.$Message.info(msg)
@@ -359,9 +360,7 @@ export default {
       let list = this.dataList
         .split(/[\r\n]/g)
         .map(item => item.split(/----/g))
-        .map(item => {
-          return { account: item[0], password: item[1], a16Data64: item[2] }
-        })
+        .map(item => ({ account: item[0], password: item[1], a16Data64: item[2] }))
       list.forEach((item, index) => {
         if (!item.account || !item.password || !item.a16Data64) list.splice(index, 1)
       })
@@ -387,21 +386,18 @@ export default {
       let errorMsg = ""
       if (data.error.length !== 0) {
         data.error.forEach(item => {
-          if (JSON.parse(item.msg).Data.baseResponse.errMsg.string) {
-            const msg = JSON.parse(item.msg).Data.baseResponse.errMsg.string
-            account = item.account
-            const start = msg.indexOf("<Content><![CDATA[") + 18
-            const end = msg.lastIndexOf("]]></Content>")
-            errorMsg = msg.substring(start, end)
-            this.errorMsg.push({ account, errorMsg })
+          let msg = ""
+          const parseMsg = JSON.parse(item.msg)
+          if (parseMsg.Data) {
+            msg = parseMsg.Data.baseResponse.errMsg.string
           } else {
-            const msg = JSON.parse(item.msg).Message
-            account = item.account
-            const start = msg.indexOf("<Content><![CDATA[") + 18
-            const end = msg.lastIndexOf("]]></Content>")
-            errorMsg = msg.substring(start, end)
-            this.errorMsg.push({ account, errorMsg })
+            msg = parseMsg.Message
           }
+          account = item.account
+          const start = msg.indexOf("<Content><![CDATA[") + 18
+          const end = msg.lastIndexOf("]]></Content>")
+          errorMsg = msg.substring(start, end)
+          this.errorMsg.push({ account, errorMsg })
         })
         const saveArgs = { data: this.errorMsg, groupId: this.groupID }
         await this.$http.post("/saveErrorAccount", saveArgs)

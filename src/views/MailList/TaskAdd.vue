@@ -23,63 +23,6 @@
         <Button type="error" icon="md-checkmark" @click="stop">确定</Button>
       </div>
     </Modal>
-    <Drawer width="40" :closable="false" v-model="isShowTaskAddDrawer" @on-close="onClose">
-      <div slot="header"><Icon type="md-book" color="#2D8CF0" class="mr-10" />加粉任务报表</div>
-      <Row>
-        <Col span="11">
-          <Card class="text-center">
-            <p slot="title">死号量</p>
-            <div>
-              <h1>{{ taskObj.deadCount }}</h1>
-            </div>
-          </Card>
-        </Col>
-        <Col span="11" offset="2">
-          <Card class="text-center">
-            <p slot="title">失败次数</p>
-            <div>
-              <h1>{{ taskObj.failureCount }}</h1>
-            </div>
-          </Card>
-        </Col>
-      </Row>
-      <Row class="mt-25">
-        <Col span="11">
-          <Card class="text-center">
-            <p slot="title">单组在线数</p>
-            <div>
-              <h1>{{ taskObj.groupOnlineCount }}</h1>
-            </div>
-          </Card>
-        </Col>
-        <Col span="11" offset="2">
-          <Card class="text-center">
-            <p slot="title">通过好友量</p>
-            <div>
-              <h1>{{ taskObj.passCount }}</h1>
-            </div>
-          </Card>
-        </Col>
-      </Row>
-      <Row class="mt-25">
-        <Col span="11">
-          <Card class="text-center">
-            <p slot="title">打招呼次数</p>
-            <div>
-              <h1>{{ taskObj.sayHelloCount }}</h1>
-            </div>
-          </Card>
-        </Col>
-        <Col span="11" offset="2">
-          <Card class="text-center">
-            <p slot="title">剩余手机号数</p>
-            <div>
-              <h1>{{ taskObj.phoneNumberNotUsed }}</h1>
-            </div>
-          </Card>
-        </Col>
-      </Row>
-    </Drawer>
   </div>
 </template>
 
@@ -91,16 +34,25 @@ export default {
       data: [],
       timer: null,
       taskObj: {},
+      taskState: "",
       currentGroupID: "",
       currentTaskName: "",
       isShowStopAddModal: false,
       isShowTaskAddDrawer: false,
       Columns: [
-        { align: "center", title: "分组ID", key: "groupId" },
-        { align: "center", title: "任务名称", key: "taskName" },
-        { align: "center", title: "单号请求", key: "maxRequest" },
+        { width: 100, align: "center", title: "分组ID", key: "groupId" },
+        { width: 180, align: "center", title: "任务名称", key: "taskName" },
+        { width: 150, align: "center", title: "任务状态", key: "taskState" },
+        { width: 100, align: "center", title: "单号请求", key: "maxRequest" },
+        { width: 130, align: "center", title: "通过好友量", key: "passCount" },
+        { width: 130, align: "center", title: "打招呼次数", key: "sayHelloCount" },
+        { width: 130, align: "center", title: "单组在线数", key: "groupOnlineCount" },
+        { width: 130, align: "center", title: "剩余手机号数", key: "phoneNumberNotUsed" },
+        { width: 100, align: "center", title: "死号量", key: "deadCount" },
+        { width: 100, align: "center", title: "失败次数", key: "failureCount" },
         {
-          width: 400,
+          width: 410,
+          fixed: "right",
           title: "操作",
           align: "center",
           render: (h, params) => {
@@ -108,23 +60,7 @@ export default {
               h(
                 "Button",
                 {
-                  props: { type: "success", icon: "md-eye" },
                   style: { marginRight: "15px" },
-                  on: {
-                    click: () => {
-                      this.isShowTaskAddDrawer = true
-                      const { taskName, groupId } = params.row
-                      clearInterval(this.timer)
-                      this.taskAddData(taskName, groupId)
-                      this.syncGetData(taskName, groupId)
-                    }
-                  }
-                },
-                "查看加粉报表"
-              ),
-              h(
-                "Button",
-                {
                   props: { type: "error", icon: "md-stopwatch" },
                   on: {
                     click: () => {
@@ -137,6 +73,19 @@ export default {
                   }
                 },
                 "终止加粉任务"
+              ),
+              h(
+                "Button",
+                {
+                  props: { type: "error", icon: "md-trash" },
+                  on: {
+                    click: () => {
+                      this.initData()
+                      clearInterval(this.timer)
+                    }
+                  }
+                },
+                "删除记录"
               )
             ])
           }
@@ -146,6 +95,11 @@ export default {
   },
   created() {
     this.initData()
+    clearInterval(this.timer)
+    // this.timer = setInterval(() => this.initData(), 15000)
+  },
+  destroyed() {
+    clearInterval(this.timer)
   },
   computed: {
     ...mapState({ user_id: state => state.user_id })
@@ -153,14 +107,32 @@ export default {
   methods: {
     async initData() {
       this.data = []
-      const data = await this.$http.get("/getAddFriendOrder")
-      this.$refs["TaskPagedTable"].total = Object.keys(data).length
-      for (const key in data) {
+      let newObj = {}
+      let newArr = []
+      let data = await this.$http.get("/order/getAddFriendOrder")
+      data.forEach(item => {
+        newObj = Object.assign({}, item.addFriendOrder, item.getFriendViewResponse)
+        newArr.push(newObj)
+      })
+      newArr.forEach(async item => {
+        const params = { groupId: item.groupId, taskName: item.taskName }
+        const state = await this.$http.get("/order/getAddFriendOrderState", { params })
         this.data.push({
-          groupId: JSON.parse(data[key]).groupId,
-          taskName: JSON.parse(data[key]).taskName,
-          maxRequest: JSON.parse(data[key]).maxRequest
+          groupId: item.groupId,
+          taskName: item.taskName,
+          deadCount: item.deadCount,
+          passCount: item.passCount,
+          maxRequest: item.maxRequest,
+          failureCount: item.failureCount,
+          sayHelloCount: item.sayHelloCount,
+          groupOnlineCount: item.groupOnlineCount,
+          taskState: state === 0 ? "进行中" : "已完成",
+          phoneNumberNotUsed: item.phoneNumberNotUsed
         })
+      })
+      const TaskTable = this.$refs["TaskPagedTable"]
+      if (TaskTable) {
+        TaskTable.total = Object.keys(data).length
       }
     },
     cancel() {
@@ -171,32 +143,8 @@ export default {
       const params = { groupId: this.currentGroupID, taskName: this.currentTaskName }
       const { msg } = await this.$http.get("/stopAddFriend", { params })
       this.$Message.info(msg)
-    },
-    async taskAddData(taskName, groupId) {
-      const params = { taskName, groupId }
-      const res = await this.$http.get("/getAddFriendView", { params })
-      this.taskObj = res
-    },
-    syncGetData(taskName, groupId) {
-      this.timer = setInterval(() => this.taskAddData(taskName, groupId), 15000)
-    },
-    onClose() {
-      clearInterval(this.timer)
+      this.initData()
     }
-    /* async clearFirends() {
-      const params = { hours: 24 }
-      this.$Modal.confirm({
-        title: "开启定时",
-        content: "确定吗？",
-        okText: "确定",
-        cancelText: "取消",
-        onOk: async () => {
-          const { msg } = await this.$http.get("/initFriendCount", { params })
-          this.$Message.info(msg)
-        },
-        onCancel() {}
-      })
-    } */
   }
 }
 </script>

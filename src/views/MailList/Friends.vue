@@ -426,8 +426,8 @@ export default {
         content: this.validInfo
       }
       if (flag) {
-        const res = await this.$http.post("/contact/addFriendsByGroup", args)
-        this.$Message.info(res.msg)
+        const { msg } = await this.$http.post("/contact/addFriendsByGroup", args)
+        this.$Message.info(msg)
         this.resetClick()
       }
     },

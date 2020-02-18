@@ -133,15 +133,45 @@ export default {
           title: "操作",
           align: "center",
           render: (h, params) => {
+            const { groupId, groupName } = params.row
             return h("div", [
               h(
                 "Button",
                 {
-                  style: { marginRight: "5px" },
+                  style: { marginRight: "5px", marginTop: "5px" },
+                  props: { size: "small", type: "error", icon: "md-heart" },
+                  on: {
+                    click: async () => {
+                      const params = { groupId }
+                      await this.$http.get("/heart/startHeartBeat", { params })
+                      this.$Message.success("开启成功！")
+                    }
+                  }
+                },
+                "开启心跳监控"
+              ),
+              h(
+                "Button",
+                {
+                  style: { marginRight: "5px", marginTop: "5px" },
+                  props: { size: "small", type: "error", icon: "md-heart-outline" },
+                  on: {
+                    click: async () => {
+                      const params = { groupId }
+                      await this.$http.get("/heart/closeHeartBeat", { params })
+                      this.$Message.success("关闭成功！")
+                    }
+                  }
+                },
+                "关闭心跳监控"
+              ),
+              h(
+                "Button",
+                {
+                  style: { marginRight: "5px", marginTop: "5px" },
                   props: { size: "small", type: "info", icon: "md-share-alt" },
                   on: {
                     click: () => {
-                      const { groupName, groupId } = params.row
                       this.isShowDrawer = true
                       this.currentGroupID = groupId
                       this.currentGroupName = groupName
@@ -153,15 +183,15 @@ export default {
               h(
                 "Button",
                 {
-                  style: { marginRight: "5px" },
+                  style: { marginRight: "5px", marginTop: "5px", marginBottom: "5px" },
                   props: { size: "small", type: "success", icon: "md-eye", disabled: this.mutex },
                   on: {
                     click: () => {
-                      const { groupId } = params.row
                       this.$refs["GroupTableDrawer"].isShowTableDrawer = true
-                      this.$refs["GroupTableDrawer"].getAccountDataByGroupID(groupId)
-                      this.$refs["GroupTableDrawer"].initAllData(groupId)
                       this.$refs["GroupTableDrawer"].groupID = groupId
+                      this.$refs["GroupTableDrawer"].initAllData(groupId)
+                      this.$refs["GroupTableDrawer"].getAccountDataByGroupID(groupId)
+                      this.$refs["GroupTableDrawer"].checkHeart(groupId)
                     }
                   }
                 },
@@ -170,7 +200,7 @@ export default {
               h(
                 "Button",
                 {
-                  style: { marginRight: "5px" },
+                  style: { marginRight: "5px", marginTop: "5px", marginBottom: "5px" },
                   props: { size: "small", type: "info", icon: "md-create", disabled: this.mutex },
                   on: {
                     click: () => {
@@ -183,12 +213,12 @@ export default {
               h(
                 "Button",
                 {
+                  style: { marginBottom: "5px", marginTop: "5px" },
                   props: { type: "error", size: "small", icon: "md-trash", disabled: this.mutex },
                   on: {
                     click: () => {
-                      const { groupId: group_id } = params.row
                       this.$refs[this.ConfirmModalRef].isShowConfirmModal = true
-                      this.$refs[this.ConfirmModalRef].params = group_id
+                      this.$refs[this.ConfirmModalRef].params = groupId
                     }
                   }
                 },
@@ -214,7 +244,8 @@ export default {
     async allData() {
       const params = { user_id: this.user_id }
       const { data } = await this.$http.get("/account/getAllGroup", { params })
-      this.$refs[this.PagedTableRef].total = data.length
+      const Table = this.$refs[this.PagedTableRef]
+      if (Table) Table.total = data.length
       const arr = []
       data.forEach(item => arr.push({ label: item.groupName, value: String(item.groupId) }))
       this.$store.commit("saveGroupData", JSON.stringify(arr))
