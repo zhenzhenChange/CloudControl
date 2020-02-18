@@ -272,7 +272,6 @@ export default {
                 })
               }
             } else {
-              console.log(max)
               chatRoomMember.forEach(sonItem => {
                 this.reportData.push({
                   WXID: sonItem.userName,
