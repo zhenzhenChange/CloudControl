@@ -279,6 +279,8 @@ export default {
       })
     },
     async initAllData(group_id) {
+      this.data = []
+      this.allData = []
       const { data } = await this.$http.post("/account/getAccount", { group_id })
       this.allData = data
       this.total = data.length
