@@ -277,6 +277,7 @@ export default {
         flag = true
       })
       const rand = Math.floor(Math.random() * (1 - 100) + 100)
+      const phoneGroup = `${rand}${this.currentGroupID}`
       const args = {
         content: this.validInfo,
         endTime: 20,
@@ -286,7 +287,7 @@ export default {
         interval: this.blankTime,
         maxRequest: this.requestNum,
         origin: 10,
-        phoneGroup: `${rand}${this.currentGroupID}`,
+        phoneGroup,
         startTime: this.startTime,
         taskName: this.fansTaskName
       }
@@ -302,11 +303,7 @@ export default {
             contactData.push({ name, phoneNumber })
           })
         }
-        const upload = {
-          data: contactData,
-          userId: this.user_id,
-          phoneGroup: `${rand}${this.currentGroupID}`
-        }
+        const upload = { data: contactData, userId: this.user_id, phoneGroup }
         await this.$http.post("/contact/addPhoneToSQL", upload)
         const { msg } = await this.$http.post("/contact/addFriendFromSQL", args)
         this.$Message.info(msg)
