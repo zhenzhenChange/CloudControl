@@ -103,7 +103,7 @@ export default {
   created() {
     this.initData()
     clearInterval(this.timer)
-    this.timer = setInterval(() => this.initData(), 15000)
+    // this.timer = setInterval(() => this.initData(), 15000)
     if (this.user_id) this.initGroupData()
   },
   destroyed() {
@@ -130,29 +130,36 @@ export default {
       this.dataCard[2].data[3].data = 0
 
       const params = { user_id: this.user_id }
-
-      const { data } = await this.$http.get("/account/getAccountInfo", { params })
-      this.dataCard[0].data[0].data = data.length
-      data.forEach(item => {
-        if (item.accountFriendCount) this.dataCard[1].data[0].data += item.accountFriendCount
-        if (item.accountState) this.dataCard[0].data[1].data += 1
-        if (!item.accountState) this.dataCard[0].data[2].data += 1
-        if (!item.accountIsValid) this.dataCard[0].data[3].data += 1
+      const { data } = await this.$http.get("/account/getAllGroup", { params })
+      let newAccountData = []
+      data.forEach(async item => {
+        const args = { group_id: item.groupId }
+        const { data: accountData } = await this.$http.post("/account/getAccount", args)
+        newAccountData.push(...accountData)
+        newAccountData.forEach(sonItem => {
+          if (sonItem.accountFriendCount)
+            this.dataCard[1].data[0].data += sonItem.accountFriendCount
+          if (sonItem.accountState) this.dataCard[0].data[1].data += 1
+          if (!sonItem.accountState) this.dataCard[0].data[2].data += 1
+          if (!sonItem.accountIsValid) this.dataCard[0].data[3].data += 1
+          this.dataCard[0].data[0].data =
+            this.dataCard[0].data[1].data + this.dataCard[0].data[2].data
+        })
       })
 
       const InitRes = await this.$http.get("/common/getInit", { params })
-      this.dataCard[1].data[1].data = InitRes.data.addCount
-      this.dataCard[1].data[2].data = InitRes.data.addCount - InitRes.data.ssAllPassCount
-      this.dataCard[1].data[3].data = InitRes.data.ssAllPassCount
+      this.dataCard[1].data[1].data = InitRes.data.addCount || 0
+      this.dataCard[1].data[2].data = InitRes.data.addCount - InitRes.data.ssAllPassCount || 0
+      this.dataCard[1].data[3].data = InitRes.data.ssAllPassCount || 0
       this.$store.commit("saveShreshold", InitRes.data.suLoginShreshold)
 
       const GroupRes = await this.$http.get("/group/getEnterGroupCount", { params })
-      this.dataCard[2].data[0].data = GroupRes.data.count
-      this.dataCard[2].data[1].data = GroupRes.data.goingCount
+      this.dataCard[2].data[0].data = GroupRes.data.count || 0
+      this.dataCard[2].data[1].data = GroupRes.data.goingCount || 0
 
       const FriendRes = await this.$http.get("/contact/getAddFriendCount", { params })
-      this.dataCard[2].data[2].data = FriendRes.data.count
-      this.dataCard[2].data[3].data = FriendRes.data.goingCount
+      this.dataCard[2].data[2].data = FriendRes.data.count || 0
+      this.dataCard[2].data[3].data = FriendRes.data.goingCount || 0
     },
     async initGroupData() {
       const arr = []
