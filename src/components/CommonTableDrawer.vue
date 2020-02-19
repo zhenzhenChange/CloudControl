@@ -299,11 +299,13 @@ export default {
 
       data.forEach((item, index) => {
         let errMsg = ""
-        errData.forEach(sonItem => {
-          if (item.account === sonItem.account) {
-            errMsg = sonItem.errorMsg
-          }
-        })
+        if (Array.isArray(errData)) {
+          errData.forEach(sonItem => {
+            if (item.account === sonItem.account) {
+              errMsg = sonItem.errorMsg
+            }
+          })
+        }
         this.data.push({
           serialNumber: index + 1,
           account: item.account,

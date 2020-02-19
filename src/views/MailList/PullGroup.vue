@@ -123,7 +123,7 @@ export default {
       PullGroupColumns: [
         { width: 200, align: "center", title: "任务名称", key: "taskName" },
         {
-          width: 180,
+          width: 150,
           align: "center",
           title: "群聊Urls数量",
           key: "grpUrl",
@@ -132,22 +132,23 @@ export default {
             return h("div", [h("span", { domProps: { innerHTML: grpUrl.length } })])
           }
         },
-        { width: 180, align: "center", title: "最大人数", key: "maxPeople" },
+        { width: 150, align: "center", title: "最大人数", key: "maxPeople" },
         { width: 180, align: "center", title: "类型", key: "opType" },
         { width: 180, align: "center", title: "订单状态", key: "pullState" },
         { width: 180, align: "center", title: "分组ID", key: "groupId" },
         {
-          width: 550,
+          width: 650,
           title: "操作",
           fixed: "right",
           align: "center",
           render: (h, params) => {
+            const { taskName, groupId, maxPeople } = params.row
             return h("div", [
               h(
                 "Button",
                 {
-                  props: { type: "info", icon: "md-add" },
                   style: { marginRight: "15px" },
+                  props: { type: "info", icon: "md-add" },
                   on: {
                     click: () => {
                       this.isShowAddModal = true
@@ -160,11 +161,10 @@ export default {
               h(
                 "Button",
                 {
-                  props: { type: "success", icon: "md-eye" },
                   style: { marginRight: "15px" },
+                  props: { type: "success", icon: "md-eye" },
                   on: {
                     click: () => {
-                      const { taskName, groupId, maxPeople } = params.row
                       this.isShowReportDrawer = true
                       this.getReportData(taskName, groupId, maxPeople)
                     }
@@ -175,10 +175,10 @@ export default {
               h(
                 "Button",
                 {
+                  style: { marginRight: "15px" },
                   props: { type: "error", icon: "md-stopwatch" },
                   on: {
                     click: () => {
-                      const { taskName, groupId } = params.row
                       this.isShowStopModal = true
                       this.currentGroupID = groupId
                       this.currentTaskName = taskName
@@ -186,6 +186,18 @@ export default {
                   }
                 },
                 "终止拉群任务"
+              ),
+              h(
+                "Button",
+                {
+                  props: { type: "error", icon: "md-trash" },
+                  on: {
+                    click: () => {
+                      this.removeOrder(taskName, groupId)
+                    }
+                  }
+                },
+                "删除记录"
               )
             ])
           }
@@ -332,6 +344,21 @@ export default {
       if (minutes >= 0 && minutes <= 9) minutes = "0" + minutes
       if (seconds >= 0 && seconds <= 9) seconds = "0" + seconds
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+    },
+    removeOrder(taskName, groupId) {
+      const params = { taskName, groupId }
+      this.$Modal.confirm({
+        title: "删除订单",
+        content: "确定要删除吗？",
+        okText: "确定",
+        cancelText: "取消",
+        onOk: async () => {
+          const { msg } = await this.$http.get("/order/deleteEnterGroupOrder", { params })
+          this.$Message.info(msg)
+          this.initData()
+        },
+        onCancel() {}
+      })
     }
   }
 }

@@ -56,6 +56,7 @@ export default {
           title: "操作",
           align: "center",
           render: (h, params) => {
+            const { taskName, groupId } = params.row
             return h("div", [
               h(
                 "Button",
@@ -64,7 +65,6 @@ export default {
                   props: { type: "error", icon: "md-stopwatch" },
                   on: {
                     click: () => {
-                      const { taskName, groupId } = params.row
                       this.isShowStopAddModal = true
                       this.currentGroupID = groupId
                       this.currentTaskName = taskName
@@ -80,8 +80,7 @@ export default {
                   props: { type: "error", icon: "md-trash" },
                   on: {
                     click: () => {
-                      this.initData()
-                      clearInterval(this.timer)
+                      this.removeOrder(taskName, groupId)
                     }
                   }
                 },
@@ -96,7 +95,7 @@ export default {
   created() {
     this.initData()
     clearInterval(this.timer)
-    // this.timer = setInterval(() => this.initData(), 15000)
+    this.timer = setInterval(() => this.initData(), 15000)
   },
   destroyed() {
     clearInterval(this.timer)
@@ -144,6 +143,21 @@ export default {
       const { msg } = await this.$http.get("/stopAddFriend", { params })
       this.$Message.info(msg)
       this.initData()
+    },
+    removeOrder(taskName, groupId) {
+      const params = { taskName, groupId }
+      this.$Modal.confirm({
+        title: "删除订单",
+        content: "确定要删除吗？",
+        okText: "确定",
+        cancelText: "取消",
+        onOk: async () => {
+          const { msg } = await this.$http.get("/order/deleteAddFriendOrder", { params })
+          this.$Message.info(msg)
+          this.initData()
+        },
+        onCancel() {}
+      })
     }
   }
 }
