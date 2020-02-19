@@ -259,6 +259,7 @@ export default {
           if (item.roomName === "有异常,请检查账号状态") {
             msg = "部分有异常,请检查账号状态或账号是否有好友"
           } else {
+            msg = "OK"
             let memberCount = item.groupInfo.memberCount
             const chatRoomMember = item.groupInfo.chatRoomMember
             const flag = Object.keys(item.idtoMd5).length === 0
@@ -301,7 +302,7 @@ export default {
           }
         }
       })
-      this.$Message.error(msg)
+      this.$Message.info(msg)
     },
     async addUrl() {
       if (!this.addPeople) {
