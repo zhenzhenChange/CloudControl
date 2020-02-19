@@ -297,13 +297,13 @@ export default {
       const params = { groupId: group_id }
       const errData = await this.$http.get("/getErrorAccount", { params })
 
-      let errMsg = ""
       data.forEach((item, index) => {
-        if (Array.isArray(errData)) {
-          errData.forEach(sonItem => {
-            if (item.account === sonItem.account) errMsg = sonItem.errorMsg
-          })
-        }
+        let errMsg = ""
+        errData.forEach(sonItem => {
+          if (item.account === sonItem.account) {
+            errMsg = sonItem.errorMsg
+          }
+        })
         this.data.push({
           serialNumber: index + 1,
           account: item.account,
