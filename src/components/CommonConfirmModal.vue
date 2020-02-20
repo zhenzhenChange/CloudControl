@@ -47,6 +47,41 @@ export default {
           this.$parent.remove(null)
         }
       }
+      /* switch (this.config.params) {
+        case "onByID":
+          this.$parent.onlineByWXID(this.config.paramsValue)
+          break
+        case "onNo":
+          this.$parent.onlineByWXID(null)
+          break
+        case "offNo":
+          this.$parent.offlineByWXID()
+          break
+        case "remove-m":
+          this.$parent.removeByWXID(null)
+          break
+        case "removeByID":
+          this.$parent.removeByWXID(this.config.paramsValue)
+          break
+        case "requestByWXID":
+          this.$parent.requestSetByWXID()
+          break
+        case "changeMeansByWXID":
+          this.$parent.changeMeansByWXID()
+          break
+        case "addMailFriend":
+          this.$parent.addMailFriend(this.configParams)
+          break
+        case "sendFriend":
+          this.$parent.sendFriendSpace(this.configParams)
+          break
+        case "sendByGroup":
+          this.$parent.sendByGroup(this.configParams)
+          break
+        case "clearMailList":
+          this.$parent.clearMailList()
+          break
+      } */
       if (this.config.params === "onByID") {
         this.$parent.onlineByWXID(this.config.paramsValue)
       } else if (this.config.params === "onNo") {

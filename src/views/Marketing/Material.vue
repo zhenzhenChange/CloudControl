@@ -145,7 +145,7 @@ export default {
   methods: {
     async _initData() {
       const params = { user_id: this.user_id }
-      const { data, msg } = await this.$http.get("/marketing/getInfo", { params })
+      const { data } = await this.$http.get("/marketing/getInfo", { params })
       const picURL = []
       const avaUrl = []
       data.friendCriclePicURL
@@ -161,7 +161,6 @@ export default {
       this.personInfo.pwd = data.setInfoPwd
       this.personInfo.nickname = data.setInfoNickName
       this.personInfo.signature = data.setInfoSignature
-      this.$Message.info(msg)
     },
     async saveTemplate() {
       if (!this.template.title) {

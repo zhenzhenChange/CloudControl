@@ -90,7 +90,11 @@
           </BreadcrumbItem>
         </Breadcrumb>
         <Card>
-          <div class="card-div"><router-view /></div>
+          <div class="card-div">
+            <keep-alive>
+              <router-view />
+            </keep-alive>
+          </div>
         </Card>
       </Content>
       <Footer class="footer">&copy; Cloud</Footer>
