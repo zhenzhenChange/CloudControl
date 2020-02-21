@@ -140,9 +140,7 @@ export default {
       this.webSocket = new WebSocket(wsURI)
       this.webSocket.onopen = () => this.webSocket.send(this.user_id)
       this.webSocket.onmessage = event => {
-        console.log(event.data)
         const data = JSON.parse(event.data)
-        console.log(data)
         const TaskTable = this.$refs["TaskPagedTable"]
         TaskTable && (TaskTable.total = data.length)
         if (Array.isArray(data)) {
