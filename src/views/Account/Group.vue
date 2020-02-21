@@ -245,7 +245,7 @@ export default {
       const params = { user_id: this.user_id }
       const { data } = await this.$http.get("/account/getAllGroup", { params })
       const Table = this.$refs[this.PagedTableRef]
-      if (Table) Table.total = data.length
+      Table && (Table.total = data.length)
       const arr = []
       data.forEach(item => arr.push({ label: item.groupName, value: String(item.groupId) }))
       this.$store.commit("saveGroupData", JSON.stringify(arr))

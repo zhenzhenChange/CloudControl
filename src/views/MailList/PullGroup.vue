@@ -220,9 +220,7 @@ export default {
       this.data = []
       const data = await this.$http.get("/getEnterGroupInfo")
       const Table = this.$refs[this.PagedTableRef]
-      if (Table) {
-        Table.total = Object.keys(data).length
-      }
+      Table && (Table.total = Object.keys(data).length)
       for (const key in data) {
         const newData = JSON.parse(data[key])
         const params = { groupId: newData.groupId, taskName: newData.taskName }
