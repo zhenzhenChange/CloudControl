@@ -97,7 +97,7 @@ export default {
   created() {
     this.initData()
     clearInterval(this.timer)
-    // this.timer = setInterval(() => this.initData(), 15000)
+    this.timer = setInterval(() => this.initData(), 15000)
     if (this.user_id) this.initGroupData()
   },
   destroyed() {
