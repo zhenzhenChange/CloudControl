@@ -67,8 +67,8 @@
           </div>
           <Dropdown transfer>
             <Button type="info" @click="logout">
-              退出登录
-              <Icon type="ios-arrow-down" class="ml-10"></Icon>
+              <Icon type="md-log-out" class="mr-10" />退出登录
+              <Icon type="ios-arrow-down" class="ml-10" />
             </Button>
             <DropdownMenu slot="list">
               <DropdownItem>
@@ -203,7 +203,6 @@ export default {
       localStorage.removeItem("user_id")
       localStorage.removeItem("GroupData")
       localStorage.removeItem("Shreshold")
-      localStorage.removeItem("DataCount")
     },
     async IPChecking() {
       if (!this.orderno) {
