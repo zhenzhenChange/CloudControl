@@ -1,6 +1,12 @@
 <template>
   <div>
-    <PagedTable :data="data" ref="TaskPagedTable" :dataColumns="Columns" />
+    <PagedTable
+      v-if="webSocketData"
+      :data="webSocketData"
+      :CusTotal="webSocketData.length"
+      ref="TaskPagedTable"
+      :dataColumns="Columns"
+    />
     <Modal
       width="350"
       :closable="false"
@@ -23,6 +29,7 @@
         <Button type="error" icon="md-checkmark" @click="stop">确定</Button>
       </div>
     </Modal>
+    <Spin></Spin>
   </div>
 </template>
 
@@ -32,7 +39,6 @@ export default {
   name: "taskAdd",
   data() {
     return {
-      data: [],
       taskObj: {},
       taskState: "",
       webSocket: null,
@@ -100,7 +106,7 @@ export default {
     this.webSocket.close()
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id })
+    ...mapState({ user_id: state => state.user_id, webSocketData: state => state.webSocketData })
   },
   methods: {
     cancel() {
@@ -129,43 +135,28 @@ export default {
     initWebSocket() {
       if (!("WebSocket" in window)) {
         this.$Notice.error({
-          title: "严重错误",
+          title: "意外错误",
           desc:
-            "您的浏览器不支持实时轮询通信，数据无法实时更新，请升级或更换浏览器（谷歌Chrome、火狐Firefox）"
+            "您的浏览器不支持实时轮询通信，数据将无法实时更新，请升级或更换浏览器（谷歌Chrome、火狐Firefox）"
         })
         return
       }
-      this.data = []
       const wsURI = "ws://39.108.132.32:8080/ws/asset"
       this.webSocket = new WebSocket(wsURI)
       this.webSocket.onopen = () => this.webSocket.send(this.user_id)
-      this.webSocket.onmessage = event => {
+      this.webSocket.onmessage = async event => {
+        if (event.data === "==连接成功==") {
+          return
+        }
         const data = JSON.parse(event.data)
-        const TaskTable = this.$refs["TaskPagedTable"]
-        TaskTable && (TaskTable.total = data.length)
         if (Array.isArray(data)) {
           let newObj = {}
-          let newArr = []
+          let webSocketData = []
           data.forEach(item => {
             newObj = Object.assign({}, item.addFriendOrder, item.getFriendViewResponse)
-            newArr.push(newObj)
+            webSocketData.push(newObj)
           })
-          newArr.forEach(async item => {
-            const params = { groupId: item.groupId, taskName: item.taskName }
-            const state = await this.$http.get("/order/getAddFriendOrderState", { params })
-            this.data.push({
-              groupId: item.groupId,
-              taskName: item.taskName,
-              deadCount: item.deadCount,
-              passCount: item.passCount,
-              maxRequest: item.maxRequest,
-              failureCount: item.failureCount,
-              sayHelloCount: item.sayHelloCount,
-              groupOnlineCount: item.groupOnlineCount,
-              taskState: state === 0 ? "进行中" : "已完成",
-              phoneNumberNotUsed: item.phoneNumberNotUsed
-            })
-          })
+          await this.$store.dispatch("saveWebSocketData", { VueInstance: this, webSocketData })
         }
       }
       this.webSocket.onerror = () => {

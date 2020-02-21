@@ -146,6 +146,7 @@ export default {
     async _initData() {
       const params = { user_id: this.user_id }
       const { data } = await this.$http.get("/marketing/getInfo", { params })
+      if (Object.keys(data).length === 0) return
       const picURL = []
       const avaUrl = []
       data.friendCriclePicURL

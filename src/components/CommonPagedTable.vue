@@ -16,10 +16,10 @@
           show-total
           show-sizer
           show-elevator
-          :total="total"
           :current="current"
           :page-size="pageSize"
           @on-change="changePage"
+          :total="total || CusTotal"
           :page-size-opts="pageSizeOpts"
           @on-page-size-change="changeSize"
         />
@@ -31,10 +31,10 @@
 <script>
 export default {
   name: "PagedTable",
-  props: { data: Array, dataColumns: Array, show: String },
+  props: { data: Array, dataColumns: Array, show: String, CusTotal: Number },
   data() {
     return {
-      total: 0,
+      total: null,
       current: 1,
       pageSize: 10,
       TableRef: "CommonPagedTable",

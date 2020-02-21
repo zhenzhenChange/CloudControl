@@ -7,7 +7,8 @@ export default new Vuex.Store({
   state: {
     user_id: "" || localStorage.getItem("user_id"),
     GroupData: "" || localStorage.getItem("GroupData"),
-    Shreshold: "" || localStorage.getItem("Shreshold")
+    Shreshold: "" || localStorage.getItem("Shreshold"),
+    webSocketData: ""
   },
   mutations: {
     saveID: (state, user_id) => {
@@ -21,11 +22,36 @@ export default new Vuex.Store({
     saveShreshold: (state, shreshold) => {
       state.Shreshold = shreshold
       localStorage.setItem("Shreshold", shreshold)
+    },
+    saveWebSocketData: (state, webSocketData) => {
+      state.webSocketData = webSocketData
     }
   },
   getters: {
     user_id: state => state.user_id,
     GroupData: state => state.GroupData,
     Shreshold: state => state.Shreshold
+  },
+  actions: {
+    saveWebSocketData({ commit }, { VueInstance, webSocketData }) {
+      const data = []
+      webSocketData.forEach(async item => {
+        const params = { groupId: item.groupId, taskName: item.taskName }
+        const state = await VueInstance.$http.get("/order/getAddFriendOrderState", { params })
+        data.push({
+          groupId: item.groupId,
+          taskName: item.taskName,
+          deadCount: item.deadCount,
+          passCount: item.passCount,
+          maxRequest: item.maxRequest,
+          failureCount: item.failureCount,
+          sayHelloCount: item.sayHelloCount,
+          groupOnlineCount: item.groupOnlineCount,
+          phoneNumberNotUsed: item.phoneNumberNotUsed,
+          taskState: Number(state.data) === 0 ? "进行中" : "已完成"
+        })
+        commit("saveWebSocketData", data)
+      })
+    }
   }
 })
