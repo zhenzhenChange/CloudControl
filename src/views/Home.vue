@@ -67,8 +67,7 @@
           </div>
           <Dropdown transfer>
             <Button type="info" @click="logout">
-              <Icon type="md-log-out" class="mr-10" />退出登录
-              <Icon type="ios-arrow-down" class="ml-10" />
+              退出登录<Icon type="ios-arrow-down" class="ml-10" />
             </Button>
             <DropdownMenu slot="list">
               <DropdownItem>
@@ -91,7 +90,7 @@
         </Breadcrumb>
         <Card>
           <div class="card-div">
-            <keep-alive>
+            <keep-alive exclude="taskAdd">
               <router-view />
             </keep-alive>
           </div>

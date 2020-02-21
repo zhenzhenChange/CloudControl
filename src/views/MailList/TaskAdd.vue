@@ -29,12 +29,13 @@
 <script>
 import { mapState } from "vuex"
 export default {
+  name: "taskAdd",
   data() {
     return {
       data: [],
-      timer: null,
       taskObj: {},
       taskState: "",
+      webSocket: null,
       currentGroupID: "",
       currentTaskName: "",
       isShowStopAddModal: false,
@@ -93,47 +94,15 @@ export default {
     }
   },
   created() {
-    this.initData()
-    clearInterval(this.timer)
-    this.timer = setInterval(() => this.initData(), 15000)
+    this.initWebSocket()
   },
   destroyed() {
-    clearInterval(this.timer)
+    this.webSocket.close()
   },
   computed: {
     ...mapState({ user_id: state => state.user_id })
   },
   methods: {
-    async initData() {
-      this.data = []
-      let newObj = {}
-      let newArr = []
-      let data = await this.$http.get("/order/getAddFriendOrder")
-      data.forEach(item => {
-        newObj = Object.assign({}, item.addFriendOrder, item.getFriendViewResponse)
-        newArr.push(newObj)
-      })
-      newArr.forEach(async item => {
-        const params = { groupId: item.groupId, taskName: item.taskName }
-        const state = await this.$http.get("/order/getAddFriendOrderState", { params })
-        this.data.push({
-          groupId: item.groupId,
-          taskName: item.taskName,
-          deadCount: item.deadCount,
-          passCount: item.passCount,
-          maxRequest: item.maxRequest,
-          failureCount: item.failureCount,
-          sayHelloCount: item.sayHelloCount,
-          groupOnlineCount: item.groupOnlineCount,
-          taskState: state === 0 ? "进行中" : "已完成",
-          phoneNumberNotUsed: item.phoneNumberNotUsed
-        })
-      })
-      const TaskTable = this.$refs["TaskPagedTable"]
-      if (TaskTable) {
-        TaskTable.total = Object.keys(data).length
-      }
-    },
     cancel() {
       this.isShowStopAddModal = false
     },
@@ -142,7 +111,6 @@ export default {
       const params = { groupId: this.currentGroupID, taskName: this.currentTaskName }
       const { msg } = await this.$http.get("/stopAddFriend", { params })
       this.$Message.info(msg)
-      this.initData()
     },
     removeOrder(taskName, groupId) {
       const params = { taskName, groupId }
@@ -154,10 +122,58 @@ export default {
         onOk: async () => {
           const { msg } = await this.$http.get("/order/deleteAddFriendOrder", { params })
           this.$Message.info(msg)
-          this.initData()
         },
         onCancel() {}
       })
+    },
+    initWebSocket() {
+      if (!("WebSocket" in window)) {
+        this.$Notice.error({
+          title: "严重错误",
+          desc:
+            "您的浏览器不支持实时轮询通信，数据无法实时更新，请升级或更换浏览器（谷歌Chrome、火狐Firefox）"
+        })
+        return
+      }
+      this.data = []
+      const wsURI = "ws://39.108.132.32:8080/ws/asset"
+      this.webSocket = new WebSocket(wsURI)
+      this.webSocket.onopen = () => this.webSocket.send(this.user_id)
+      this.webSocket.onmessage = event => {
+        const data = JSON.parse(event.data)
+        const TaskTable = this.$refs["TaskPagedTable"]
+        if (TaskTable) {
+          TaskTable.total = Object.keys(data).length
+        }
+        if (Array.isArray(data)) {
+          let newObj = {}
+          let newArr = []
+          data.forEach(item => {
+            newObj = Object.assign({}, item.addFriendOrder, item.getFriendViewResponse)
+            newArr.push(newObj)
+          })
+          newArr.forEach(async item => {
+            const params = { groupId: item.groupId, taskName: item.taskName }
+            const state = await this.$http.get("/order/getAddFriendOrderState", { params })
+            this.data.push({
+              groupId: item.groupId,
+              taskName: item.taskName,
+              deadCount: item.deadCount,
+              passCount: item.passCount,
+              maxRequest: item.maxRequest,
+              failureCount: item.failureCount,
+              sayHelloCount: item.sayHelloCount,
+              groupOnlineCount: item.groupOnlineCount,
+              taskState: state === 0 ? "进行中" : "已完成",
+              phoneNumberNotUsed: item.phoneNumberNotUsed
+            })
+          })
+        }
+      }
+      this.webSocket.onerror = () => {
+        this.webSocket.close()
+        this.initWebSocket()
+      }
     }
   }
 }
