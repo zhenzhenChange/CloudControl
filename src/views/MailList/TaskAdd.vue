@@ -39,6 +39,7 @@ export default {
   name: "taskAdd",
   data() {
     return {
+      timer: null,
       taskObj: {},
       taskState: "",
       webSocket: null,
@@ -104,9 +105,14 @@ export default {
   },
   destroyed() {
     this.webSocket.close()
+    clearInterval(this.timer)
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id, webSocketData: state => state.webSocketData })
+    ...mapState({
+      user_id: state => state.user_id,
+      webSocketData: state => state.webSocketData,
+      blankTime: state => state.blankTime
+    })
   },
   methods: {
     cancel() {
@@ -133,6 +139,7 @@ export default {
       })
     },
     initWebSocket() {
+      clearInterval(this.timer)
       if (!("WebSocket" in window)) {
         this.$Notice.error({
           title: "意外错误",
@@ -142,12 +149,13 @@ export default {
         return
       }
       const wsURI = "ws://39.108.132.32:8080/ws/asset"
+      const Time = this.blankTime || 10000
       this.webSocket = new WebSocket(wsURI)
-      this.webSocket.onopen = () => this.webSocket.send(this.user_id)
+      this.webSocket.onopen = () => {
+        this.timer = setInterval(() => this.webSocket.send(this.user_id), Time)
+      }
       this.webSocket.onmessage = async event => {
-        if (event.data === "==连接成功==") {
-          return
-        }
+        this.$Message.info("有新数据接收~")
         const data = JSON.parse(event.data)
         if (Array.isArray(data)) {
           let newObj = {}
@@ -161,7 +169,11 @@ export default {
       }
       this.webSocket.onerror = () => {
         this.webSocket.close()
+        clearInterval(this.timer)
         this.initWebSocket()
+      }
+      this.webSocket.onclose = () => {
+        clearInterval(this.timer)
       }
     }
   }

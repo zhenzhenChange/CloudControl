@@ -306,6 +306,7 @@ export default {
         const upload = { data: contactData, userId: this.user_id, phoneGroup }
         await this.$http.post("/contact/addPhoneToSQL", upload)
         const { msg } = await this.$http.post("/contact/addFriendFromSQL", args)
+        this.$store.commit("saveBlankTime", this.blankTime)
         this.$Message.info(msg)
         this.resetClick()
       }

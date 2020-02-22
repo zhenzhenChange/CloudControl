@@ -427,6 +427,7 @@ export default {
       }
       if (flag) {
         const { msg } = await this.$http.post("/contact/addFriendsByGroup", args)
+        this.$store.commit("saveBlankTime", this.blankTime)
         this.$Message.info(msg)
         this.resetClick()
       }

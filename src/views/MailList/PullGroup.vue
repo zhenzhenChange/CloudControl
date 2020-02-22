@@ -143,7 +143,7 @@ export default {
           fixed: "right",
           align: "center",
           render: (h, params) => {
-            const { taskName, groupId, maxPeople } = params.row
+            const { taskName, groupId } = params.row
             return h("div", [
               h(
                 "Button",
@@ -167,7 +167,7 @@ export default {
                   on: {
                     click: () => {
                       this.isShowReportDrawer = true
-                      this.getReportData(taskName, groupId, maxPeople)
+                      this.getReportData(taskName, groupId)
                     }
                   }
                 },
@@ -224,14 +224,14 @@ export default {
       for (const key in data) {
         const newData = JSON.parse(data[key])
         const params = { groupId: newData.groupId, taskName: newData.taskName }
-        const state = await this.$http.get("/order/getEnterGroupOrderState", { params })
+        const { state } = await this.$http.get("/order/getEnterGroupOrderState", { params })
         this.data.push({
           grpUrl: newData.grpUrl,
           groupId: newData.groupId,
           taskName: newData.taskName,
           maxPeople: newData.maxPeople + 5,
           opType: newData.opType === 0 ? "一手" : "二手",
-          pullState: state === 0 ? "进行中" : "已完成"
+          pullState: Number(state) === 0 ? "进行中" : "已完成"
         })
       }
     },
@@ -245,7 +245,7 @@ export default {
       const { msg } = await this.$http.get("/stopEnterGroup", { params })
       this.$Message.info(msg)
     },
-    async getReportData(taskName, groupId, max) {
+    async getReportData(taskName, groupId) {
       this.reportData = []
       const data = await this.$http.get("/groupView", { params: { taskName, groupId } })
       let WXID = ""
@@ -256,11 +256,12 @@ export default {
       data.forEach(item => {
         if (item) {
           if (item.roomName === "有异常,请检查账号状态") {
-            msg = "部分有异常,请检查账号状态或账号是否有好友"
+            msg = "部分有异常,请检查账号状态或账号下是否有好友"
           } else {
             msg = "OK"
             let memberCount = item.groupInfo.memberCount
             const chatRoomMember = item.groupInfo.chatRoomMember
+            const countBefore = item.countBefore
             const flag = Object.keys(item.idtoMd5).length === 0
             if (!flag) {
               for (const key in item.idtoMd5) {
@@ -280,7 +281,7 @@ export default {
                   groupUrl: item.url,
                   roomName: item.roomName,
                   groupID: item.chatRoomName.split("@")[0],
-                  beforeCount: memberCount - Object.keys(item.idtoMd5).length
+                  beforeCount: countBefore
                 })
               }
             } else {
@@ -294,7 +295,7 @@ export default {
                   groupUrl: item.url,
                   roomName: item.roomName,
                   groupID: item.chatRoomName.split("@")[0],
-                  beforeCount: max - memberCount - 5
+                  beforeCount: countBefore
                 })
               })
             }
