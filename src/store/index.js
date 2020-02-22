@@ -50,7 +50,6 @@ export default new Vuex.Store({
           phoneNumberNotUsed: item.phoneNumberNotUsed,
           taskState: Number(state) === 0 ? "进行中" : "已完成"
         })
-        console.log(data)
         commit("saveWebSocketData", data)
       })
     }
