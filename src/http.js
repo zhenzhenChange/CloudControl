@@ -1,7 +1,7 @@
 import Vue from "vue"
 import axios from "axios"
 
-const http = axios.create({ baseURL: "/cloud-api" })
+const http = axios.create({ baseURL: process.env.VUE_APP_AXIOS_BASE_URL })
 
 const excludeUrl = [
   "/common/getInit",

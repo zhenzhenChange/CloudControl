@@ -3,10 +3,10 @@ module.exports = {
     proxy: {
       "/cloud-api": {
         changeOrigin: true,
-        target: "http://39.108.132.32:8080",
+        target: process.env.VUE_APP_API_URL,
         pathRewrite: { "^/cloud-api": "/api" }
       }
     }
   },
-  publicPath: "/cloud-control/"
+  publicPath: process.env.VUE_APP_ROUTER_BASE
 }
