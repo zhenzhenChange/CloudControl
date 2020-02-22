@@ -148,14 +148,13 @@ export default {
         })
         return
       }
-      const wsURI = "ws://39.108.132.32:8080/ws/asset"
       const Time = this.blankTime || 10000
-      this.webSocket = new WebSocket(wsURI)
+      this.webSocket = new WebSocket(process.env.VUE_APP_WEB_SOCKET_URL)
       this.webSocket.onopen = () => {
         this.timer = setInterval(() => this.webSocket.send(this.user_id), Time)
       }
       this.webSocket.onmessage = async event => {
-        this.$Message.info("有新数据接收~")
+        this.$Notice.info({ title: "WebSocket持续更新中。。。", desc: "更新数据~" })
         const data = JSON.parse(event.data)
         if (Array.isArray(data)) {
           let newObj = {}

@@ -15,6 +15,7 @@ Vue.config.productionTip = false
 
 Vue.prototype.$http = http
 Vue.prototype.$Loading.config({ height: 3 })
+Vue.prototype.$Notice.config({ top: 100 })
 
 const componentsContext = require.context("./components", true, /.vue$/)
 componentsContext.keys().forEach(component => {

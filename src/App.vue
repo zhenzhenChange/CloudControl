@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <keep-alive exclude="taskAdd">
+    <keep-alive :exclude="['taskAdd', 'homeData']">
       <router-view />
     </keep-alive>
   </div>

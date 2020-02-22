@@ -37,6 +37,7 @@
 <script>
 import { mapState } from "vuex"
 export default {
+  name: "homeData",
   data() {
     return {
       timer: null,

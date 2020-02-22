@@ -90,7 +90,7 @@
         </Breadcrumb>
         <Card>
           <div class="card-div">
-            <keep-alive exclude="taskAdd">
+            <keep-alive :exclude="['taskAdd', 'homeData']">
               <router-view />
             </keep-alive>
           </div>
