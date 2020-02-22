@@ -2,6 +2,7 @@
   <div class="Friends">
     <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider class="float-left" dashed />
+    <Button type="info" icon="md-refresh" @click="refreshData">刷新数据</Button>
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="FriendsColumns" />
     <CommonConfirmModal ref="FriendConfirmModal" :config="config" />
     <Drawer width="900" :closable="false" v-model="isShowDrawer">
@@ -427,7 +428,7 @@ export default {
       }
       if (flag) {
         const { msg } = await this.$http.post("/contact/addFriendsByGroup", args)
-        this.$store.commit("saveBlankTime", this.blankTime)
+        this.$store.commit("saveBlankTime", this.blankTime - 3)
         this.$Message.info(msg)
         this.resetClick()
       }
@@ -436,6 +437,10 @@ export default {
       this.$refs[this.ConfirmModalRef].isShowConfirmModal = false
       const { msg } = await this.$http.post("/contact/clearContact", { user_id: this.user_id })
       this.$Message.info(msg)
+    },
+    refreshData() {
+      this.allData()
+      this.initData()
     }
   }
 }

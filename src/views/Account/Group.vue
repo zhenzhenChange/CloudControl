@@ -8,6 +8,7 @@
     <CommonConfirmModal :data="operationData" :ref="ConfirmModalRef" :config="operationConfig" />
     <Divider class="float-left" dashed />
     <UnCheckButton ref="UnCheckButton" :el="PagedTableRef" />
+    <Button class="ml-10" type="info" icon="md-refresh" @click="refreshData">刷新数据</Button>
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="GroupColumns" />
     <TableDrawer ref="GroupTableDrawer" />
     <Drawer width="600" :closable="false" v-model="isShowDrawer">
@@ -263,10 +264,10 @@ export default {
         res.data.forEach(item => arr.push({ label: item.groupName, value: item.groupId }))
       }
       res.data.forEach(async (item, index) => {
-        let total = await this.$http.post("/account/getAccount", { group_id: String(item.groupId) })
+        // let total = await this.$http.post("/account/getAccount", { group_id: String(item.groupId) })
         this.data.push({
           serialNumber: index + 1,
-          total: total.data.length,
+          total: "等待字段迁移",
           groupName: item.groupName,
           groupId: String(item.groupId),
           groupCreateDate: this.$options.filters.date(item.groupCreateDate)
@@ -364,6 +365,10 @@ export default {
     },
     showQRCodeDrawer() {
       this.$refs["QRCodeDrawer"].isShowQRCodeDrawer = true
+    },
+    refreshData() {
+      this.allData()
+      this.initData(null)
     }
   }
 }

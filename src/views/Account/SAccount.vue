@@ -1,6 +1,7 @@
 <template>
   <!-- 账号资料设置 -->
   <div class="SAccount">
+    <Button type="info" icon="md-refresh" @click="refreshData">刷新数据</Button>
     <Modal
       width="450"
       :closable="false"
@@ -94,14 +95,14 @@ export default {
       const params = { user_id: this.user_id, pageIndex: this.pageIndex, pageSize: this.pageSize }
       const { data } = await this.$http.get("/account/getAllGroup", { params })
       data.forEach(async (item, index) => {
-        const group_id = String(item.groupId)
-        let total = await this.$http.post("/account/getAccount", { group_id })
+        // const group_id = String(item.groupId)
+        // let total = await this.$http.post("/account/getAccount", { group_id })
         this.data.push({
           serialNumber: index + 1,
           groupName: item.groupName,
           groupId: String(item.groupId),
           groupCreateDate: this.$options.filters.date(item.groupCreateDate),
-          total: total.data.length
+          total: "等待字段迁移"
         })
       })
     },
@@ -118,6 +119,10 @@ export default {
       if (msg === "全部失败") {
         this.$Message.info(msg)
       }
+      this.allData()
+      this.initData()
+    },
+    refreshData() {
       this.allData()
       this.initData()
     }

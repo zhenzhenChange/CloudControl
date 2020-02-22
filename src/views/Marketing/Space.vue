@@ -1,6 +1,7 @@
 <template>
   <div class="Space">
     <CommonConfirmModal :ref="ConfirmModalRef" :config="config" />
+    <Button type="info" icon="md-refresh" @click="refreshData">刷新数据</Button>
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="SpaceColumns" />
   </div>
 </template>
@@ -90,6 +91,10 @@ export default {
       const group_id = String(params)
       const { msg } = await this.$http.post("/account/sendFriendCircle", { group_id })
       this.$Message.info(msg)
+    },
+    refreshData() {
+      this.allData()
+      this.initData()
     }
   }
 }

@@ -4,6 +4,7 @@
     <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider dashed />
     <UnCheckButton :el="PagedTableRef" />
+    <Button class="ml-10" type="info" icon="md-refresh" @click="refreshData">刷新数据</Button>
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="MAccountColumns" />
     <CommonConfirmModal :ref="ConfirmModalRef" :data="operationData" :config="operationConfig" />
     <CommonSelectModal :ref="SelectModalRef" :config="selectConfig" />
@@ -216,6 +217,9 @@ export default {
       const succ = data.success.length
       const dataObj = { succ, err }
       return dataObj
+    },
+    refreshData() {
+      this.initData()
     }
   }
 }

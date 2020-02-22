@@ -1,5 +1,6 @@
 <template>
   <div class="PullGroup">
+    <Button type="info" icon="md-refresh" @click="refreshData">刷新数据</Button>
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="PullGroupColumns" />
     <Drawer width="90" :closable="false" v-model="isShowReportDrawer">
       <div slot="header">
@@ -345,6 +346,9 @@ export default {
         },
         onCancel() {}
       })
+    },
+    refreshData() {
+      this.initData()
     }
   }
 }

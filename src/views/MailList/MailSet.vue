@@ -2,6 +2,7 @@
   <div class="MailList">
     <ButtonList :buttonListInfos="buttonListInfos" />
     <Divider dashed />
+    <Button type="info" icon="md-refresh" @click="refreshData">刷新数据</Button>
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="MailColumns" />
     <CommonComplexModal ref="MailSetComplexModal" />
     <CommonConfirmModal :data="operationData" :ref="ConfirmModalRef" :config="operationConfig" />
@@ -306,7 +307,7 @@ export default {
         const upload = { data: contactData, userId: this.user_id, phoneGroup }
         await this.$http.post("/contact/addPhoneToSQL", upload)
         const { msg } = await this.$http.post("/contact/addFriendFromSQL", args)
-        this.$store.commit("saveBlankTime", this.blankTime)
+        this.$store.commit("saveBlankTime", this.blankTime - 3)
         this.$Message.info(msg)
         this.resetClick()
       }
@@ -315,6 +316,10 @@ export default {
       this.$refs[this.ConfirmModalRef].isShowConfirmModal = false
       const { msg } = await this.$http.post("/contact/clearContact", { user_id: this.user_id })
       this.$Message.info(msg)
+    },
+    refreshData() {
+      this.allData()
+      this.initData()
     }
   }
 }
