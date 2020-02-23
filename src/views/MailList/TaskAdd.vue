@@ -148,10 +148,10 @@ export default {
         })
         return
       }
-      const Time = this.blankTime || 10000
+      // const Time = this.blankTime || 10000
       this.webSocket = new WebSocket(process.env.VUE_APP_WEB_SOCKET_URL)
       this.webSocket.onopen = () => {
-        this.timer = setInterval(() => this.webSocket.send(this.user_id), Time)
+        this.timer = setInterval(() => this.webSocket.send(this.user_id), 15000)
       }
       this.webSocket.onmessage = async event => {
         this.$Notice.info({ title: "WebSocket持续更新中。。。", desc: "更新数据~" })
