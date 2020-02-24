@@ -213,7 +213,7 @@ export default {
       CommonColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { width: 130, align: "center", title: "账号", key: "account" },
+        { width: 180, align: "center", title: "账号", key: "account" },
         { width: 130, align: "center", tooltip: true, title: "密码", key: "accountPwd" },
         { width: 180, align: "center", tooltip: true, title: "账号A16/62", key: "account62A16" },
         { width: 100, align: "center", title: "好友数", key: "accountFriendCount" },
@@ -279,32 +279,32 @@ export default {
         if (item.response === "false") this.up()
       })
     },
-    async initAllData(group_id) {
+    async initAllData(groupId) {
       this.data = []
       this.allData = []
-      const { data } = await this.$http.post("/account/getAccount", { group_id })
+      const params = { params: { groupId } }
+
+      const { data } = await this.$http.get("/account/getAccount", params)
       this.allData = data
       this.total = data.length
 
-      const res = await this.$http.get("/getGroupPassAndAll", { params: { groupId: group_id } })
+      const res = await this.$http.get("/getGroupPassAndAll", params)
       this.friends = res.allCount
       this.todayFriends = res.todayPassCount
     },
-    async getAccountDataByGroupID(group_id) {
+    async getAccountDataByGroupID(groupId) {
       this.data = []
-      const args = { group_id, pageSize: String(this.pageSize), pageIndex: String(this.pageIndex) }
-      const { data } = await this.$http.post("/account/getAccount", args)
+      const params = { groupId, pageSize: String(this.pageSize), pageIndex: String(this.pageIndex) }
+      const { data } = await this.$http.get("/account/getAccount", { params })
 
-      const params = { groupId: group_id }
-      const errData = await this.$http.get("/getErrorAccount", { params })
+      const errParams = { groupId }
+      const errData = await this.$http.get("/getErrorAccount", { params: errParams })
 
       data.forEach((item, index) => {
         let errMsg = ""
         if (Array.isArray(errData)) {
           errData.forEach(sonItem => {
-            if (item.account === sonItem.account) {
-              errMsg = sonItem.errorMsg
-            }
+            if (item.account === sonItem.account) errMsg = sonItem.errorMsg
           })
         }
         this.data.push({
