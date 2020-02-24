@@ -282,11 +282,11 @@ export default {
     async initAllData(groupId) {
       this.data = []
       this.allData = []
-      const params = { params: { groupId } }
+      const params = { groupId, size: 9999999, currentPage: Number(this.pageIndex) + 1 }
 
-      const { data } = await this.$http.get("/account/getAccount", params)
-      this.allData = data
-      this.total = data.length
+      const { data } = await this.$http.get("/account/getAccount", { params })
+      this.allData = data.content
+      this.total = data.content.length
 
       const res = await this.$http.get("/getGroupPassAndAll", params)
       this.friends = res.allCount
@@ -294,13 +294,17 @@ export default {
     },
     async getAccountDataByGroupID(groupId) {
       this.data = []
-      const params = { groupId, pageSize: String(this.pageSize), pageIndex: String(this.pageIndex) }
+      const params = {
+        groupId,
+        size: Number(this.pageSize),
+        currentPage: Number(this.pageIndex) + 1
+      }
       const { data } = await this.$http.get("/account/getAccount", { params })
 
       const errParams = { groupId }
       const errData = await this.$http.get("/getErrorAccount", { params: errParams })
 
-      data.forEach((item, index) => {
+      data.content.forEach((item, index) => {
         let errMsg = ""
         if (Array.isArray(errData)) {
           errData.forEach(sonItem => {
