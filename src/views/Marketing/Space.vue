@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapGetters } from "vuex"
 export default {
   data() {
     return {
@@ -60,20 +60,15 @@ export default {
     }
   },
   created() {
-    this.allData()
     this.initData()
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id })
+    ...mapGetters(["user_id", "GroupDataTotal"])
   },
   methods: {
-    async allData() {
-      const params = { user_id: this.user_id }
-      const { data } = await this.$http.get("/account/getAllGroup", { params })
-      this.$refs[this.PagedTableRef].total = data.length
-    },
     async initData() {
       this.data = []
+      this.$nextTick(() => (this.$refs[this.PagedTableRef].total = Number(this.GroupDataTotal)))
       const params = { user_id: this.user_id, pageIndex: this.pageIndex, pageSize: this.pageSize }
       const { data } = await this.$http.get("/account/getAllGroup", { params })
       data.forEach((item, index) => {
@@ -93,7 +88,6 @@ export default {
       this.$Message.info(msg)
     },
     refreshData() {
-      this.allData()
       this.initData()
     }
   }

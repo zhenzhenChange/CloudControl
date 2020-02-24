@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapGetters } from "vuex"
 export default {
   data() {
     return {
@@ -29,7 +29,7 @@ export default {
     }
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id, Shreshold: state => state.Shreshold })
+    ...mapGetters(["user_id", "Shreshold"])
   },
   created() {
     this.limit = this.Shreshold

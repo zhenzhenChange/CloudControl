@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapGetters } from "vuex"
 export default {
   data() {
     return {
@@ -192,7 +192,7 @@ export default {
                       this.$refs["GroupTableDrawer"].groupID = groupId
                       this.$refs["GroupTableDrawer"].initAllData(groupId)
                       this.$refs["GroupTableDrawer"].getAccountDataByGroupID(groupId)
-                      this.$refs["GroupTableDrawer"].checkHeart(groupId)
+                      // this.$refs["GroupTableDrawer"].checkHeart(groupId)
                     }
                   }
                 },
@@ -236,24 +236,23 @@ export default {
     this.initData(null)
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id }),
+    ...mapGetters(["user_id", "GroupDataTotal"]),
     urlListLength() {
       return this.urlList.split(/[\r\n]/g).filter(item => item !== "").length
     }
   },
   methods: {
     async allData() {
+      const arr = []
       const params = { user_id: this.user_id }
       const { data } = await this.$http.get("/account/getAllGroup", { params })
-      const Table = this.$refs[this.PagedTableRef]
-      Table && (Table.total = data.length)
-      const arr = []
       data.forEach(item => arr.push({ label: item.groupName, value: String(item.groupId) }))
       this.$store.commit("saveGroupData", JSON.stringify(arr))
+      this.$store.commit("saveGroupDataTotal", data.length)
+      this.$refs[this.PagedTableRef].total = data.length
     },
     async initData(keyWords) {
       this.data = []
-      let arr = []
       let res = null
       if (keyWords) {
         const params = { group_name: keyWords, user_id: this.user_id }
@@ -261,9 +260,8 @@ export default {
       } else {
         const params = { user_id: this.user_id, pageIndex: this.pageIndex, pageSize: this.pageSize }
         res = await this.$http.get("/account/getAllGroup", { params })
-        res.data.forEach(item => arr.push({ label: item.groupName, value: item.groupId }))
       }
-      res.data.forEach(async (item, index) => {
+      res.data.forEach((item, index) => {
         // let total = await this.$http.post("/account/getAccount", { group_id: String(item.groupId) })
         this.data.push({
           serialNumber: index + 1,
@@ -286,7 +284,7 @@ export default {
       this.$refs[this.EditModalRef].value = ""
       if (msg) {
         this.allData()
-        this.initData()
+        this.initData(null)
         this.$Message.success("添加成功！")
       }
     },

@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapGetters } from "vuex"
 export default {
   name: "homeData",
   data() {
@@ -97,15 +97,15 @@ export default {
   },
   created() {
     this.initData()
+    this.initGroupData()
     clearInterval(this.timer)
     this.timer = setInterval(() => this.initData(), 15000)
-    if (this.user_id) this.initGroupData()
   },
   destroyed() {
     clearInterval(this.timer)
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id })
+    ...mapGetters(["user_id"])
   },
   methods: {
     async initData() {
@@ -140,6 +140,7 @@ export default {
       const { data } = await this.$http.get("/account/getAllGroup", { params })
       data.forEach(item => arr.push({ label: item.groupName, value: String(item.groupId) }))
       this.$store.commit("saveGroupData", JSON.stringify(arr))
+      this.$store.commit("saveGroupDataTotal", data.length)
     }
   }
 }

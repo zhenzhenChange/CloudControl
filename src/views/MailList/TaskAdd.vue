@@ -2,10 +2,10 @@
   <div>
     <PagedTable
       v-if="webSocketData"
-      :data="webSocketData"
-      :CusTotal="webSocketData.length"
       ref="TaskPagedTable"
+      :data="webSocketData"
       :dataColumns="Columns"
+      :CusTotal="webSocketData.length"
     />
     <Modal
       width="350"
@@ -110,8 +110,7 @@ export default {
   computed: {
     ...mapState({
       user_id: state => state.user_id,
-      webSocketData: state => state.webSocketData,
-      blankTime: state => state.blankTime
+      webSocketData: state => state.webSocketData
     })
   },
   methods: {
@@ -148,7 +147,6 @@ export default {
         })
         return
       }
-      // const Time = this.blankTime || 10000
       this.webSocket = new WebSocket(process.env.VUE_APP_WEB_SOCKET_URL)
       this.webSocket.onopen = () => {
         this.timer = setInterval(() => this.webSocket.send(this.user_id), 15000)

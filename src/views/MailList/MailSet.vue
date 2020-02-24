@@ -153,7 +153,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapGetters } from "vuex"
 export default {
   data() {
     return {
@@ -213,23 +213,18 @@ export default {
     }
   },
   created() {
-    this.allData()
     this.initData()
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id }),
+    ...mapGetters(["user_id", "GroupDataTotal"]),
     mailListLength() {
       return this.mailList.split(/[\r\n]/g).filter(item => item !== "").length
     }
   },
   methods: {
-    async allData() {
-      const params = { user_id: this.user_id }
-      const { data } = await this.$http.get("/account/getAllGroup", { params })
-      this.$refs[this.PagedTableRef].total = data.length
-    },
     async initData() {
       this.data = []
+      this.$nextTick(() => (this.$refs[this.PagedTableRef].total = Number(this.GroupDataTotal)))
       const params = { user_id: this.user_id, pageIndex: this.pageIndex, pageSize: this.pageSize }
       const { data } = await this.$http.get("/account/getAllGroup", { params })
       data.forEach((item, index) => {
@@ -293,21 +288,20 @@ export default {
         taskName: this.fansTaskName
       }
       if (flag) {
+        const data = []
         const contact = this.mailList.split(/[\r\n]/g).filter(item => item !== "")
-        const contactData = []
         if (this.mailType === "纯手机号") {
-          contact.forEach(item => contactData.push({ name: null, phoneNumber: item }))
+          contact.forEach(item => data.push({ name: null, phoneNumber: item }))
         } else {
           contact.forEach(item => {
             const name = item.split(/----/g)[0]
             const phoneNumber = item.split(/----/g)[1]
-            contactData.push({ name, phoneNumber })
+            data.push({ name, phoneNumber })
           })
         }
-        const upload = { data: contactData, userId: this.user_id, phoneGroup }
+        const upload = { data, userId: this.user_id, phoneGroup }
         await this.$http.post("/contact/addPhoneToSQL", upload)
         const { msg } = await this.$http.post("/contact/addFriendFromSQL", args)
-        this.$store.commit("saveBlankTime", this.blankTime - 3)
         this.$Message.info(msg)
         this.resetClick()
       }
@@ -318,7 +312,6 @@ export default {
       this.$Message.info(msg)
     },
     refreshData() {
-      this.allData()
       this.initData()
     }
   }

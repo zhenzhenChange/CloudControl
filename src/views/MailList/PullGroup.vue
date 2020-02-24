@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapGetters } from "vuex"
 import getSystemTime from "../../lib/getSystemTime.js"
 export default {
   data() {
@@ -211,7 +211,7 @@ export default {
     this.initData()
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id, GroupData: state => state.GroupData }),
+    ...mapGetters(["user_id"]),
     supplyUrlListLength() {
       return this.supplyUrlList.split(/[\r\n]/g).filter(item => item !== "").length
     }

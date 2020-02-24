@@ -199,9 +199,7 @@ export default {
     },
     logout() {
       this.$router.push("/")
-      localStorage.removeItem("user_id")
-      localStorage.removeItem("GroupData")
-      localStorage.removeItem("Shreshold")
+      localStorage.clear()
     },
     async IPChecking() {
       if (!this.orderno) {

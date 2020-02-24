@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapGetters } from "vuex"
 export default {
   data() {
     return {
@@ -78,20 +78,15 @@ export default {
     }
   },
   created() {
-    this.allData()
     this.initData()
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id })
+    ...mapGetters(["user_id", "GroupDataTotal"])
   },
   methods: {
-    async allData() {
-      const params = { user_id: this.user_id }
-      const { data } = await this.$http.get("/account/getAllGroup", { params })
-      this.$refs[this.PagedTableRef].total = data.length
-    },
     async initData() {
       this.data = []
+      this.$nextTick(() => (this.$refs[this.PagedTableRef].total = Number(this.GroupDataTotal)))
       const params = { user_id: this.user_id, pageIndex: this.pageIndex, pageSize: this.pageSize }
       const { data } = await this.$http.get("/account/getAllGroup", { params })
       data.forEach(async (item, index) => {
@@ -108,22 +103,18 @@ export default {
     },
     async modify() {
       this.isShowModfiyModal = false
+      const group_id = this.currentGroupID
       const isUpdateType = this.isUpdateType
       const change_type = isUpdateType === "修改密码" ? 2 : isUpdateType === "修改昵称" ? 0 : 1
-      const group_id = this.currentGroupID
+
       const args = { type: 0, wxids: [], change_type, user_id: this.user_id, group_id }
+
       const { msg, data } = await this.$http.post("/account/changeDatum", args)
-      if (data) {
-        this.$Message.info(`成功修改${data.success.length}个，失败${data.error.length}个`)
-      }
-      if (msg === "全部失败") {
-        this.$Message.info(msg)
-      }
-      this.allData()
+      if (data) this.$Message.info(`成功修改${data.success.length}个，失败${data.error.length}个`)
+      if (msg === "全部失败") this.$Message.info(msg)
       this.initData()
     },
     refreshData() {
-      this.allData()
       this.initData()
     }
   }
