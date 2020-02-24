@@ -8,7 +8,7 @@ export default new Vuex.Store({
     user_id: "" || localStorage.getItem("user_id"),
     GroupData: "" || localStorage.getItem("GroupData"),
     Shreshold: "" || localStorage.getItem("Shreshold"),
-    webSocketData: "" || localStorage.getItem("webSocketData"),
+    webSocketData: "",
     GroupDataTotal: "" || localStorage.getItem("GroupDataTotal")
   },
   mutations: {
@@ -30,7 +30,6 @@ export default new Vuex.Store({
     },
     saveWebSocketData: (state, webSocketData) => {
       state.webSocketData = webSocketData
-      localStorage.setItem("webSocketData", webSocketData)
     }
   },
   getters: {
