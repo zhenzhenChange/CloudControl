@@ -123,6 +123,7 @@ export default {
         { width: 170, title: "上传时间", align: "center", key: "uploadTime" }
       ],
       PullGroupColumns: [
+        { width: 180, align: "center", title: "分组ID", key: "groupId" },
         { width: 200, align: "center", title: "任务名称", key: "taskName" },
         {
           width: 150,
@@ -137,7 +138,6 @@ export default {
         { width: 150, align: "center", title: "最大人数", key: "maxPeople" },
         { width: 180, align: "center", title: "类型", key: "opType" },
         { width: 180, align: "center", title: "订单状态", key: "pullState" },
-        { width: 180, align: "center", title: "分组ID", key: "groupId" },
         {
           width: 650,
           title: "操作",
@@ -222,19 +222,16 @@ export default {
       const data = await this.$http.get("/getEnterGroupInfo")
       const Table = this.$refs[this.PagedTableRef]
       Table && (Table.total = Object.keys(data).length)
-      for (const key in data) {
-        const newData = JSON.parse(data[key])
-        const params = { groupId: newData.groupId, taskName: newData.taskName }
-        const { state } = await this.$http.get("/order/getEnterGroupOrderState", { params })
+      data.forEach(item => {
         this.data.push({
-          grpUrl: newData.grpUrl,
-          groupId: newData.groupId,
-          taskName: newData.taskName,
-          maxPeople: newData.maxPeople + 5,
-          opType: newData.opType === 0 ? "一手" : "二手",
-          pullState: Number(state) === 0 ? "进行中" : "已完成"
+          grpUrl: item.groupOrderInfo.grpUrl,
+          groupId: item.groupOrderInfo.groupId,
+          taskName: item.groupOrderInfo.taskName,
+          maxPeople: item.groupOrderInfo.maxPeople + 5,
+          opType: item.groupOrderInfo.opType === 0 ? "一手" : "二手",
+          pullState: Number(item.state) === 0 ? "进行中" : "已完成"
         })
-      }
+      })
     },
     cancel() {
       this.isShowAddModal = false

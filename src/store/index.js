@@ -39,11 +39,9 @@ export default new Vuex.Store({
     GroupDataTotal: state => state.GroupDataTotal
   },
   actions: {
-    saveWebSocketData({ commit }, { VueInstance, webSocketData }) {
+    saveWebSocketData({ commit }, webSocketData) {
       const data = []
       webSocketData.forEach(async item => {
-        const params = { groupId: item.groupId, taskName: item.taskName }
-        const { state } = await VueInstance.$http.get("/order/getAddFriendOrderState", { params })
         data.push({
           groupId: item.groupId,
           taskName: item.taskName,
@@ -54,7 +52,7 @@ export default new Vuex.Store({
           sayHelloCount: item.sayHelloCount,
           groupOnlineCount: item.groupOnlineCount,
           phoneNumberNotUsed: item.phoneNumberNotUsed,
-          taskState: Number(state) === 0 ? "进行中" : "已完成"
+          taskState: Number(item.state) === 0 ? "进行中" : "已完成"
         })
         commit("saveWebSocketData", data)
       })

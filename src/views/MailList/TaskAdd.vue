@@ -153,10 +153,15 @@ export default {
           let newObj = {}
           let webSocketData = []
           data.forEach(item => {
-            newObj = Object.assign({}, item.addFriendOrder, item.getFriendViewResponse)
+            newObj = Object.assign(
+              {},
+              item.orderResponse.addFriendOrder,
+              item.orderResponse.getFriendViewResponse
+            )
+            newObj.state = item.state
             webSocketData.push(newObj)
           })
-          await this.$store.dispatch("saveWebSocketData", { VueInstance: this, webSocketData })
+          await this.$store.dispatch("saveWebSocketData", webSocketData)
         }
       }
       this.webSocket.onerror = () => {
