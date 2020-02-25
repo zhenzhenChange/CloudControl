@@ -21,60 +21,18 @@
     <Layout class="layout">
       <Header class="header">
         <div>
-          <Poptip
-            transfer
-            width="400"
-            offset="20"
-            padding="20px"
-            v-show="isShow"
-            class="login-poptip"
-            placement="right-start"
-          >
-            <Button type="error" icon="md-link">代理验证</Button>
-            <div slot="content">
-              <Card>
-                <Input clearable v-model="secret" placeholder="请输入密钥">
-                  <span slot="prepend">密钥</span>
-                </Input>
-                <Input clearable class="mt-10" v-model="orderno" placeholder="请输入订单号">
-                  <span slot="prepend">订单</span>
-                </Input>
-                <div class="mt-10">
-                  <Button
-                    long
-                    type="success"
-                    @click="IPChecking"
-                    :loading="IPloading"
-                    icon="md-git-commit"
-                  >
-                    提交
-                  </Button>
-                </div>
-              </Card>
-            </div>
-          </Poptip>
+          <Button icon="md-log-out" type="warning" @click="logout" class="mr-10">
+            退出登录
+          </Button>
+          <Button icon="md-open" type="info" @click="isShow = true" class="mr-10">
+            开启代理
+          </Button>
+          <Button icon="md-create" type="info" @click="isShowChangePwd = true">
+            修改密码
+          </Button>
         </div>
         <div>
           <h1><Icon type="md-cloud-circle" class="mr-10" />云控营销管理平台</h1>
-        </div>
-        <div>
-          <div class="float-left mr-30">
-            <span class="mr-20">是否开启代理</span>
-            <i-switch size="large" true-value="0" false-value="1" @on-change="changeIsOpen">
-              <span slot="open">开启</span>
-              <span slot="close">关闭</span>
-            </i-switch>
-          </div>
-          <Dropdown transfer>
-            <Button type="info" @click="logout">
-              退出登录<Icon type="ios-arrow-down" class="ml-10" />
-            </Button>
-            <DropdownMenu slot="list">
-              <DropdownItem>
-                <a type="info" @click="isShowChangePwd = true">修改密码</a>
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
         </div>
       </Header>
       <Content class="content">
@@ -105,7 +63,7 @@
           <Button type="success" icon="md-checkmark" @click="changePwd">立即提交</Button>
         </div>
       </div>
-      <Row class="mt-10">
+      <Row>
         <Col span="24">
           <Input v-model="oldPwd" clearable placeholder="请输入原密码">
             <span slot="prepend">原密码</span>
@@ -120,11 +78,33 @@
         </Col>
       </Row>
     </Drawer>
+    <Drawer width="20" :closable="false" v-model="isShow" @on-visible-change="onShowDrawer">
+      <div slot="header" class="header-drawer">
+        <div><Icon class="mr-10" color="#2D8CF0" type="md-fastforward" />代理验证</div>
+        <div>
+          <Button type="success" icon="md-checkmark" @click="IPChecking">立即验证</Button>
+        </div>
+      </div>
+      <Row>
+        <Col span="24">
+          <Input clearable v-model="secret" placeholder="请输入密钥">
+            <span slot="prepend">密钥</span>
+          </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="24">
+          <Input clearable class="mt-10" v-model="orderno" placeholder="请输入订单号">
+            <span slot="prepend">订单</span>
+          </Input>
+        </Col>
+      </Row>
+    </Drawer>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapGetters } from "vuex"
 export default {
   name: "home",
   data() {
@@ -181,7 +161,7 @@ export default {
     }
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id })
+    ...mapGetters(["user_id"])
   },
   methods: {
     selectMenu(name) {
@@ -202,12 +182,12 @@ export default {
       localStorage.clear()
     },
     async IPChecking() {
-      if (!this.orderno) {
-        this.$Notice.error({ title: "请输入订单号" })
+      if (!this.secret) {
+        this.$Message.error("请输入密钥~")
         return
       }
-      if (!this.secret) {
-        this.$Notice.error({ title: "请输入密钥" })
+      if (!this.orderno) {
+        this.$Message.error("请输入订单号~")
         return
       }
       this.IPloading = true
@@ -215,18 +195,24 @@ export default {
       const res = await this.$http.get("/proxyInfo", { params })
       this.IPloading = false
       if (res.Success === false) {
-        this.$Notice.error({ title: "验证失败！" })
+        this.$Message.error("验证失败~")
         return
       }
       if (res.Success === true) {
-        this.$Notice.sucess({ title: "验证成功！" })
+        this.$Message.error("验证成功~")
         return
       }
-      this.$Notice.info({ title: res })
+      this.$Message.info(res)
     },
-    async changeIsOpen(value) {
-      value === "0" ? (this.isShow = true) : (this.isShow = false)
-      const { msg } = await this.$http.get("openProxy", { params: { isOpen: value } })
+    async onShowDrawer(value) {
+      let msg
+      if (value) {
+        await this.$http.get("openProxy", { params: { isOpen: 0 } })
+        msg = "已开启"
+      } else {
+        await this.$http.get("openProxy", { params: { isOpen: 1 } })
+        msg = "已关闭"
+      }
       this.$Message.info(msg)
     },
     async changePwd() {
@@ -243,7 +229,7 @@ export default {
       this.$Message.info(msg)
       this.oldPwd = this.newPwd = ""
       this.$router.push("/")
-      localStorage.removeItem("user_id")
+      localStorage.clear()
     }
   }
 }

@@ -244,9 +244,11 @@ export default {
   methods: {
     async allData() {
       const arr = []
-      const params = { user_id: this.user_id }
-      const { data } = await this.$http.get("/account/getAllGroup", { params })
-      data.forEach(item => arr.push({ label: item.groupName, value: String(item.groupId) }))
+      const params = { userId: this.user_id, size: 999999, currentPage: 1 }
+      const data = await this.$http.get("/account/getAllGroup", { params })
+      data.forEach(item =>
+        arr.push({ label: item.tbGroupEntity.groupName, value: String(item.tbGroupEntity.groupId) })
+      )
       this.$store.commit("saveGroupData", JSON.stringify(arr))
       this.$store.commit("saveGroupDataTotal", data.length)
       this.$refs[this.PagedTableRef].total = data.length
@@ -258,17 +260,20 @@ export default {
         const params = { group_name: keyWords, user_id: this.user_id }
         res = await this.$http.get("/account/getGroupByName", { params })
       } else {
-        const params = { user_id: this.user_id, pageIndex: this.pageIndex, pageSize: this.pageSize }
+        const params = {
+          userId: this.user_id,
+          size: Number(this.pageSize),
+          currentPage: Number(this.pageIndex) + 1
+        }
         res = await this.$http.get("/account/getAllGroup", { params })
       }
-      res.data.forEach((item, index) => {
-        // let total = await this.$http.post("/account/getAccount", { group_id: String(item.groupId) })
+      res.forEach((item, index) => {
         this.data.push({
           serialNumber: index + 1,
-          total: "等待字段迁移",
-          groupName: item.groupName,
-          groupId: String(item.groupId),
-          groupCreateDate: this.$options.filters.date(item.groupCreateDate)
+          total: item.accountCount,
+          groupName: item.tbGroupEntity.groupName,
+          groupId: String(item.tbGroupEntity.groupId),
+          groupCreateDate: this.$options.filters.date(item.tbGroupEntity.groupCreateDate)
         })
       })
     },

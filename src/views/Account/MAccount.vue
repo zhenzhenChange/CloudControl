@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapGetters } from "vuex"
 export default {
   name: "MAccountVue",
   data() {
@@ -115,7 +115,7 @@ export default {
     this.initData()
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id })
+    ...mapGetters(["user_id"])
   },
   methods: {
     async initData() {

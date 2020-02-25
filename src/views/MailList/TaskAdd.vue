@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Button type="info" icon="md-refresh" @click="refreshData">刷新数据</Button>
     <PagedTable
       v-if="webSocketData"
       ref="TaskPagedTable"
@@ -29,7 +30,7 @@
         <Button type="error" icon="md-checkmark" @click="stop">确定</Button>
       </div>
     </Modal>
-    <Spin></Spin>
+    <Spin class="mt-10"></Spin>
   </div>
 </template>
 
@@ -39,7 +40,6 @@ export default {
   name: "taskAdd",
   data() {
     return {
-      timer: null,
       taskObj: {},
       taskState: "",
       webSocket: null,
@@ -76,7 +76,6 @@ export default {
                       this.isShowStopAddModal = true
                       this.currentGroupID = groupId
                       this.currentTaskName = taskName
-                      clearInterval(this.timer)
                     }
                   }
                 },
@@ -105,7 +104,6 @@ export default {
   },
   destroyed() {
     this.webSocket.close()
-    clearInterval(this.timer)
   },
   computed: {
     ...mapState({
@@ -138,7 +136,6 @@ export default {
       })
     },
     initWebSocket() {
-      clearInterval(this.timer)
       if (!("WebSocket" in window)) {
         this.$Notice.error({
           title: "意外错误",
@@ -148,11 +145,9 @@ export default {
         return
       }
       this.webSocket = new WebSocket(process.env.VUE_APP_WEB_SOCKET_URL)
-      this.webSocket.onopen = () => {
-        this.timer = setInterval(() => this.webSocket.send(this.user_id), 15000)
-      }
+      this.webSocket.onopen = () => this.webSocket.send(this.user_id)
       this.webSocket.onmessage = async event => {
-        this.$Notice.info({ title: "WebSocket持续更新中。。。", desc: "更新数据~" })
+        this.$Notice.info({ title: "WebSocket持续更新中。。。", desc: "请求数据中...请稍后..." })
         const data = JSON.parse(event.data)
         if (Array.isArray(data)) {
           let newObj = {}
@@ -166,12 +161,11 @@ export default {
       }
       this.webSocket.onerror = () => {
         this.webSocket.close()
-        clearInterval(this.timer)
         this.initWebSocket()
       }
-      this.webSocket.onclose = () => {
-        clearInterval(this.timer)
-      }
+    },
+    refreshData() {
+      setTimeout(() => this.webSocket.send(this.user_id), 3000)
     }
   }
 }

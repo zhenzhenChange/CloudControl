@@ -120,25 +120,23 @@ export default {
         if (!item.accountIsValid) this.dataCard[0].data[3].data += 1
       })
 
-      const InitRes = await this.$http.get("/common/getInit", { params })
-      this.dataCard[1].data[1].data = InitRes.data.addCount || 0
-      this.dataCard[1].data[2].data = InitRes.data.addCount - InitRes.data.ssAllPassCount || 0
-      this.dataCard[1].data[3].data = InitRes.data.ssAllPassCount || 0
-      this.$store.commit("saveShreshold", InitRes.data.suLoginShreshold)
-
-      const GroupRes = await this.$http.get("/group/getEnterGroupCount", { params })
-      this.dataCard[2].data[0].data = GroupRes.data.count || 0
-      this.dataCard[2].data[1].data = GroupRes.data.goingCount || 0
-
-      const FriendRes = await this.$http.get("/contact/getAddFriendCount", { params })
-      this.dataCard[2].data[2].data = FriendRes.data.count || 0
-      this.dataCard[2].data[3].data = FriendRes.data.goingCount || 0
+      const { data: InitHomeData } = await this.$http.get("/getHomeData", { params })
+      this.dataCard[1].data[1].data = InitHomeData.addCount || 0
+      this.dataCard[1].data[2].data = InitHomeData.addCount - InitHomeData.ssAllPassCount || 0
+      this.dataCard[1].data[3].data = InitHomeData.ssAllPassCount || 0
+      this.dataCard[2].data[0].data = InitHomeData.friendOrderCount || 0
+      this.dataCard[2].data[1].data = InitHomeData.friendOrderGoingCount || 0
+      this.dataCard[2].data[2].data = InitHomeData.groupOrderCount || 0
+      this.dataCard[2].data[3].data = InitHomeData.groupOrderGoingCount || 0
+      this.$store.commit("saveShreshold", InitHomeData.suLoginShreshold)
     },
     async initGroupData() {
       const arr = []
-      const params = { user_id: this.user_id }
-      const { data } = await this.$http.get("/account/getAllGroup", { params })
-      data.forEach(item => arr.push({ label: item.groupName, value: String(item.groupId) }))
+      const params = { userId: this.user_id, size: 999999, currentPage: 1 }
+      const data = await this.$http.get("/account/getAllGroup", { params })
+      data.forEach(item =>
+        arr.push({ label: item.tbGroupEntity.groupName, value: String(item.tbGroupEntity.groupId) })
+      )
       this.$store.commit("saveGroupData", JSON.stringify(arr))
       this.$store.commit("saveGroupDataTotal", data.length)
     }

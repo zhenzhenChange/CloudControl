@@ -33,6 +33,7 @@ export default {
         { title: "分组ID", align: "center", key: "groupId" },
         { title: "分组名称", align: "center", key: "groupName" },
         { title: "创建时间", align: "center", key: "groupCreateDate" },
+        { align: "center", title: "组内账号总数", key: "total" },
         {
           width: 200,
           title: "操作",
@@ -69,16 +70,24 @@ export default {
     async initData() {
       this.data = []
       this.$nextTick(() => (this.$refs[this.PagedTableRef].total = Number(this.GroupDataTotal)))
-      const params = { user_id: this.user_id, pageIndex: this.pageIndex, pageSize: this.pageSize }
-      const { data } = await this.$http.get("/account/getAllGroup", { params })
-      data.forEach((item, index) => {
+      const params = {
+        userId: this.user_id,
+        size: Number(this.pageSize),
+        currentPage: Number(this.pageIndex) + 1
+      }
+      const data = await this.$http.get("/account/getAllGroup", { params })
+      data.forEach(async (item, index) => {
         this.data.push({
           serialNumber: index + 1,
-          groupName: item.groupName,
-          groupId: String(item.groupId),
-          groupCreateDate: this.$options.filters.date(item.groupCreateDate)
+          groupName: item.tbGroupEntity.groupName,
+          groupId: String(item.tbGroupEntity.groupId),
+          groupCreateDate: this.$options.filters.date(item.tbGroupEntity.groupCreateDate),
+          total: item.accountCount
         })
-        this.GroupData.push({ label: item.groupName, value: item.groupId })
+        this.GroupData.push({
+          label: item.tbGroupEntity.groupName,
+          value: item.tbGroupEntity.groupId
+        })
       })
     },
     async sendFriendSpace(params) {

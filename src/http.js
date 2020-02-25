@@ -3,12 +3,7 @@ import axios from "axios"
 
 const http = axios.create({ baseURL: process.env.VUE_APP_AXIOS_BASE_URL })
 
-const excludeUrl = [
-  "/common/getInit",
-  "/account/getAccountInfo",
-  "/group/getEnterGroupCount",
-  "/contact/getAddFriendCount"
-]
+const excludeUrl = ["/account/getAccountInfo", "/getHomeData"]
 
 http.interceptors.request.use(
   config => {
