@@ -289,7 +289,7 @@ export default {
       this.total = data.content.length
 
       const res = await this.$http.get("/getGroupPassAndAll", params)
-      this.friends = res.allCount
+      // this.friends = res.allCount
       this.todayFriends = res.todayPassCount
     },
     async getAccountDataByGroupID(groupId) {
@@ -311,6 +311,7 @@ export default {
             if (item.account === sonItem.account) errMsg = sonItem.errorMsg
           })
         }
+        if (Number(item.accountFriendCount)) this.friends += item.accountFriendCount
         this.data.push({
           serialNumber: index + 1,
           account: item.account,
