@@ -246,57 +246,37 @@ export default {
     async getReportData(taskName, groupId) {
       this.reportData = []
       const data = await this.$http.get("/groupView", { params: { taskName, groupId } })
-      let WXID = ""
-      let phone = ""
-      let nickName = ""
-      let uploadTime = getSystemTime()
-      let msg = ""
+      let msg
+      const uploadTime = getSystemTime()
       data.forEach(item => {
         if (item) {
           if (item.roomName === "有异常,请检查账号状态") {
             msg = "部分有异常,请检查账号状态或账号下是否有好友"
           } else {
             msg = "OK"
-            let memberCount = item.groupInfo.memberCount
-            const chatRoomMember = item.groupInfo.chatRoomMember
             const countBefore = item.countBefore
-            const flag = Object.keys(item.idtoMd5).length === 0
-            if (!flag) {
-              for (const key in item.idtoMd5) {
-                chatRoomMember.map(memberItem => {
-                  if (key === memberItem.userName) {
-                    WXID = key
-                    phone = item.idtoMd5[key]
-                    nickName = memberItem.nickName
-                  }
-                })
-                this.reportData.push({
-                  WXID,
-                  phone,
-                  nickName,
-                  uploadTime,
-                  memberCount,
-                  groupUrl: item.url,
-                  roomName: item.roomName,
-                  groupID: item.chatRoomName.split("@")[0],
-                  beforeCount: countBefore
-                })
-              }
-            } else {
-              chatRoomMember.forEach(sonItem => {
-                this.reportData.push({
-                  WXID: sonItem.userName,
-                  phone: "未上传或非本平台",
-                  nickName: sonItem.nickName,
-                  uploadTime,
-                  memberCount,
-                  groupUrl: item.url,
-                  roomName: item.roomName,
-                  groupID: item.chatRoomName.split("@")[0],
-                  beforeCount: countBefore
-                })
+            const memberCount = item.groupInfo.memberCount
+            const chatRoomMember = item.groupInfo.chatRoomMember
+            chatRoomMember.forEach(sonItem => {
+              let objPhone
+              // TODO 用函数 + find 实现寻找对应的手机号
+              Object.keys(item.idtoMd5).forEach(objItem => {
+                if (sonItem.userName === objItem) {
+                  objPhone = item.idtoMd5[objItem]
+                }
               })
-            }
+              this.reportData.push({
+                WXID: sonItem.userName,
+                phone: objPhone || "未上传或非本平台",
+                nickName: sonItem.nickName,
+                uploadTime,
+                memberCount,
+                groupUrl: item.url,
+                roomName: item.roomName,
+                groupID: item.chatRoomName.split("@")[0],
+                beforeCount: countBefore
+              })
+            })
           }
         }
       })
