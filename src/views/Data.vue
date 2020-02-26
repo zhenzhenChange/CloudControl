@@ -40,6 +40,11 @@ export default {
   name: "homeData",
   data() {
     return {
+      Flag: {
+        InfoFlag: false,
+        OrderFlag: false,
+        FriendFlag: false
+      },
       timer: null,
       dataCard: [
         {
@@ -96,49 +101,73 @@ export default {
     }
   },
   created() {
-    this.initData()
-    this.initGroupData()
-    clearInterval(this.timer)
-    this.timer = setInterval(() => this.initData(), 15000)
-  },
-  destroyed() {
-    clearInterval(this.timer)
+    this.initInfo()
+    this.initGroup()
+    this.initOrder()
+    this.initFriend()
+    this.initShreshold()
   },
   computed: {
     ...mapGetters(["user_id"])
   },
+  watch: {
+    Flag: {
+      handler(newValue) {
+        if (newValue.InfoFlag) setTimeout(() => this.initInfo(), 3000)
+        if (newValue.FriendFlag) setTimeout(() => this.initFriend(), 3000)
+        if (newValue.OrderFlag) setTimeout(() => this.initOrder(), 3000)
+      },
+      deep: true
+    }
+  },
   methods: {
-    async initData() {
+    async initInfo() {
+      this.Flag.InfoFlag = false
       this.dataCard.forEach(data => data.data.forEach(sonData => (sonData.data = 0)))
       const params = { user_id: this.user_id }
       const { data } = await this.$http.get("/account/getAccountInfo", { params })
       this.dataCard[0].data[0].data = data.length || 0
       data.forEach(item => {
-        if (item.accountFriendCount) this.dataCard[1].data[0].data += item.accountFriendCount
         if (item.accountState) this.dataCard[0].data[1].data += 1
         if (!item.accountState) this.dataCard[0].data[2].data += 1
         if (!item.accountIsValid) this.dataCard[0].data[3].data += 1
       })
-
-      const { data: InitHomeData } = await this.$http.get("/getHomeData", { params })
-      this.dataCard[1].data[1].data = InitHomeData.addCount || 0
-      this.dataCard[1].data[2].data = InitHomeData.addCount - InitHomeData.ssAllPassCount || 0
-      this.dataCard[1].data[3].data = InitHomeData.ssAllPassCount || 0
-      this.dataCard[2].data[0].data = InitHomeData.friendOrderCount || 0
-      this.dataCard[2].data[1].data = InitHomeData.friendOrderGoingCount || 0
-      this.dataCard[2].data[2].data = InitHomeData.groupOrderCount || 0
-      this.dataCard[2].data[3].data = InitHomeData.groupOrderGoingCount || 0
-      this.$store.commit("saveShreshold", InitHomeData.suLoginShreshold)
+      this.Flag.InfoFlag = true
     },
-    async initGroupData() {
+    async initFriend() {
+      this.Flag.FriendFlag = false
+      const params = { userId: this.user_id }
+      const friendData = await this.$http.get("/home/getHomeFriendData", { params })
+      this.dataCard[1].data[0].data = friendData.allFriendCount || 0
+      this.dataCard[1].data[1].data = friendData.allRequestCount || 0
+      this.dataCard[1].data[2].data = friendData.allFailureCount || 0
+      this.dataCard[1].data[3].data = friendData.allPassCount || 0
+      this.Flag.FriendFlag = true
+    },
+    async initOrder() {
+      this.Flag.OrderFlag = false
+      const params = { userId: this.user_id }
+      const orderData = await this.$http.get("/home/getHomeOrderData", { params })
+      this.dataCard[2].data[0].data = orderData.enterGroupAll || 0
+      this.dataCard[2].data[1].data = orderData.enterGroupIng || 0
+      this.dataCard[2].data[2].data = orderData.addFriendAll || 0
+      this.dataCard[2].data[3].data = orderData.addFriendIng || 0
+      this.Flag.OrderFlag = true
+    },
+    async initGroup() {
       const arr = []
-      const params = { userId: this.user_id, size: 999999, currentPage: 1 }
+      const params = { userId: this.user_id, size: 99999, currentPage: 1 }
       const data = await this.$http.get("/account/getAllGroup", { params })
       data.forEach(item =>
         arr.push({ label: item.tbGroupEntity.groupName, value: String(item.tbGroupEntity.groupId) })
       )
       this.$store.commit("saveGroupData", JSON.stringify(arr))
       this.$store.commit("saveGroupDataTotal", data.length)
+    },
+    async initShreshold() {
+      const params = { user_id: this.user_id }
+      const { data } = await this.$http.get("/getHomeData", { params })
+      this.$store.commit("saveShreshold", data.suLoginShreshold)
     }
   }
 }

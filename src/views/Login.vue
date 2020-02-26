@@ -55,6 +55,7 @@ export default {
       } else {
         this.$Message.info(msg)
       }
+      this.loginForm.user_account = this.loginForm.user_pwd = ""
     }
   }
 }

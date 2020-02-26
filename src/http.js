@@ -3,14 +3,18 @@ import axios from "axios"
 
 const http = axios.create({ baseURL: process.env.VUE_APP_AXIOS_BASE_URL })
 
-const excludeUrl = ["/account/getAccountInfo", "/getHomeData"]
+const excludeUrl = [
+  "/getHomeData",
+  "/home/getHomeOrderData",
+  "/home/getHomeFriendData",
+  "/account/getAccountInfo"
+]
 
 http.interceptors.request.use(
   config => {
     const url = config.url
-    if (excludeUrl.includes(url)) {
-      return config
-    } else {
+    if (excludeUrl.includes(url)) return config
+    else {
       Vue.prototype.$Loading.start()
       return config
     }
@@ -22,9 +26,8 @@ http.interceptors.response.use(
   res => {
     const resUrl = res.config.url
     const data = res.data ? res.data : res
-    if (excludeUrl.includes(resUrl)) {
-      return data
-    } else {
+    if (excludeUrl.includes(resUrl)) return data
+    else {
       Vue.prototype.$Loading.finish()
       return data
     }
