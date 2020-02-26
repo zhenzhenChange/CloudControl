@@ -41,8 +41,6 @@ export default {
   data() {
     return {
       Flag: {
-        InfoFlag: false,
-        OrderFlag: false,
         FriendFlag: false
       },
       timer: null,
@@ -106,6 +104,10 @@ export default {
     this.initOrder()
     this.initFriend()
     this.initShreshold()
+    setInterval(() => {
+      this.initInfo()
+      this.initOrder()
+    }, 10000)
   },
   computed: {
     ...mapGetters(["user_id"])
@@ -113,16 +115,13 @@ export default {
   watch: {
     Flag: {
       handler(newValue) {
-        if (newValue.InfoFlag) setTimeout(() => this.initInfo(), 3000)
         if (newValue.FriendFlag) setTimeout(() => this.initFriend(), 3000)
-        if (newValue.OrderFlag) setTimeout(() => this.initOrder(), 3000)
       },
       deep: true
     }
   },
   methods: {
     async initInfo() {
-      this.Flag.InfoFlag = false
       this.dataCard.forEach(data => data.data.forEach(sonData => (sonData.data = 0)))
       const params = { user_id: this.user_id }
       const { data } = await this.$http.get("/account/getAccountInfo", { params })
@@ -132,7 +131,6 @@ export default {
         if (!item.accountState) this.dataCard[0].data[2].data += 1
         if (!item.accountIsValid) this.dataCard[0].data[3].data += 1
       })
-      this.Flag.InfoFlag = true
     },
     async initFriend() {
       this.Flag.FriendFlag = false
@@ -145,14 +143,12 @@ export default {
       this.Flag.FriendFlag = true
     },
     async initOrder() {
-      this.Flag.OrderFlag = false
       const params = { userId: this.user_id }
       const orderData = await this.$http.get("/home/getHomeOrderData", { params })
       this.dataCard[2].data[0].data = orderData.enterGroupAll || 0
       this.dataCard[2].data[1].data = orderData.enterGroupIng || 0
       this.dataCard[2].data[2].data = orderData.addFriendAll || 0
       this.dataCard[2].data[3].data = orderData.addFriendIng || 0
-      this.Flag.OrderFlag = true
     },
     async initGroup() {
       const arr = []
