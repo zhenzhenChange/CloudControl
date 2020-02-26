@@ -10,9 +10,12 @@ const excludeUrl = [
   "/account/getAccountInfo"
 ]
 
+const root = process.env.NODE_ENV === "production" ? "http://47.111.180.163:8080/api" : ""
+
 http.interceptors.request.use(
   config => {
     const url = config.url
+    config.url = root + config.url
     if (excludeUrl.includes(url)) return config
     else {
       Vue.prototype.$Loading.start()

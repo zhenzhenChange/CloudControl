@@ -57,7 +57,7 @@ const routes = [
   }
 ]
 
-const router = new VueRouter({ base: process.env.VUE_APP_ROUTER_BASE, mode: "history", routes })
+const router = new VueRouter({ base: "./", mode: "history", routes })
 
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
