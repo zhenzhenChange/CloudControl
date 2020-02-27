@@ -43,6 +43,20 @@
         </Col>
       </Row>
       <Row class="mt-10">
+        <Col span="11" class="span-prefix">
+          <div>
+            <span class="ml-10 mr-10">号码前缀</span>
+            <RadioGroup v-model="prefix">
+              <Radio label="开启"></Radio>
+              <Radio label="关闭"></Radio>
+            </RadioGroup>
+          </div>
+        </Col>
+        <Col span="12" offset="1">
+          <Input disabled placeholder="开启后将自动给手机号码加上【+86】前缀" />
+        </Col>
+      </Row>
+      <Row class="mt-10">
         <Col span="6">
           <div class="upload">
             <span class="title ml-10 mr-10">加粉数据</span>
@@ -158,6 +172,7 @@ export default {
   data() {
     return {
       data: [],
+      prefix: "开启",
       freqInte: "",
       mailList: "",
       pageSize: 10,
@@ -305,6 +320,9 @@ export default {
             data.push({ name, phoneNumber })
           })
         }
+        if (this.prefix === "开启") {
+          data.forEach(item => (item.phoneNumber = "+86" + item.phoneNumber))
+        }
         const upload = { data, userId: this.user_id, phoneGroup }
         await this.$http.post("/contact/addPhoneToSQL", upload)
         const { msg } = await this.$http.post("/contact/addFriendFromSQL", args)
@@ -341,6 +359,21 @@ export default {
     height: 32px;
     display: block;
     line-height: 32px;
+  }
+}
+
+.span-prefix {
+  div {
+    height: 32px;
+    line-height: 32px;
+    span {
+      height: 100%;
+      padding-top: 1px;
+      display: inline-block;
+    }
+    ::v-deep .ivu-radio-wrapper {
+      vertical-align: baseline;
+    }
   }
 }
 </style>

@@ -40,9 +40,6 @@ export default {
   name: "homeData",
   data() {
     return {
-      Flag: {
-        FriendFlag: false
-      },
       timer: null,
       dataCard: [
         {
@@ -109,16 +106,11 @@ export default {
       this.initOrder()
     }, 10000)
   },
+  destroyed() {
+    clearInterval(this.timer)
+  },
   computed: {
     ...mapGetters(["user_id"])
-  },
-  watch: {
-    Flag: {
-      handler(newValue) {
-        if (newValue.FriendFlag) setTimeout(() => this.initFriend(), 3000)
-      },
-      deep: true
-    }
   },
   methods: {
     async initInfo() {
@@ -133,14 +125,12 @@ export default {
       })
     },
     async initFriend() {
-      this.Flag.FriendFlag = false
       const params = { userId: this.user_id }
       const friendData = await this.$http.get("/home/getHomeFriendData", { params })
       this.dataCard[1].data[0].data = friendData.allFriendCount || 0
       this.dataCard[1].data[1].data = friendData.allRequestCount || 0
       this.dataCard[1].data[2].data = friendData.allFailureCount || 0
       this.dataCard[1].data[3].data = friendData.allPassCount || 0
-      this.Flag.FriendFlag = true
     },
     async initOrder() {
       const params = { userId: this.user_id }

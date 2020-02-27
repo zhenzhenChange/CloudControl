@@ -42,6 +42,20 @@
         </Col>
       </Row>
       <Row class="mt-10">
+        <Col span="11" class="span-prefix">
+          <div>
+            <span class="ml-10 mr-10">号码前缀</span>
+            <RadioGroup v-model="prefix">
+              <Radio label="开启"></Radio>
+              <Radio label="关闭"></Radio>
+            </RadioGroup>
+          </div>
+        </Col>
+        <Col span="12" offset="1">
+          <Input disabled placeholder="开启后将自动给手机号码加上【+86】前缀" />
+        </Col>
+      </Row>
+      <Row class="mt-10">
         <Col span="6">
           <div class="upload">
             <span class="title ml-10 mr-10">加粉数据</span>
@@ -208,6 +222,7 @@ export default {
   data() {
     return {
       wx: "",
+      prefix: "开启",
       data: [],
       custom: "",
       freqInte: "",
@@ -412,7 +427,15 @@ export default {
           : this.setOrigin === "来源通讯录"
           ? "13"
           : this.custom
-      let requestList = this.mailList.split(/[\r\n]/g).filter(item => item !== "")
+      let requestList = []
+      let list = this.mailList.split(/[\r\n]/g).filter(item => item !== "")
+      if (this.prefix === "开启") {
+        list.forEach(item => {
+          requestList.push("+86" + item)
+        })
+      } else {
+        requestList = list
+      }
       const args = {
         groupId: this.currentGroupID,
         startTime: this.startTime,
@@ -468,5 +491,20 @@ export default {
 .ivu-col-span-17 {
   height: 32px;
   line-height: 32px;
+}
+
+.span-prefix {
+  div {
+    height: 32px;
+    line-height: 32px;
+    span {
+      height: 100%;
+      padding-top: 1px;
+      display: inline-block;
+    }
+    ::v-deep .ivu-radio-wrapper {
+      vertical-align: baseline;
+    }
+  }
 }
 </style>

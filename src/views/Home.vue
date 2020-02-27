@@ -54,7 +54,7 @@
           </div>
         </Card>
       </Content>
-      <Footer class="footer">&copy; Cloud</Footer>
+      <Footer class="footer">&copy; Cloud 2.0</Footer>
     </Layout>
     <Drawer width="20" :closable="false" v-model="isShowChangePwd">
       <div slot="header" class="header-drawer">
