@@ -213,12 +213,11 @@ export default {
       CommonColumns: [
         { width: 60, align: "center", type: "selection" },
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
-        { width: 180, align: "center", title: "账号", key: "account" },
-        { width: 130, align: "center", tooltip: true, title: "密码", key: "accountPwd" },
-        { width: 180, align: "center", tooltip: true, title: "账号A16/62", key: "account62A16" },
-        { width: 100, align: "center", title: "好友数", key: "accountFriendCount" },
+        { align: "center", title: "账号", key: "account" },
+        { align: "center", tooltip: true, title: "密码", key: "accountPwd" },
+        { align: "center", tooltip: true, title: "账号A16/62", key: "account62A16" },
+        { align: "center", title: "好友数", key: "accountFriendCount" },
         {
-          width: 130,
           align: "center",
           title: "账号是否有效",
           key: "accountIsValid",
@@ -230,7 +229,6 @@ export default {
           }
         },
         {
-          width: 130,
           align: "center",
           title: "登录状态",
           key: "accountState",
@@ -241,7 +239,7 @@ export default {
             return h("Tag", { props: { type: "dot", color } }, text)
           }
         },
-        { width: 190, align: "center", tooltip: true, title: "微信ID", key: "accountWxid" },
+        { align: "center", tooltip: true, title: "微信ID", key: "accountWxid" },
         {
           title: "操作",
           align: "center",

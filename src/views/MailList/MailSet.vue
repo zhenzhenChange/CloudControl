@@ -293,6 +293,11 @@ export default {
         }
         flag = true
       })
+
+      if (!/^\d+$/.test(this.passageway)) {
+        this.$Message.warning(`加粉通道只能为正整数`)
+        return
+      }
       const rand = Math.floor(Math.random() * (1 - 100) + 100)
       const phoneGroup = `${rand}${this.currentGroupID}`
       const args = {
@@ -303,7 +308,7 @@ export default {
         groupId: this.currentGroupID,
         interval: this.blankTime,
         maxRequest: this.requestNum,
-        origin: 10,
+        origin: Number(this.passageway),
         phoneGroup,
         startTime: this.startTime,
         taskName: this.fansTaskName

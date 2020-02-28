@@ -120,6 +120,8 @@ export default {
       const params = { groupId: this.currentGroupID, taskName: this.currentTaskName }
       const { msg } = await this.$http.get("/stopAddFriend", { params })
       this.$Message.info(msg)
+      this.webSocket.close()
+      this.initWebSocket()
     },
     removeOrder(taskName, groupId) {
       const params = { taskName, groupId }
@@ -131,6 +133,8 @@ export default {
         onOk: async () => {
           const { msg } = await this.$http.get("/order/deleteAddFriendOrder", { params })
           this.$Message.info(msg)
+          this.webSocket.close()
+          this.initWebSocket()
         },
         onCancel() {}
       })
@@ -170,7 +174,7 @@ export default {
       }
     },
     refreshData() {
-      setTimeout(() => this.webSocket.send(this.user_id), 3000)
+      setTimeout(() => this.webSocket.send(this.user_id), 1000)
     }
   }
 }

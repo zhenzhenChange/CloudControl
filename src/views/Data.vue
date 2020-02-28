@@ -104,7 +104,8 @@ export default {
     setInterval(() => {
       this.initInfo()
       this.initOrder()
-    }, 10000)
+      this.initFriend()
+    }, 30000)
   },
   destroyed() {
     clearInterval(this.timer)

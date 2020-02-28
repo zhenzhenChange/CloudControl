@@ -428,6 +428,7 @@ export default {
           ? "13"
           : this.custom
       let requestList = []
+      // TODO 姓名----手机号格式
       let list = this.mailList.split(/[\r\n]/g).filter(item => item !== "")
       if (this.prefix === "开启") {
         list.forEach(item => {
