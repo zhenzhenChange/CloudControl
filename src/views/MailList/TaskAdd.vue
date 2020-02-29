@@ -160,7 +160,7 @@ export default {
           webSocketData.forEach(async item => {
             const failed = item.failureCount
             const deno = failed + item.sayHelloCount
-            if (failed / deno > this.Shreshold && deno !== 0) {
+            if (failed / deno > this.Shreshold && deno > 20) {
               const params = { groupId: item.groupId, taskName: item.taskName }
               await this.$http.get("/stopAddFriend", { params })
               this.webSocket.send(this.user_id)
