@@ -2,7 +2,7 @@
   <Card class="set-card">
     <p slot="title" class="title">封号率阈值设置</p>
     <Input class="card-input" v-model="limit">
-      <span slot="prepend">封号率（单位%）</span>
+      <span slot="prepend">封号率阈值（%）</span>
     </Input>
     <div class="mt-10">
       <Button
@@ -24,7 +24,7 @@ import { mapGetters } from "vuex"
 export default {
   data() {
     return {
-      limit: "",
+      limit: 0,
       limitLoading: false
     }
   },
@@ -32,7 +32,7 @@ export default {
     ...mapGetters(["user_id", "Shreshold"])
   },
   created() {
-    this.limit = this.Shreshold
+    this.limit = this.Shreshold * 100
   },
   methods: {
     async saveLimit() {
@@ -45,9 +45,9 @@ export default {
         return
       }
       this.limitLoading = true
-      const arg = { user_id: this.user_id, shreshold: this.limit }
+      const arg = { user_id: this.user_id, shreshold: this.limit / 100 }
       const { msg } = await this.$http.post("/common/setShreshold", arg)
-      this.$store.commit("saveShreshold", this.limit)
+      this.$store.commit("saveShreshold", this.limit / 100)
       this.$Message.info(msg)
       this.limitLoading = false
     }

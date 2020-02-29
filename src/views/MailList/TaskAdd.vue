@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapState, mapGetters } from "vuex"
 export default {
   name: "taskAdd",
   data() {
@@ -106,10 +106,8 @@ export default {
     this.webSocket.close()
   },
   computed: {
-    ...mapState({
-      user_id: state => state.user_id,
-      webSocketData: state => state.webSocketData
-    })
+    ...mapState({ webSocketData: state => state.webSocketData }),
+    ...mapGetters(["user_id", "Shreshold"])
   },
   methods: {
     cancel() {
@@ -141,11 +139,8 @@ export default {
     },
     initWebSocket() {
       if (!("WebSocket" in window)) {
-        this.$Notice.error({
-          title: "意外错误",
-          desc:
-            "您的浏览器不支持实时轮询通信，数据将无法实时更新，请升级或更换浏览器（谷歌Chrome、火狐Firefox）"
-        })
+        const desc = "您的浏览器不支持实时轮询通信，请升级或更换浏览器（谷歌Chrome、火狐Firefox）"
+        this.$Notice.error({ title: "意外错误", desc })
         return
       }
       this.webSocket = new WebSocket(process.env.VUE_APP_WEB_SOCKET_URL)
@@ -157,13 +152,19 @@ export default {
           let newObj = {}
           let webSocketData = []
           data.forEach(item => {
-            newObj = Object.assign(
-              {},
-              item.orderResponse.addFriendOrder,
-              item.orderResponse.getFriendViewResponse
-            )
+            const result = item.orderResponse
+            newObj = Object.assign({}, result.addFriendOrder, result.getFriendViewResponse)
             newObj.state = item.state
             webSocketData.push(newObj)
+          })
+          webSocketData.forEach(async item => {
+            const failed = item.failureCount
+            const deno = failed + item.sayHelloCount
+            if (failed / deno > this.Shreshold && deno !== 0) {
+              const params = { groupId: item.groupId, taskName: item.taskName }
+              await this.$http.get("/stopAddFriend", { params })
+              this.webSocket.send(this.user_id)
+            }
           })
           await this.$store.dispatch("saveWebSocketData", webSocketData)
         }

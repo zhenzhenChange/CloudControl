@@ -50,6 +50,7 @@ export default {
       const { msg, data } = await this.$http.post("/login", this.loginForm)
       if (msg === "登录成功") {
         this.$store.commit("saveID", String(data.userId))
+        this.$store.commit("saveShreshold", data.userCdkey)
         this.$router.push("/data")
         this.$Message.success(msg)
       } else {

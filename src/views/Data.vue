@@ -100,7 +100,6 @@ export default {
     this.initGroup()
     this.initOrder()
     this.initFriend()
-    this.initShreshold()
     setInterval(() => {
       this.initInfo()
       this.initOrder()
@@ -150,11 +149,6 @@ export default {
       )
       this.$store.commit("saveGroupData", JSON.stringify(arr))
       this.$store.commit("saveGroupDataTotal", data.length)
-    },
-    async initShreshold() {
-      const params = { user_id: this.user_id }
-      const { data } = await this.$http.get("/getHomeData", { params })
-      this.$store.commit("saveShreshold", data.suLoginShreshold)
     }
   }
 }
