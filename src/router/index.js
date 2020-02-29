@@ -37,6 +37,11 @@ const routes = [
       },
       { path: "/mail", name: "加粉管理", component: () => import("../views/MailList/MailSet.vue") },
       {
+        path: "/mail-test",
+        name: "测试",
+        component: () => import("../views/MailList/MailSet2.vue")
+      },
+      {
         path: "/pull-group",
         name: "拉群任务",
         component: () => import("../views/MailList/PullGroup.vue")
@@ -65,7 +70,7 @@ VueRouter.prototype.push = function push(location) {
 }
 
 router.beforeEach((to, from, next) => {
-  if (!to.meta.isPublic && !localStorage.getItem("user_id")) {
+  if (!to.meta.isPublic && !sessionStorage.getItem("user_id")) {
     Vue.prototype.$Message.error("请先登录~")
     return next("/")
   }

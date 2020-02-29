@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user_id: "" || localStorage.getItem("user_id"),
+    user_id: "" || sessionStorage.getItem("user_id"),
     GroupData: "" || localStorage.getItem("GroupData"),
     Shreshold: "" || localStorage.getItem("Shreshold"),
     webSocketData: "",
@@ -14,7 +14,7 @@ export default new Vuex.Store({
   mutations: {
     saveID: (state, userId) => {
       state.user_id = userId
-      localStorage.setItem("user_id", userId)
+      sessionStorage.setItem("user_id", userId)
     },
     saveShreshold: (state, shreshold) => {
       state.Shreshold = shreshold
