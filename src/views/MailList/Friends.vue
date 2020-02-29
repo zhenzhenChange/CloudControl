@@ -432,7 +432,7 @@ export default {
       let list = this.mailList.split(/[\r\n]/g).filter(item => item !== "")
       if (this.prefix === "开启") {
         list.forEach(item => {
-          requestList.push("+86" + item)
+          requestList.push("0086" + item)
         })
       } else {
         requestList = list

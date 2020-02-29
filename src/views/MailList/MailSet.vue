@@ -326,7 +326,7 @@ export default {
           })
         }
         if (this.prefix === "开启") {
-          data.forEach(item => (item.phoneNumber = "+86" + item.phoneNumber))
+          data.forEach(item => (item.phoneNumber = "0086" + item.phoneNumber))
         }
         const upload = { data, userId: this.user_id, phoneGroup }
         await this.$http.post("/contact/addPhoneToSQL", upload)
