@@ -45,8 +45,8 @@ export default {
         return
       }
       this.limitLoading = true
-      const arg = { user_id: this.user_id, shreshold: this.limit / 100 }
-      const { msg } = await this.$http.post("/common/setShreshold", arg)
+      const params = { userCdkey: this.limit / 100 }
+      const { msg } = await this.$http.get("/common/setShreshold", { params })
       this.$store.commit("saveShreshold", this.limit / 100)
       this.$Message.info(msg)
       this.limitLoading = false
