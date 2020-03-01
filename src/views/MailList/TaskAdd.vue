@@ -156,7 +156,7 @@ export default {
             newObj.state = item.state
             webSocketData.push(newObj)
           })
-          webSocketData.forEach(async item => {
+          /* webSocketData.forEach(async item => {
             const failed = item.failureCount
             const deno = failed + item.sayHelloCount
             if (failed / deno > this.Shreshold && deno > 20) {
@@ -164,7 +164,7 @@ export default {
               await this.$http.get("/stopAddFriend", { params })
               this.webSocket.send(this.user_id)
             }
-          })
+          }) */
           await this.$store.dispatch("saveWebSocketData", webSocketData)
         }
       }
