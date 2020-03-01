@@ -1,6 +1,6 @@
 <template>
-  <!-- 分组管理 -->
-  <div class="Group">
+  <!-- 分组 && 账号 && 拉群 -->
+  <div>
     <SearchInput :ref="SearchInputRef" :infos="['分组名称']" />
     <Divider dashed />
     <ButtonList :buttonListInfos="buttonListInfos" />
@@ -12,7 +12,7 @@
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="GroupColumns" />
     <TableDrawer ref="GroupTableDrawer" />
     <Drawer width="600" :closable="false" v-model="isShowDrawer">
-      <div slot="header" class="header-drawer">
+      <div slot="header" class="flex-center-between">
         <div><Icon type="md-create" color="#2D8CF0" class="mr-10" />创建拉群任务</div>
         <div>
           <Button type="error" class="mr-10" icon="md-barcode" @click="showQRCodeDrawer">
@@ -24,13 +24,6 @@
       </div>
       <Row>
         <Col span="10">
-          <Input clearable v-model="groupTaskName" placeholder="请设置任务名称">
-            <span slot="prepend">任务名称</span>
-          </Input>
-        </Col>
-      </Row>
-      <Row class="mt-10">
-        <Col span="10">
           <Input v-model="currentGroupName" disabled>
             <span slot="prepend">当前分组</span>
           </Input>
@@ -39,6 +32,16 @@
           <Input v-model="currentGroupID" disabled>
             <span slot="prepend">分组ID</span>
           </Input>
+        </Col>
+      </Row>
+      <Row class="mt-10">
+        <Col span="10">
+          <Input clearable v-model="groupTaskName" placeholder="请设置任务名称">
+            <span slot="prepend">任务名称</span>
+          </Input>
+        </Col>
+        <Col span="13" offset="1">
+          <Input disabled placeholder="订单标识，于拉群任务处查看" />
         </Col>
       </Row>
       <Row class="mt-10">
@@ -55,8 +58,8 @@
         <Col span="10">
           <span class="ml-10 mr-10">类型选择</span>
           <RadioGroup v-model="checkType">
-            <Radio label="一手"></Radio>
-            <Radio label="二手"></Radio>
+            <Radio label="一手" />
+            <Radio label="二手" />
           </RadioGroup>
         </Col>
       </Row>
@@ -76,7 +79,7 @@
         </Col>
       </Row>
       <Row class="mt-10">
-        <Col span="12">
+        <Col span="24">
           <Input disabled :placeholder="`群链接总数：${urlListLength}`" />
         </Col>
       </Row>
@@ -127,8 +130,8 @@ export default {
         { width: 70, align: "center", title: "序号", key: "serialNumber" },
         { align: "center", title: "分组ID", key: "groupId" },
         { align: "center", title: "分组名称", key: "groupName" },
-        { sortable: true, align: "center", title: "创建时间", key: "groupCreateDate" },
-        { align: "center", title: "组内账号总数", key: "total" },
+        { align: "center", title: "创建时间", key: "groupCreateDate" },
+        { align: "center", title: "组内账号总数", key: "accountCount" },
         {
           width: 430,
           title: "操作",
@@ -232,67 +235,105 @@ export default {
     }
   },
   created() {
+    // 初始化数据
     this.allData()
     this.initData(null)
   },
   computed: {
     ...mapGetters(["user_id", "GroupDataTotal"]),
     urlListLength() {
+      // 计算有效的（去除空行、换行）群链接条数
       return this.urlList.split(/[\r\n]/g).filter(item => item !== "").length
     }
   },
   methods: {
+    /* 获取所有分组信息 */
     async allData() {
-      const arr = []
+      const spareGroup = []
+
+      // 获取所有分组信息API
       const params = { userId: this.user_id, size: 999999, currentPage: 1 }
       const data = await this.$http.get("/account/getAllGroup", { params })
-      data.forEach(item =>
-        arr.push({ label: item.tbGroupEntity.groupName, value: String(item.tbGroupEntity.groupId) })
-      )
-      this.$store.commit("saveGroupData", JSON.stringify(arr))
-      this.$store.commit("saveGroupDataTotal", data.length)
-      this.$refs[this.PagedTableRef].total = data.length
+
+      // 遍历取出分组名称与分组ID（需转化成字符串，其他API的参数类型要求是字符串），供下拉选择使用
+      data.forEach(item => {
+        spareGroup.push({
+          label: item.tbGroupEntity.groupName,
+          value: String(item.tbGroupEntity.groupId)
+        })
+      })
+
+      // 表格总数（分组个数）
+      const spareGroupLength = spareGroup.length
+      this.$refs[this.PagedTableRef].total = spareGroupLength
+
+      // Vuex全局存放分组信息与分组个数，供其他页面使用
+      this.$store.commit("saveGroupData", JSON.stringify(spareGroup))
+      this.$store.commit("saveGroupDataTotal", spareGroupLength)
     },
+    /* 根据分页参数请求数据 */
     async initData(keyWords) {
+      let data
+
+      // 每次置空，防止数据重复push
       this.data = []
-      let res = null
+
+      // 判断是否有关键词 如果有则是模糊查找，否则为无条件查找
       if (keyWords) {
         const params = { group_name: keyWords, user_id: this.user_id }
-        res = await this.$http.get("/account/getGroupByName", { params })
+        data = (await this.$http.get("/account/getGroupByName", { params })).data
       } else {
+        // 根据分页参数请求数据
         const params = {
           userId: this.user_id,
-          size: Number(this.pageSize),
-          currentPage: Number(this.pageIndex) + 1
+          size: this.pageSize,
+          currentPage: this.pageIndex + 1
         }
-        res = await this.$http.get("/account/getAllGroup", { params })
+        data = await this.$http.get("/account/getAllGroup", { params })
       }
-      res.forEach((item, index) => {
+
+      // 遍历数据，根据表格的 Columns 的 key 组装对应的数据
+      data.forEach((item, index) => {
+        const Group = item.tbGroupEntity
         this.data.push({
-          serialNumber: index + 1,
-          total: item.accountCount,
-          groupName: item.tbGroupEntity.groupName,
-          groupId: String(item.tbGroupEntity.groupId),
-          groupCreateDate: this.$options.filters.date(item.tbGroupEntity.groupCreateDate)
+          groupId: String(Group.groupId), // 分组ID
+          groupName: Group.groupName, // 分组名称
+          serialNumber: index + 1, // 序号
+          accountCount: item.accountCount, // 组内账号总数
+          groupCreateDate: this.$options.filters.date(Group.groupCreateDate) // 格式化日期
         })
       })
     },
+    /* 创建分组 */
     async create() {
+      // 缓存编辑模态窗
       const editModal = this.$refs[this.EditModalRef]
-      if (!editModal.value || editModal.value === " ") {
-        this.$Message.warning("请输入分组名称（不能以空格开头）")
+
+      // 缓存编辑模态窗中文本框的值
+      const value = editModal.value
+
+      // 校验非空
+      if (!value || value === " " || value.length === 0) {
+        this.$Message.warning("请输入分组名称（且不能以空格开头）！")
         return
       }
-      this.$refs[this.EditModalRef].isShowEditModal = false
-      const createData = { group_name: editModal.value, user_id: this.user_id }
+
+      // 创建分组API
+      const createData = { group_name: value, user_id: this.user_id }
       const { msg } = await this.$http.post("/account/addGroup", createData)
-      this.$refs[this.EditModalRef].value = ""
+
+      // 清空文本框，关闭模态窗
+      editModal.value = ""
+      editModal.isShowEditModal = false
+
       if (msg) {
+        // 更新数据并弹出提示信息
         this.allData()
         this.initData(null)
         this.$Message.success("添加成功！")
       }
     },
+    /* TODO 改造 编辑分组 */
     update({ groupName: group_name, groupId: group_id }) {
       this.updateConfig = {
         icon: "md-create",
@@ -308,67 +349,85 @@ export default {
       this.$refs[this.EditModalRef].isShowEditModal = true
       this.$refs[this.EditModalRef].value = false
     },
+    /* TODO 改造 删除分组 */
     async remove(params) {
       let group_id = []
+
+      // 缓存refs
       const ref = this.$refs
-      if (params) {
-        group_id.push(params)
-      } else {
-        group_id = this.operationData.map(item => item.groupId)
-      }
+
+      // 如果有参数，则是单个删除
+      if (params) group_id.push(params)
+      // 否则为多选删除
+      else group_id = this.operationData.map(item => item.groupId)
+
+      // 删除分组API
       const args = { group_id, user_id: this.user_id }
       const { msg } = await this.$http.post("/account/deleteGroup", args)
+
       if (msg) {
+        // 更新数据
         this.allData()
-        this.initData()
+        this.initData(null)
+
+        // 取消选中状态，清空搜索框，关闭模态窗，并弹出提示信息
         ref["UnCheckButton"].unCheck()
-        this.$Message.success(`删除成功（账号处于未分配状态）！`)
         ref[this.SearchInputRef].keyWords = ""
         ref[this.ConfirmModalRef].isShowConfirmModal = false
+        this.$Message.success(`删除成功（账号处于未分配状态）！`)
       }
     },
-    handleBeforeUpload(file) {
-      const reader = new FileReader()
-      reader.readAsText(file)
-      reader.onload = () => (this.urlList = reader.result)
-      return false
-    },
+    /* 重置按钮 */
     resetClick() {
       this.groupTaskName = this.finalNum = this.urlList = ""
     },
+    /* 创建拉群订单 */
     async createGroupTask() {
-      if (!this.groupTaskName) {
-        this.$Message.warning("请设置任务名称！")
-        return
-      }
-      if (!this.finalNum) {
-        this.$Message.warning("请设置群最终人数！")
-        return
-      }
+      // 校验表单
+      const msgArr = [
+        { name: "群聊链接", value: this.urlList },
+        { name: "最终人数", value: this.finalNum },
+        { name: "任务名称", value: this.groupTaskName }
+      ]
+      let flag = false
+      msgArr.forEach(item => {
+        if (!item.value) {
+          this.$Message.warning(`${item.name}不能为空！`)
+          flag = false
+        }
+        flag = true
+      })
       if (this.finalNum > 39) {
         this.$Message.warning("群最终人数不能大于39！")
         return
       }
-      if (!this.urlList) {
-        this.$Message.warning("请填入群链接！")
-        return
-      }
-      let grpUrl = this.urlList.split(/[\r\n]/g).filter(item => item !== "")
+      if (!flag) return
+
+      // 根据换行符、回车符分割，去除空项
+      const grpUrl = this.urlList.split(/[\r\n]/g).filter(item => item !== "")
+
+      // 上传群链接API
+      const args = { grpUrl, taskName: this.groupTaskName }
+      await this.$http.post("/group/setGroupURL", args)
+
+      // 创建拉群订单API
       const params = {
         groupId: this.currentGroupID,
         taskName: this.groupTaskName,
         maxPeople: this.finalNum - 5,
         opType: this.checkType === "一手" ? "0" : "1"
       }
-      const args = { grpUrl, taskName: this.groupTaskName }
-      await this.$http.post("/group/setGroupURL", args)
       const { msg } = await this.$http.get("/group/enterGroup", { params })
+
+      // 弹出提示信息且重置表单
       this.$Message.info(msg)
       this.resetClick()
     },
+    /* 打开抽屉 */
     showQRCodeDrawer() {
       this.$refs["QRCodeDrawer"].isShowQRCodeDrawer = true
     },
+    /* 手动更新数据按钮 */
     refreshData() {
       this.allData()
       this.initData(null)
@@ -376,11 +435,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.header-drawer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-</style>
