@@ -37,11 +37,6 @@ const routes = [
       },
       { path: "/mail", name: "加粉管理", component: () => import("../views/MailList/MailSet.vue") },
       {
-        path: "/mail-test",
-        name: "测试",
-        component: () => import("../views/MailList/MailSet2.vue")
-      },
-      {
         path: "/pull-group",
         name: "拉群任务",
         component: () => import("../views/MailList/PullGroup.vue")

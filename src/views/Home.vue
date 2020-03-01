@@ -131,7 +131,6 @@ export default {
           type: "md-call",
           menuItem: [
             { name: "加粉管理", path: "/mail" },
-            { name: "测试", path: "/mail-test" },
             { name: "添加好友", path: "/friends" },
             { name: "拉群任务", path: "/pull-group" },
             { name: "加粉任务", path: "/task" }
