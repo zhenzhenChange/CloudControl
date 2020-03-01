@@ -328,7 +328,7 @@ export default {
         if (this.prefix === "开启") {
           data.forEach(item => (item.phoneNumber = "0086" + item.phoneNumber))
         }
-        const upload = { data, userId: this.user_id, phoneGroup }
+        const upload = { data, userId: this.user_id, phoneGroup, taskName: this.fansTaskName }
         await this.$http.post("/contact/addPhoneToSQL", upload)
         const { msg } = await this.$http.post("/contact/addFriendFromSQL", args)
         this.$Message.info(msg)
