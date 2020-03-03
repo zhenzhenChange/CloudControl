@@ -94,6 +94,7 @@ export default {
   data() {
     return {
       data: [],
+      enterGroupCount: 0,
       mutex: false,
       pageIndex: 0,
       pageSize: 10,
@@ -420,17 +421,11 @@ export default {
       const params = {
         groupId: this.currentGroupID,
         taskName: this.groupTaskName,
-        maxPeople: this.finalNum - 5,
+        maxPeople: this.finalNum,
         opType: this.checkType === "一手" ? "0" : "1"
       }
-      await this.$http.get("/group/enterGroup", { params })
-      await this.$http.get("/group/enterGroup", { params })
-      await this.$http.get("/group/enterGroup", { params })
-      await this.$http.get("/group/enterGroup", { params })
-      const { msg } = await this.$http.get("/group/enterGroup", { params })
-
+      this.loopEnterGroup(params, this.finalNum)
       // 弹出提示信息且重置表单
-      this.$Message.info(msg)
       this.resetClick()
     },
     /* 打开抽屉 */
@@ -441,6 +436,23 @@ export default {
     refreshData() {
       this.allData()
       this.initData(null)
+    },
+    async loopEnterGroup(params, max) {
+      this.enterGroupCount++
+      let maxPeople = params.maxPeople
+      if (maxPeople > 10) {
+        params.maxPeople = 10
+        maxPeople = maxPeople - 10
+      } else {
+        params.maxPeople = maxPeople
+      }
+      const { data, msg } = await this.$http.get("/group/enterGroup", { params })
+      data.forEach(item => {
+        if (item.groupAmount < max && this.enterGroupCount !== 5 * data.length) {
+          this.loopEnterGroup(params, max)
+        }
+      })
+      this.$Message.info(msg)
     }
   }
 }

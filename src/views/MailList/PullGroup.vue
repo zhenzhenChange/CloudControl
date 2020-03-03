@@ -4,7 +4,8 @@
     <PagedTable :data="data" :ref="PagedTableRef" :dataColumns="PullGroupColumns" />
     <Drawer width="90" :closable="false" v-model="isShowReportDrawer">
       <div slot="header">
-        <Icon type="md-book" color="#2D8CF0" class="mr-10" />拉群任务报表
+        <Icon type="md-book" color="#2D8CF0" class="mr-10" />
+        拉群任务报表（共{{ dataLength || 0 }}条数据）
         <Button type="info" class="ml-10" icon="md-download" @click="exportData">导出报表</Button>
       </div>
       <PagedTable
@@ -93,6 +94,7 @@ export default {
     return {
       row: "",
       data: [],
+      dataLength: 0,
       urlList: "",
       finalNum: "",
       pageSize: 10,
@@ -276,6 +278,7 @@ export default {
                 groupID: item.chatRoomName.split("@")[0],
                 beforeCount: countBefore
               })
+              this.dataLength = this.reportData.length
             })
           }
         }
