@@ -139,7 +139,7 @@ export default {
           render: (h, params) => {
             const { groupId, groupName } = params.row
             return h("div", [
-              h(
+              /* h(
                 "Button",
                 {
                   style: { marginRight: "5px", marginTop: "5px" },
@@ -168,12 +168,17 @@ export default {
                   }
                 },
                 "关闭心跳监控"
-              ),
+              ), */
               h(
                 "Button",
                 {
-                  style: { marginRight: "5px", marginTop: "5px" },
-                  props: { size: "small", type: "info", icon: "md-share-alt" },
+                  style: { marginRight: "5px" },
+                  props: {
+                    type: "info",
+                    size: "small",
+                    icon: "md-share-alt",
+                    disabled: this.mutex
+                  },
                   on: {
                     click: () => {
                       this.isShowDrawer = true
@@ -187,15 +192,16 @@ export default {
               h(
                 "Button",
                 {
-                  style: { marginRight: "5px", marginTop: "5px", marginBottom: "5px" },
+                  style: { marginRight: "5px" },
                   props: { size: "small", type: "success", icon: "md-eye", disabled: this.mutex },
                   on: {
-                    click: () => {
-                      this.$refs["GroupTableDrawer"].isShowTableDrawer = true
-                      this.$refs["GroupTableDrawer"].groupID = groupId
-                      this.$refs["GroupTableDrawer"].initAllData(groupId)
-                      this.$refs["GroupTableDrawer"].getAccountDataByGroupID(groupId)
-                      // this.$refs["GroupTableDrawer"].checkHeart(groupId)
+                    click: async () => {
+                      await this.$http.get("/heart/sendHeartBeat", { params: { groupId } })
+                      const ref = this.$refs["GroupTableDrawer"]
+                      ref.groupID = groupId
+                      ref.isShowTableDrawer = true
+                      ref.initAllData(groupId)
+                      ref.getDataByGroupID(groupId)
                     }
                   }
                 },
@@ -204,7 +210,7 @@ export default {
               h(
                 "Button",
                 {
-                  style: { marginRight: "5px", marginTop: "5px", marginBottom: "5px" },
+                  style: { marginRight: "5px" },
                   props: { size: "small", type: "info", icon: "md-create", disabled: this.mutex },
                   on: {
                     click: () => {
@@ -217,12 +223,12 @@ export default {
               h(
                 "Button",
                 {
-                  style: { marginBottom: "5px", marginTop: "5px" },
                   props: { type: "error", size: "small", icon: "md-trash", disabled: this.mutex },
                   on: {
                     click: () => {
-                      this.$refs[this.ConfirmModalRef].isShowConfirmModal = true
-                      this.$refs[this.ConfirmModalRef].params = groupId
+                      const ref = this.$refs[this.ConfirmModalRef]
+                      ref.params = groupId
+                      ref.isShowConfirmModal = true
                     }
                   }
                 },
@@ -417,6 +423,10 @@ export default {
         maxPeople: this.finalNum - 5,
         opType: this.checkType === "一手" ? "0" : "1"
       }
+      await this.$http.get("/group/enterGroup", { params })
+      await this.$http.get("/group/enterGroup", { params })
+      await this.$http.get("/group/enterGroup", { params })
+      await this.$http.get("/group/enterGroup", { params })
       const { msg } = await this.$http.get("/group/enterGroup", { params })
 
       // 弹出提示信息且重置表单

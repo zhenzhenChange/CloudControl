@@ -179,7 +179,7 @@
   </div>
 </template>
 <script>
-import { mapState } from "vuex"
+import { mapGetters } from "vuex"
 import getSystemTime from "../lib/getSystemTime.js"
 export default {
   name: "TableDrawer",
@@ -268,19 +268,13 @@ export default {
     this.options = JSON.parse(this.GroupData)
   },
   computed: {
-    ...mapState({ user_id: state => state.user_id, GroupData: state => state.GroupData })
+    ...mapGetters(["user_id", "GroupData"])
   },
   methods: {
-    async checkHeart(groupId) {
-      const heartData = await this.$http.get("/heart/sendHeartBeat", { params: { groupId } })
-      heartData.forEach(item => {
-        if (item.response === "false") this.up()
-      })
-    },
     async initAllData(groupId) {
       this.data = []
       this.allData = []
-      const params = { groupId, size: 9999999, currentPage: Number(this.pageIndex) + 1 }
+      const params = { groupId, size: 99999, currentPage: this.pageIndex + 1 }
 
       const { data } = await this.$http.get("/account/getAccount", { params })
       this.allData = data.content
@@ -290,13 +284,9 @@ export default {
       this.friends = res.allCount
       this.todayFriends = res.todayPassCount
     },
-    async getAccountDataByGroupID(groupId) {
+    async getDataByGroupID(groupId) {
       this.data = []
-      const params = {
-        groupId,
-        size: Number(this.pageSize),
-        currentPage: Number(this.pageIndex) + 1
-      }
+      const params = { groupId, size: this.pageSize, currentPage: this.pageIndex + 1 }
       const { data } = await this.$http.get("/account/getAccount", { params })
 
       const errParams = { groupId }
@@ -324,11 +314,11 @@ export default {
     changePage(index) {
       this.current = index
       this.pageIndex = index - 1
-      this.getAccountDataByGroupID(this.groupID)
+      this.getDataByGroupID(this.groupID)
     },
     changeSize(pageSize) {
       this.pageSize = pageSize
-      this.getAccountDataByGroupID(this.groupID)
+      this.getDataByGroupID(this.groupID)
     },
     selectionChange(selection) {
       this.operationData = selection
@@ -353,7 +343,7 @@ export default {
       this.$Message.info(msg)
       this.initAllData(this.groupID)
       this.$refs[this.TableRef].selectAll(false)
-      this.getAccountDataByGroupID(this.groupID)
+      this.getDataByGroupID(this.groupID)
     },
     cancel() {
       this.isShowMoveModal = false
@@ -377,7 +367,7 @@ export default {
       this.$Message.info(msg)
       this.isShowUploadModal = false
       this.initAllData(this.groupID)
-      this.getAccountDataByGroupID(this.groupID)
+      this.getDataByGroupID(this.groupID)
     },
     handleBeforeUpload(file) {
       const reader = new FileReader()
@@ -410,16 +400,18 @@ export default {
         await this.$http.post("/saveErrorAccount", saveArgs)
       }
       this.initAllData(this.groupID)
-      this.getAccountDataByGroupID(this.groupID)
+      this.getDataByGroupID(this.groupID)
       this.$Message.info(`上线成功${data.success.length}个，失败${data.error.length}个`)
+      await this.$http.get("/heart/startHeartBeat", { params: { groupId: this.groupID } })
     },
     async down() {
       this.isShowDownModal = false
       const args = { wxids: [], requestType: "0", groupId: this.groupID }
       const { data } = await this.$http.post("/account/logout", args)
       this.initAllData(this.groupID)
-      this.getAccountDataByGroupID(this.groupID)
+      this.getDataByGroupID(this.groupID)
       this.$Message.info(`下线成功${data.success.length}个，失败${data.error.length}个`)
+      await this.$http.get("/heart/closeHeartBeat", { params: { groupId: this.groupID } })
     },
     moveModal() {
       if (!this.operationData.length) {
@@ -437,7 +429,7 @@ export default {
       this.value = ""
       this.$Message.success(msg)
       this.initAllData(this.groupID)
-      this.getAccountDataByGroupID(this.groupID)
+      this.getDataByGroupID(this.groupID)
       this.$refs[this.TableRef].selectAll(false)
     },
     async trash() {
@@ -451,7 +443,7 @@ export default {
       this.$Message.info(msg)
       this.initAllData(this.groupID)
       this.$refs[this.TableRef].selectAll(false)
-      this.getAccountDataByGroupID(this.groupID)
+      this.getDataByGroupID(this.groupID)
     },
     exportData() {
       const Time = getSystemTime()

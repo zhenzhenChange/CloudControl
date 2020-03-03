@@ -100,7 +100,7 @@ export default {
     this.initGroup()
     this.initOrder()
     this.initFriend()
-    setInterval(() => {
+    this.timer = setInterval(() => {
       this.initInfo()
       this.initOrder()
       this.initFriend()
