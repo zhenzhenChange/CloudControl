@@ -424,8 +424,10 @@ export default {
         maxPeople: this.finalNum,
         opType: this.checkType === "一手" ? "0" : "1"
       }
-      this.loopEnterGroup(params, this.finalNum)
+      const { msg } = await this.$http.get("/group/enterGroupHasCalculation", { params })
+
       // 弹出提示信息且重置表单
+      this.$Message.info(msg)
       this.resetClick()
     },
     /* 打开抽屉 */
@@ -436,8 +438,8 @@ export default {
     refreshData() {
       this.allData()
       this.initData(null)
-    },
-    async loopEnterGroup(params, max) {
+    }
+    /* async loopEnterGroup(params, max) {
       this.enterGroupCount++
       let maxPeople = params.maxPeople
       if (maxPeople > 10) {
@@ -452,8 +454,7 @@ export default {
           this.loopEnterGroup(params, max)
         }
       })
-      this.$Message.info(msg)
-    }
+    } */
   }
 }
 </script>

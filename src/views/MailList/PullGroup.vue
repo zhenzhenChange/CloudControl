@@ -243,6 +243,7 @@ export default {
       this.isShowStopModal = false
       const params = { groupId: this.currentGroupID, taskName: this.currentTaskName }
       const { msg } = await this.$http.get("/stopEnterGroup", { params })
+      this.initData()
       this.$Message.info(msg)
     },
     async getReportData(taskName, groupId) {
@@ -304,6 +305,7 @@ export default {
       const opType = this.addType === "一手" ? 0 : 1
       const args = { grpUrl, groupId, taskName, maxPeople: this.addPeople - 5, opType }
       const { msg } = await this.$http.post("/group/addGroupURL", args)
+      this.initData()
       this.$Message.info(msg)
     },
     exportData() {
