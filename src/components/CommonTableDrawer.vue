@@ -402,7 +402,7 @@ export default {
       this.initAllData(this.groupID)
       this.getDataByGroupID(this.groupID)
       this.$Message.info(`上线成功${data.success.length}个，失败${data.error.length}个`)
-      await this.$http.get("/heart/startHeartBeat", { params: { groupId: this.groupID } })
+      // await this.$http.get("/heart/startHeartBeat", { params: { groupId: this.groupID } })
     },
     async down() {
       this.isShowDownModal = false
@@ -411,7 +411,7 @@ export default {
       this.initAllData(this.groupID)
       this.getDataByGroupID(this.groupID)
       this.$Message.info(`下线成功${data.success.length}个，失败${data.error.length}个`)
-      await this.$http.get("/heart/closeHeartBeat", { params: { groupId: this.groupID } })
+      // await this.$http.get("/heart/closeHeartBeat", { params: { groupId: this.groupID } })
     },
     moveModal() {
       if (!this.operationData.length) {

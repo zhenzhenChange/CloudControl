@@ -197,7 +197,7 @@ export default {
                   props: { size: "small", type: "success", icon: "md-eye", disabled: this.mutex },
                   on: {
                     click: async () => {
-                      await this.$http.get("/heart/sendHeartBeat", { params: { groupId } })
+                      // await this.$http.get("/heart/sendHeartBeat", { params: { groupId } })
                       const ref = this.$refs["GroupTableDrawer"]
                       ref.groupID = groupId
                       ref.isShowTableDrawer = true
