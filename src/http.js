@@ -10,7 +10,8 @@ const excludeUrl = [
   "/account/getAccountInfo"
 ]
 
-const root = process.env.NODE_ENV === "production" ? "http://47.111.180.163:8080/api" : ""
+// 生产环境替换API地址
+const root = process.env.NODE_ENV === "production" ? process.env.VUE_APP_PRODUCTION_API_URL : ""
 
 http.interceptors.request.use(
   config => {

@@ -154,8 +154,8 @@ export default {
       const avaUrl = []
       data.friendCriclePicURL
         .split(",")
-        .map(item => picURL.push(`http://39.108.132.32:8080${item}`))
-      avaUrl.push(`http://39.108.132.32:8080${data.setInfoAvatarUrl}`)
+        .map(item => picURL.push(`${process.env.VUE_APP_API_URL}${item}`))
+      avaUrl.push(`${process.env.VUE_APP_API_URL}${data.setInfoAvatarUrl}`)
       this.$refs.SpaceUpload.uploadList = picURL
       this.$refs.UploadAvatar.uploadList = avaUrl
       this.template.title = data.friendCricleTitle
